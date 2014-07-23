@@ -1,9 +1,12 @@
-package com.ryochin.qittaro;
+package com.ryochin.qittaro.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.ryochin.qittaro.R;
 
 
 public class HomeActivity extends ActionBarActivity {
@@ -12,6 +15,9 @@ public class HomeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        this.startActivity(intent);
     }
 
 
