@@ -4,6 +4,7 @@
 *.class
 bin/
 gen/
+build/
 local.properties
 .classpath
 .project
