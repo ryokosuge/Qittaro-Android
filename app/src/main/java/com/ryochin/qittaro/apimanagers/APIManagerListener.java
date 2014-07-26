@@ -7,6 +7,6 @@ package com.ryochin.qittaro.apimanagers;
 
 public interface APIManagerListener {
     public void willStart();
-    public void onCompleted();
+    public void onCompleted(String response);
     public void onError();
 }

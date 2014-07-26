@@ -15,40 +15,61 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.ryochin.qittaro.R;
-import com.ryochin.qittaro.apimanagers.ArticleAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.models.ArticleUserModel;
-import com.ryochin.qittaro.models.TagModel;
 import com.ryochin.qittaro.utils.AppController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArticleAdapter extends BaseAdapter {
     private static final String TAG = ArticleAdapter.class.getSimpleName();
     private final ArticleAdapter self = this;
 
     private Context context;
+    private List<ArticleModel> items;
 
     private static class ViewHolder {
-        NetworkImageView tagImageView;
         TextView titleTextView;
         TextView createdAtTextView;
         TextView updatedAtTextView;
         NetworkImageView userIconImageView;
         TextView userNameTextView;
-    }
 
+        public ViewHolder(View v) {
+            this.titleTextView = (TextView) v.findViewById(R.id.article_title_text_view);
+            this.createdAtTextView = (TextView) v.findViewById(R.id.article_created_at_text_view);
+            this.updatedAtTextView = (TextView) v.findViewById(R.id.article_updated_at_text_view);
+            this.userNameTextView = (TextView) v.findViewById(R.id.article_user_name_text_view);
+            this.userIconImageView = (NetworkImageView) v.findViewById(R.id.article_user_icon_image_view);
+        }
+    }
 
     public ArticleAdapter(Context context) {
         this.context = context;
+        this.items = new ArrayList<ArticleModel>();
+    }
+
+    public void setItems(List<ArticleModel> items) {
+        this.items = items;
+    }
+
+    public void addItem(ArticleModel item) {
+        this.items.add(item);
+    }
+
+    public void addItems(List<ArticleModel> items) {
+        this.items.addAll(items);
     }
 
     @Override
     public int getCount() {
-        return ArticleAPIManager.getInstance().getCount();
+        return this.items.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return ArticleAPIManager.getInstance().getItem(position);
+        return this.items.get(position);
     }
 
     @Override
@@ -60,34 +81,25 @@ public class ArticleAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder;
-        final ArticleModel articleModel = ArticleAPIManager.getInstance().getItem(position);
+        final ArticleModel articleModel = this.items.get(position);
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
             convertView = inflater.inflate(R.layout.fragment_article_detail, null);
-            viewHolder = new ViewHolder();
-            viewHolder.tagImageView = (NetworkImageView)convertView.findViewById(R.id.article_first_tag_image_view);
-            viewHolder.titleTextView = (TextView)convertView.findViewById(R.id.article_title_text_view);
-            viewHolder.createdAtTextView = (TextView)convertView.findViewById(R.id.article_created_at_text_view);
-            viewHolder.updatedAtTextView = (TextView)convertView.findViewById(R.id.article_updated_at_text_view);
-            viewHolder.userNameTextView = (TextView)convertView.findViewById(R.id.article_user_name_text_view);
-            viewHolder.userIconImageView = (NetworkImageView)convertView.findViewById(R.id.article_user_icon_image_view);
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)convertView.getTag();
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        TagModel firstTagModel = articleModel.getTags().get(0);
-        viewHolder.tagImageView.setImageUrl(firstTagModel.getIconURL(), imageLoader);
         ArticleUserModel userModel = articleModel.getUser();
         viewHolder.userIconImageView.setImageUrl(userModel.getProfileImageURL(), imageLoader);
-
+        viewHolder.userNameTextView.setText(userModel.getUrlName());
         viewHolder.titleTextView.setText(articleModel.getTitle());
-        String createdAt = "投稿日 : " + articleModel.getCreatedAtInWords();
-        String updatedAt = "更新日 : " + articleModel.getUpdatedAtInWords();
+        String createdAt = "投稿日 : " + articleModel.getCreatedAtInWords() + "前";
+        String updatedAt = "更新日 : " + articleModel.getUpdatedAtInWords() + "前";
         viewHolder.createdAtTextView.setText(createdAt);
         viewHolder.updatedAtTextView.setText(updatedAt);
-        viewHolder.userNameTextView.setText(userModel.getUrlName());
         return convertView;
     }
 }

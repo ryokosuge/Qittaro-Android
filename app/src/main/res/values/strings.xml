@@ -11,5 +11,6 @@
     <string name="login_error_title">Login Error</string>
     <string name="login_error_message">ユーザー名かパスワードが間違っています。</string>
     <string name="login_success_message">ログインが完了しました！</string>
+    <string name="article_tag_text">登録されているタグ</string>
 
 </resources>

@@ -4,20 +4,13 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     >
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/article_first_tag_image_view"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_centerHorizontal="true"
-     />
-
     <TextView
         android:id="@+id/article_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/article_first_tag_image_view"
-        android:layout_marginTop="10dp"
-        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:textSize="23sp"
+        android:textStyle="bold"
         android:textColor="@android:color/primary_text_light"
     />
 
@@ -25,10 +18,12 @@
         android:id="@+id/article_created_at_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_below="@id/article_title_text_view"
-        android:layout_marginTop="10dp"
         android:textColor="@android:color/secondary_text_light"
-        android:textSize="15sp"
+        android:textSize="13sp"
     />
 
     <TextView
@@ -36,23 +31,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/article_created_at_text_view"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:textColor="@android:color/secondary_text_light"
-        android:textSize="15sp"
+        android:textSize="13sp"
     />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_below="@id/article_updated_at_text_view"
         >
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/article_user_icon_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_margin="5dp"
         />
 

@@ -11,64 +11,61 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.utils.AppController;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ArticleAPIManager {
 
     private static final String TAG = ArticleAPIManager.class.getSimpleName();
     private final ArticleAPIManager self = this;
-
     private static final String API_URL = "https://qiita.com/api/v1/items";
-
     private static ArticleAPIManager instance;
-
-    private List<ArticleModel> articles;
     private int page;
+    private boolean loading;
 
     public static ArticleAPIManager getInstance() {
         if (instance == null) {
             instance = new ArticleAPIManager();
         }
-
         return instance;
     }
 
     private ArticleAPIManager() {
-        this.articles = new ArrayList<ArticleModel>();
         this.page = 1;
-    }
-
-    public int getCount() {
-        return this.articles.size();
-    }
-
-    public ArticleModel getItem(int index) {
-        return this.articles.get(index);
+        this.loading = false;
     }
 
     public void reloadItems(final APIManagerListener listener) {
+        if (this.loading) {
+            return;
+        }
         this.page = 1;
         listener.willStart();
+        this.loading = true;
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     public void addItems(final APIManagerListener listener) {
+        if (this.loading) {
+            return;
+        }
         this.page++;
         listener.willStart();
+        this.loading = true;
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
+    public int getPage() {
+        return this.page;
+    }
+
+    public boolean isLoading() {
+        return this.loading;
+    }
+
     public void cancel() {
+        this.loading = false;
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
@@ -80,25 +77,15 @@ public class ArticleAPIManager {
                     @Override
                     public void onResponse(String response) {
                         Log.e(TAG, "onResponse()");
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            int responseArrayCount = jsonArray.length();
-                            for (int i = 0; i < responseArrayCount; i ++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                ArticleModel articleModel = new ArticleModel(jsonObject);
-                                self.articles.add(articleModel);
-                            }
-                            listener.onCompleted();
-                        } catch (JSONException e) {
-                            Log.e(TAG, "JSONException()", e);
-                            listener.onError();
-                        }
+                        self.loading = false;
+                        listener.onCompleted(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "onErrorResponse()");
+                        self.loading = false;
                         listener.onError();
                     }
                 }
