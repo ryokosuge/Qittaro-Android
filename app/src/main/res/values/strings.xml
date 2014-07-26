@@ -6,6 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="login_user_name_hint">ユーザー名</string>
     <string name="login_password_hint">パスワード</string>
+    <string name="login_activity_label">Qittaログイン</string>
     <string name="login_btn_text">ログイン</string>
+    <string name="login_error_title">Login Error</string>
+    <string name="login_error_message">ユーザー名かパスワードが間違っています。</string>
+    <string name="login_success_message">ログインが完了しました！</string>
 
 </resources>
