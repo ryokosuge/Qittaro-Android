@@ -41,7 +41,7 @@ public class ArticleModel {
     private String updatedAt;
     private String createdAtInWords;
     private String updatedAtInWords;
-    private List<TagModel> tags;
+    private List<ArticleTagModel> tags;
     private int stockCount;
     private List<String> stockUsers;
     private int commentCount;
@@ -60,9 +60,9 @@ public class ArticleModel {
         this.updatedAtInWords = jsonObject.getString(API_ARTICLE_UPDATED_AT_IN_WORDS_KEY);
         JSONArray jsonTags = jsonObject.getJSONArray(API_ARTICLE_TAGS_KEY);
         int jsonTagsCount = jsonTags.length();
-        this.tags = new ArrayList<TagModel>(jsonTagsCount);
+        this.tags = new ArrayList<ArticleTagModel>(jsonTagsCount);
         for(int i = 0; i < jsonTagsCount; i ++) {
-            this.tags.add(new TagModel(jsonTags.getJSONObject(i)));
+            this.tags.add(new ArticleTagModel(jsonTags.getJSONObject(i)));
         }
         this.stockCount = jsonObject.getInt(API_ARTICLE_STOCK_COUNT_KEY);
         JSONArray jsonStockUsers = jsonObject.getJSONArray(API_ARTICLE_STOCK_USERS_KEY);
@@ -112,7 +112,7 @@ public class ArticleModel {
         return updatedAtInWords;
     }
 
-    public List<TagModel> getTags() {
+    public List<ArticleTagModel> getTags() {
         return tags;
     }
 

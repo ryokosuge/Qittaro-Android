@@ -22,6 +22,9 @@
         <activity android:name="com.ryochin.qittaro.activities.LoginActivity"
             android:label="@string/login_activity_label"
             />
+        <activity android:name="com.ryochin.qittaro.activities.ArticleDetailActivity"
+            android:label="@string/app_name"
+            />
     </application>
 
 </manifest>

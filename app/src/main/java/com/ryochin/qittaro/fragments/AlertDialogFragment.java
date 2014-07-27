@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 
 public class AlertDialogFragment extends DialogFragment {
 
@@ -40,10 +39,6 @@ public class AlertDialogFragment extends DialogFragment {
         Bundle args = this.getArguments();
         String title = args.getString(BUNDLE_TITLE_KEY);
         String message = args.getString(BUNDLE_MESSAGE_KEY);
-
-        Log.e(TAG, message);
-        Log.e(TAG, title);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(title)
                 .setMessage(message)

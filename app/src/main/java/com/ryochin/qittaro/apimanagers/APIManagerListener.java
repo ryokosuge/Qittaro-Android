@@ -5,8 +5,9 @@
  */
 package com.ryochin.qittaro.apimanagers;
 
-public interface APIManagerListener {
-    public void willStart();
-    public void onCompleted(String response);
+import java.util.List;
+
+public interface APIManagerListener<T> {
+    public void onCompleted(List<T> items);
     public void onError();
 }

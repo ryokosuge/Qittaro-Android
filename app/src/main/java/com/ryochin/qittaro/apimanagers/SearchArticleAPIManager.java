@@ -1,7 +1,7 @@
 /**
  * PACKAGE NAME com.ryochin.qittaro.apimanagers
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/07/27
  */
 package com.ryochin.qittaro.apimanagers;
 
@@ -12,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.ryochin.qittaro.models.ArticleModel;
-import com.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,72 +20,43 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArticleAPIManager {
+public class SearchArticleAPIManager {
 
-    private static final String TAG = ArticleAPIManager.class.getSimpleName();
-    private final ArticleAPIManager self = this;
-    private static final String API_URL = "https://qiita.com/api/v1/items";
-    private static ArticleAPIManager instance;
+    private static final String TAG = SearchArticleAPIManager.class.getSimpleName();
+    private final SearchArticleAPIManager self = this;
+    private static final String API_URL = "https://qiita.com/api/v1/search";
+    private static SearchArticleAPIManager instance;
     private int page;
     private boolean loading;
+    private String searchWord;
     private List<ArticleModel> items;
 
-    public static ArticleAPIManager getInstance() {
+    public static SearchArticleAPIManager getInstance() {
         if (instance == null) {
-            instance = new ArticleAPIManager();
+            instance = new SearchArticleAPIManager();
         }
         return instance;
     }
 
-    private ArticleAPIManager() {
+    private SearchArticleAPIManager() {
         this.page = 1;
         this.loading = false;
         this.items = new ArrayList<ArticleModel>();
     }
 
-    public List<ArticleModel> getItems() {
-        return this.items;
-    }
-
-    public ArticleModel getItem(int index) {
-        return this.items.get(index);
-    }
-
-    public void reloadItems(final APIManagerListener<ArticleModel> listener) {
+    public void reloadItems(final String searchWord, final APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
             return;
         }
+
         this.page = 1;
         this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+
+
     }
 
-    public void addItems(final APIManagerListener<ArticleModel> listener) {
-        if (this.loading) {
-            return;
-        }
-        this.page++;
-        this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
-
-    public int getPage() {
-        return this.page;
-    }
-
-    public boolean isLoading() {
-        return this.loading;
-    }
-
-    public void cancel() {
-        this.loading = false;
-        AppController.getInstance().cancelPendingRequests(TAG);
-    }
-
-    private StringRequest getRequest(final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?page=" + String.valueOf(page);
+    private StringRequest getRequest(final String searchWord, final int page, final APIManagerListener<ArticleModel> listener) {
+        String url = API_URL + "?q=" + searchWord + "&page=" + String.valueOf(page);
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
@@ -114,7 +84,6 @@ public class ArticleAPIManager {
         );
         return stringRequest;
     }
-
 
     private List<ArticleModel> responseToItems(String response) {
         JSONArray jsonArray = null;

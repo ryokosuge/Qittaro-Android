@@ -50,6 +50,10 @@ public class ArticleAdapter extends BaseAdapter {
         this.items = new ArrayList<ArticleModel>();
     }
 
+    public void clear() {
+        this.items = new ArrayList<ArticleModel>();
+    }
+
     public void setItems(List<ArticleModel> items) {
         this.items = items;
     }
@@ -84,7 +88,7 @@ public class ArticleAdapter extends BaseAdapter {
         final ArticleModel articleModel = this.items.get(position);
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_article_detail, null);
+            convertView = inflater.inflate(R.layout.fragment_article_list_detail, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -94,12 +98,13 @@ public class ArticleAdapter extends BaseAdapter {
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
         ArticleUserModel userModel = articleModel.getUser();
         viewHolder.userIconImageView.setImageUrl(userModel.getProfileImageURL(), imageLoader);
-        viewHolder.userNameTextView.setText(userModel.getUrlName());
         viewHolder.titleTextView.setText(articleModel.getTitle());
+        String userText = userModel.getUrlName() + "さんが投稿しました。";
         String createdAt = "投稿日 : " + articleModel.getCreatedAtInWords() + "前";
         String updatedAt = "更新日 : " + articleModel.getUpdatedAtInWords() + "前";
         viewHolder.createdAtTextView.setText(createdAt);
         viewHolder.updatedAtTextView.setText(updatedAt);
+        viewHolder.userNameTextView.setText(userText);
         return convertView;
     }
 }

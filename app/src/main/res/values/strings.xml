@@ -12,5 +12,6 @@
     <string name="login_error_message">ユーザー名かパスワードが間違っています。</string>
     <string name="login_success_message">ログインが完了しました！</string>
     <string name="article_tag_text">登録されているタグ</string>
+    <string name="search_edit_text_hint">複数検索する時は半角スペースで分けてください。</string>
 
 </resources>

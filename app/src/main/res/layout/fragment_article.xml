@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/article_swipe_refresh"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
 
     <ListView
         android:id="@+id/article_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:dividerHeight="10dp"
-        android:divider="@null"
-    />
+        android:layout_height="match_parent" />
 
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
