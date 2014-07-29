@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.ryochin.qittaro.fragments.ArticlesFragment;
+import com.ryochin.qittaro.fragments.MyArticleFragment;
 import com.ryochin.qittaro.fragments.SearchArticleFragment;
 import com.ryochin.qittaro.fragments.StocksFragment;
 import com.ryochin.qittaro.fragments.TagsFragment;
@@ -20,11 +21,12 @@ public class LoggedInFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = LoggedInFragmentPagerAdapter.class.getSimpleName();
     private final LoggedInFragmentPagerAdapter self = this;
 
-    private static final int FRAGMENT_MAX_COUNT = 4;
+    private static final int FRAGMENT_MAX_COUNT = 5;
     private static final int FRAGMENT_ARTICLE_INDEX = 0;
-    private static final int FRAGMENT_STOCKS_INDEX = 1;
-    private static final int FRAGMENT_TAGS_INDEX = 2;
-    private static final int FRAGMENT_SEARCH_INDEX = 3;
+    private static final int FRAGMENT_MY_ARTICLE_INDEX = 1;
+    private static final int FRAGMENT_STOCKS_INDEX = 2;
+    private static final int FRAGMENT_TAGS_INDEX = 3;
+    private static final int FRAGMENT_SEARCH_INDEX = 4;
 
     public LoggedInFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -41,6 +43,8 @@ public class LoggedInFragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return new SearchArticleFragment();
             case FRAGMENT_STOCKS_INDEX:
                 return new StocksFragment();
+            case FRAGMENT_MY_ARTICLE_INDEX:
+                return new MyArticleFragment();
             default:
                 return null;
         }
@@ -62,6 +66,8 @@ public class LoggedInFragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return "SEARCH";
             case FRAGMENT_STOCKS_INDEX:
                 return "STOCK";
+            case FRAGMENT_MY_ARTICLE_INDEX:
+                return "MINE";
             default:
                 return "";
         }
