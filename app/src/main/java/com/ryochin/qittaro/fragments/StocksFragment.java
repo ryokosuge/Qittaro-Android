@@ -1,8 +1,9 @@
 /**
  * PACKAGE NAME com.ryochin.qittaro.fragments
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/07/29
  */
+
 package com.ryochin.qittaro.fragments;
 
 import android.app.Activity;
@@ -20,15 +21,16 @@ import android.widget.ListView;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
-import com.ryochin.qittaro.apimanagers.ArticleAPIManager;
+import com.ryochin.qittaro.apimanagers.StockAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
+import com.ryochin.qittaro.utils.AppSharedPreference;
 
 import java.util.List;
 
-public class ArticlesFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
+public class StocksFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
-    private static final String TAG = ArticlesFragment.class.getSimpleName();
-    private final ArticlesFragment self = this;
+    private static final String TAG = StocksFragment.class.getSimpleName();
+    private final StocksFragment self = this;
 
     private ArticlesFragmentListener listener;
     private ListView listView;
@@ -39,9 +41,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         if ((activity instanceof ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener) activity;
+            this.listener = (ArticlesFragmentListener)activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -57,7 +58,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         super.onActivityCreated(savedInstanceState);
         this.listView = (ListView)this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
-        this.adapter = new ArticleAdapter(this.getActivity());
         this.swipeRefreshLayout.setColorSchemeColors(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
@@ -67,32 +67,45 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ArticleAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
+                StockAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
             }
         });
         this.listView.addFooterView(this.getFooterLoadingView());
         this.listView.setOnItemClickListener(this);
-        this.listView.setAdapter(this.adapter);
-        ArticleAPIManager.getInstance().getItems(this.getAPIManagerListener);
         this.listView.setOnScrollListener(this);
+        this.adapter = new ArticleAdapter(this.getActivity());
+        this.listView.setAdapter(this.adapter);
+        String token = AppSharedPreference.getToken(this.getActivity());
+        StockAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
     }
 
+    private View getFooterLoadingView() {
+        if (this.footerLoadingView == null) {
+            this.footerLoadingView = this.getActivity()
+                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+        }
+        return this.footerLoadingView;
+    }
+
+    private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void onCompleted(List<ArticleModel> items) {
+            self.adapter.setItems(items);
+            self.adapter.notifyDataSetChanged();
+            self.swipeRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
+        public void onError() {
+            self.swipeRefreshLayout.setRefreshing(false);
+        }
+    };
 
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onError() {
-        }
-    };
-
-    private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
-        @Override
-        public void onCompleted(List<ArticleModel> items) {
         }
 
         @Override
@@ -111,6 +124,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         public void onError() {
         }
     };
+
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
     }
@@ -118,7 +132,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            ArticleAPIManager.getInstance().addItems(this.addAPIManagerListener);
+            StockAPIManager.getInstance().addItems(this.addAPIManagerListener);
         }
     }
 
@@ -127,13 +141,4 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         ArticleModel articleModel = (ArticleModel)this.adapter.getItem(position);
         this.listener.onItemSelected(articleModel);
     }
-
-    private View getFooterLoadingView() {
-        if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
-        }
-        return this.footerLoadingView;
-    }
-
 }

@@ -43,17 +43,25 @@ public class TagAPIManager {
         this.items = new ArrayList<TagModel>();
     }
 
-    public List<TagModel> getItems() {
-        return this.items;
-    }
-
-    public TagModel getItem(int index) {
-        return this.items.get(index);
-    }
-
     public void cancel() {
         this.loading = false;
         AppController.getInstance().cancelPendingRequests(TAG);
+    }
+
+    public void getItems(final APIManagerListener<TagModel> listener) {
+        if (this.loading) {
+            return;
+        }
+
+        if (this.items.size() > 0) {
+            listener.onCompleted(this.items);
+            return;
+        }
+
+        this.loading = true;
+        this.page = 1;
+        StringRequest stringRequest = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     public void reloadItems(final APIManagerListener<TagModel> listener) {

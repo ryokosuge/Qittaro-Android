@@ -51,7 +51,7 @@ public class ArticleAdapter extends BaseAdapter {
     }
 
     public void clear() {
-        this.items = new ArrayList<ArticleModel>();
+        this.items.clear();
     }
 
     public void setItems(List<ArticleModel> items) {

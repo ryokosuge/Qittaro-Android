@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,11 +51,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if ((activity instanceof LoginFragmentCallBack) == false) {
+        if (activity instanceof LoginFragmentCallBack) {
+            this.callBack = (LoginFragmentCallBack) activity;
+        } else {
             throw new ClassCastException("activity が LoginFragmentCallBack を実装していません.");
         }
-
-        this.callBack = (LoginFragmentCallBack)activity;
     }
 
     @Override
@@ -70,8 +69,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "R.id.qiita_login_btn OnCLick()");
-        String login_tag = "qiita_login_tag";
         String loginURL = "https://qiita.com/api/v1/auth";
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 loginURL, new Response.Listener<String>() {
@@ -95,6 +92,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 return params;
             }
         };
-        AppController.getInstance().addToRequestQueue(stringRequest, login_tag);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 }

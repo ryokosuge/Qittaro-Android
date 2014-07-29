@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.ryochin.qittaro.models.ArticleModel;
+import com.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,18 +42,54 @@ public class SearchArticleAPIManager {
     private SearchArticleAPIManager() {
         this.page = 1;
         this.loading = false;
+        this.searchWord = "";
         this.items = new ArrayList<ArticleModel>();
     }
 
-    public void reloadItems(final String searchWord, final APIManagerListener<ArticleModel> listener) {
+    public void getItems(final String searchWord, final APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
+            return ;
+        }
+
+        if (!this.items.isEmpty() && this.searchWord.equals(searchWord)) {
+            listener.onCompleted(this.items);
+            return ;
+        }
+
+        this.page = 1;
+        this.loading = true;
+        this.searchWord = searchWord;
+        this.items.clear();
+        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+    }
+
+    public void reloadItems(final APIManagerListener<ArticleModel> listener) {
+        if (this.loading) {
+            return;
+        }
+
+        if (this.searchWord.equals("")) {
+            listener.onError();
             return;
         }
 
         this.page = 1;
         this.loading = true;
+        this.items.clear();
+        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+    }
 
+    public void addItems(final APIManagerListener<ArticleModel> listener) {
+        if (this.loading) {
+            return;
+        }
 
+        this.page++;
+        this.loading = true;
+        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     private StringRequest getRequest(final String searchWord, final int page, final APIManagerListener<ArticleModel> listener) {

@@ -44,12 +44,20 @@ public class ArticleAPIManager {
         this.items = new ArrayList<ArticleModel>();
     }
 
-    public List<ArticleModel> getItems() {
-        return this.items;
-    }
+    public void getItems(final APIManagerListener<ArticleModel> listener) {
+        if (this.loading) {
+            return;
+        }
 
-    public ArticleModel getItem(int index) {
-        return this.items.get(index);
+        if (!this.items.isEmpty()) {
+            listener.onCompleted(items);
+            return ;
+        }
+
+        this.page = 1;
+        this.loading = true;
+        StringRequest stringRequest = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
     public void reloadItems(final APIManagerListener<ArticleModel> listener) {

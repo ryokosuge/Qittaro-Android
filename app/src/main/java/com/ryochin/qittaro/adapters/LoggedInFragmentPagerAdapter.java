@@ -1,8 +1,9 @@
 /**
  * PACKAGE NAME com.ryochin.qittaro.adapters
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/27
+ * CREATED AT 2014/07/28
  */
+
 package com.ryochin.qittaro.adapters;
 
 import android.support.v4.app.Fragment;
@@ -11,18 +12,21 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.ryochin.qittaro.fragments.ArticlesFragment;
 import com.ryochin.qittaro.fragments.SearchArticleFragment;
+import com.ryochin.qittaro.fragments.StocksFragment;
 import com.ryochin.qittaro.fragments.TagsFragment;
 
-public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
-    private static final String TAG = FragmentPagerAdapter.class.getSimpleName();
-    private final FragmentPagerAdapter self = this;
+public class LoggedInFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final int FRAGMENT_MAX_COUNT = 3;
+    private static final String TAG = LoggedInFragmentPagerAdapter.class.getSimpleName();
+    private final LoggedInFragmentPagerAdapter self = this;
+
+    private static final int FRAGMENT_MAX_COUNT = 4;
     private static final int FRAGMENT_ARTICLE_INDEX = 0;
-    private static final int FRAGMENT_TAGS_INDEX = 1;
-    private static final int FRAGMENT_SEARCH_INDEX = 2;
+    private static final int FRAGMENT_STOCKS_INDEX = 1;
+    private static final int FRAGMENT_TAGS_INDEX = 2;
+    private static final int FRAGMENT_SEARCH_INDEX = 3;
 
-    public FragmentPagerAdapter(FragmentManager fm) {
+    public LoggedInFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -35,6 +39,8 @@ public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return new TagsFragment();
             case FRAGMENT_SEARCH_INDEX:
                 return new SearchArticleFragment();
+            case FRAGMENT_STOCKS_INDEX:
+                return new StocksFragment();
             default:
                 return null;
         }
@@ -54,6 +60,8 @@ public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return "TAGS";
             case FRAGMENT_SEARCH_INDEX:
                 return "SEARCH";
+            case FRAGMENT_STOCKS_INDEX:
+                return "STOCK";
             default:
                 return "";
         }

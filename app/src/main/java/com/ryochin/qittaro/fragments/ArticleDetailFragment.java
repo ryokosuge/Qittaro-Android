@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 import com.ryochin.qittaro.R;
 
 public class ArticleDetailFragment extends Fragment {
+
     private static final String TAG = ArticleDetailFragment.class.getSimpleName();
     private final ArticleDetailFragment self = this;
 
@@ -52,4 +53,8 @@ public class ArticleDetailFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 }
