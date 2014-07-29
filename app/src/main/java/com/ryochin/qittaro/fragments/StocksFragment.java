@@ -32,7 +32,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private static final String TAG = StocksFragment.class.getSimpleName();
     private final StocksFragment self = this;
 
-    private ArticlesFragmentListener listener;
+    private FragmentListener listener;
     private ListView listView;
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -41,8 +41,8 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if ((activity instanceof ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener)activity;
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener)activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -79,6 +79,12 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         StockAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        StockAPIManager.getInstance().cancel();
+    }
+
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
@@ -93,6 +99,9 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
+            if (StockAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -106,6 +115,9 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
+            if (StockAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -118,6 +130,9 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
+            if (StockAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -131,8 +146,10 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            StockAPIManager.getInstance().addItems(this.addAPIManagerListener);
+        if (!StockAPIManager.getInstance().isMax()) {
+            if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
+                StockAPIManager.getInstance().addItems(this.addAPIManagerListener);
+            }
         }
     }
 

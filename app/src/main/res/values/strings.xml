@@ -15,5 +15,6 @@
     <string name="search_edit_text_hint">複数検索する時は半角スペースで分けてください。</string>
     <string name="article_empty_message">記事がありませんでした。</string>
     <string name="search_empty_message">記事がみつかりませんでした。\n検索キーワードを変えてみてください。</string>
+    <string name="search_in_stoked_text">ストックしている記事から検索</string>
 
 </resources>

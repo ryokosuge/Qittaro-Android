@@ -28,9 +28,12 @@ public class StockAPIManager {
     private final StockAPIManager self = this;
 
     private static final String API_URL = "https://qiita.com/api/v1/stocks";
+    private static final int PER_PAGE = 20;
+
     private static StockAPIManager instance;
     private int page;
     private boolean loading;
+    private boolean max;
     private List<ArticleModel> items;
     private String token;
 
@@ -53,6 +56,10 @@ public class StockAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
+    public boolean isMax() {
+        return this.max;
+    }
+
     public void getItems(final String token, final APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
             return ;
@@ -66,6 +73,7 @@ public class StockAPIManager {
         this.page = 1;
         this.token = token;
         this.loading = true;
+        this.max = false;
 
         StringRequest request = this.getRequest(this.token, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
@@ -83,6 +91,8 @@ public class StockAPIManager {
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
+
         StringRequest request = this.getRequest(this.token, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
 
@@ -100,12 +110,13 @@ public class StockAPIManager {
 
         this.page ++;
         this.loading = true;
+
         StringRequest request = this.getRequest(this.token, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
     private StringRequest getRequest(final String token, final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?token=" + token + "&page=" + page;
+        String url = API_URL + "?token=" + token + "&page=" + page + "&per_page=" + PER_PAGE;
         return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -115,6 +126,9 @@ public class StockAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
+                            if (items.size() < PER_PAGE) {
+                                self.max = true;
+                            }
                             self.items.addAll(items);
                             listener.onCompleted(items);
                         }

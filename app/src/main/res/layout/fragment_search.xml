@@ -7,19 +7,31 @@
         android:id="@+id/search_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         android:textSize="14sp"
         android:hint="@string/search_edit_text_hint"
+        />
+    
+    <CheckBox
+        android:id="@+id/search_in_stoked_check_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/search_edit_text"
+        android:text="@string/search_in_stoked_text"
+        android:checked="false"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/search_article_swipe_refresh"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@id/search_edit_text"
+        android:layout_below="@id/search_in_stoked_check_box"
         >
 
         <ListView

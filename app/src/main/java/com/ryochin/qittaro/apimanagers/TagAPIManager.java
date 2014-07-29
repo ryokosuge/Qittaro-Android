@@ -25,10 +25,13 @@ public class TagAPIManager {
     private static final String TAG = TagAPIManager.class.getSimpleName();
     private final TagAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/tags";
+    private static final int PER_PAGE = 20;
+
     private static TagAPIManager instance;
     private List<TagModel> items;
     private int page;
     private boolean loading;
+    private boolean max;
 
     public static TagAPIManager getInstance() {
         if (instance == null) {
@@ -48,6 +51,10 @@ public class TagAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
+    public boolean isMax() {
+        return this.max;
+    }
+
     public void getItems(final APIManagerListener<TagModel> listener) {
         if (this.loading) {
             return;
@@ -60,6 +67,8 @@ public class TagAPIManager {
 
         this.loading = true;
         this.page = 1;
+        this.max = false;
+
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
@@ -70,7 +79,9 @@ public class TagAPIManager {
         }
 
         this.loading = true;
+        this.max = false;
         this.page = 1;
+
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
@@ -97,6 +108,9 @@ public class TagAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
+                            if (items.size() < PER_PAGE) {
+                                self.max = true;
+                            }
                             listener.onCompleted(items);
                             self.items.addAll(items);
                         }

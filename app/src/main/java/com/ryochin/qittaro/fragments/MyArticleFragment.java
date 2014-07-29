@@ -34,7 +34,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
     private static final String TAG = MyArticleFragment.class.getSimpleName();
     private final MyArticleFragment self = this;
 
-    private ArticlesFragmentListener listener;
+    private FragmentListener listener;
     private ListView listView;
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -44,8 +44,8 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if ((activity instanceof ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener) activity;
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener) activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -82,6 +82,11 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         this.listView.setOnScrollListener(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MyArticleAPIManager.getInstance().cancel();
+    }
 
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
@@ -104,6 +109,9 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
+            if (MyArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -117,6 +125,9 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
+            if (MyArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override

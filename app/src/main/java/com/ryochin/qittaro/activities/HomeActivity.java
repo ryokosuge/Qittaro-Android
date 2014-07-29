@@ -13,12 +13,13 @@ import android.view.MenuItem;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.FragmentPagerAdapter;
 import com.ryochin.qittaro.adapters.LoggedInFragmentPagerAdapter;
-import com.ryochin.qittaro.fragments.ArticlesFragmentListener;
+import com.ryochin.qittaro.fragments.AlertDialogFragment;
+import com.ryochin.qittaro.fragments.FragmentListener;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.utils.AppSharedPreference;
 
 
-public class HomeActivity extends ActionBarActivity implements ArticlesFragmentListener {
+public class HomeActivity extends ActionBarActivity implements FragmentListener {
 
     private static final int RESULT_CODE_FOR_LOGIN = 1;
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -83,28 +84,19 @@ public class HomeActivity extends ActionBarActivity implements ArticlesFragmentL
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case R.id.action_login:
-                Intent intent = new Intent(self, LoginActivity.class);
-                self.startActivityForResult(intent, RESULT_CODE_FOR_LOGIN);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "requestCode = " + requestCode);
-        Log.e(TAG, "resultCode = " + resultCode);
-        switch (resultCode) {
-            case LoginActivity.LOGIN_RESULT_OK:
-                this.setLoggedInAdapter();
-                break;
-            case LoginActivity.LOGIN_RESULT_NG:
-                this.setNoLoggedInAdapter();
-                break;
+    public void onCompletedLoggedin(boolean result) {
+        if (result) {
+            this.setLoggedInAdapter();
+        } else {
+            this.setNoLoggedInAdapter();
+            String title = this.getResources().getString(R.string.login_error_title);
+            String message = this.getResources().getString(R.string.login_error_message);
+            AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
+            alertDialogFragment.show(this.getSupportFragmentManager(), null);
         }
     }
 
@@ -121,6 +113,7 @@ public class HomeActivity extends ActionBarActivity implements ArticlesFragmentL
                             .setTabListener(this.tabListener)
             );
         }
+        this.viewPager.setCurrentItem(0, true);
     }
 
     private void setLoggedInAdapter() {
@@ -136,6 +129,7 @@ public class HomeActivity extends ActionBarActivity implements ArticlesFragmentL
                             .setTabListener(this.tabListener)
             );
         }
+        this.viewPager.setCurrentItem(0, true);
     }
 
     @Override

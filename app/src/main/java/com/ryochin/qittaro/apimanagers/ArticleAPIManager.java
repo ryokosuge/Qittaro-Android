@@ -26,9 +26,12 @@ public class ArticleAPIManager {
     private static final String TAG = ArticleAPIManager.class.getSimpleName();
     private final ArticleAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/items";
+    private static final int PER_PAGE = 20;
+
     private static ArticleAPIManager instance;
     private int page;
     private boolean loading;
+    private boolean max;
     private List<ArticleModel> items;
 
     public static ArticleAPIManager getInstance() {
@@ -41,8 +44,19 @@ public class ArticleAPIManager {
     private ArticleAPIManager() {
         this.page = 1;
         this.loading = false;
+        this.max = false;
         this.items = new ArrayList<ArticleModel>();
     }
+
+    public boolean isMax() {
+        return this.max;
+    }
+
+    public void cancel() {
+        this.loading = false;
+        AppController.getInstance().cancelPendingRequests(TAG);
+    }
+
 
     public void getItems(final APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
@@ -56,6 +70,7 @@ public class ArticleAPIManager {
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
@@ -66,6 +81,7 @@ public class ArticleAPIManager {
         }
         this.page = 1;
         this.loading = true;
+        this.max = false;
         StringRequest stringRequest = this.getRequest(this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
@@ -80,21 +96,8 @@ public class ArticleAPIManager {
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
-    public int getPage() {
-        return this.page;
-    }
-
-    public boolean isLoading() {
-        return this.loading;
-    }
-
-    public void cancel() {
-        this.loading = false;
-        AppController.getInstance().cancelPendingRequests(TAG);
-    }
-
     private StringRequest getRequest(final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?page=" + String.valueOf(page);
+        String url = API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
@@ -106,6 +109,9 @@ public class ArticleAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
+                            if (items.size() < PER_PAGE) {
+                                self.max = true;
+                            }
                             self.items.addAll(items);
                             listener.onCompleted(items);
                         }

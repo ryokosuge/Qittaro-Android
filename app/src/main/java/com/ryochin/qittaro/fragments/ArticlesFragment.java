@@ -30,7 +30,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private static final String TAG = ArticlesFragment.class.getSimpleName();
     private final ArticlesFragment self = this;
 
-    private ArticlesFragmentListener listener;
+    private FragmentListener listener;
     private ListView listView;
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -40,8 +40,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if ((activity instanceof ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener) activity;
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener) activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -77,12 +77,20 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         this.listView.setOnScrollListener(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ArticleAPIManager.getInstance().cancel();
+    }
 
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
+            if (ArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -93,10 +101,17 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void onCompleted(List<ArticleModel> items) {
+            self.adapter.setItems(items);
+            self.adapter.notifyDataSetChanged();
+            self.swipeRefreshLayout.setRefreshing(false);
+            if (ArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
         public void onError() {
+            self.swipeRefreshLayout.setRefreshing(false);
         }
     };
 
@@ -105,6 +120,9 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
+            if (ArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -117,8 +135,10 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            ArticleAPIManager.getInstance().addItems(this.addAPIManagerListener);
+        if (!ArticleAPIManager.getInstance().isMax()) {
+            if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
+                ArticleAPIManager.getInstance().addItems(this.addAPIManagerListener);
+            }
         }
     }
 

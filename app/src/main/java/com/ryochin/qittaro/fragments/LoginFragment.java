@@ -1,12 +1,15 @@
 package com.ryochin.qittaro.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -17,6 +20,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.utils.AppController;
+import com.ryochin.qittaro.utils.AppSharedPreference;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,15 +33,11 @@ import java.util.Map;
  */
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
-    public interface LoginFragmentCallBack {
-        public void onSuccessLogin(String jsonResponse);
-        public void onErrorLogin();
-    }
-
     private static final String TAG = LoginFragment.class.getSimpleName();
     private final LoginFragment self = this;
 
-    private LoginFragmentCallBack callBack;
+    private static final String LOGIN_RESPONSE_TOKEN_KEY = "token";
+    private FragmentListener listener;
     private EditText userNameEditText;
     private EditText passwordEditText;
 
@@ -50,11 +53,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        if (activity instanceof LoginFragmentCallBack) {
-            this.callBack = (LoginFragmentCallBack) activity;
+        if (activity instanceof FragmentListener) {
+            this.listener = (FragmentListener)activity;
         } else {
-            throw new ClassCastException("activity が LoginFragmentCallBack を実装していません.");
+            throw new ClassCastException("activity が FragmentListener を実装していません.");
         }
     }
 
@@ -69,17 +71,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        InputMethodManager inputMethodManager = (InputMethodManager)this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
         String loginURL = "https://qiita.com/api/v1/auth";
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 loginURL, new Response.Listener<String>() {
             @Override
-            public void onResponse(String response) {
-                self.callBack.onSuccessLogin(response);
+            public void onResponse(String jsonResponse) {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonResponse);
+                    String token = jsonObject.getString(LOGIN_RESPONSE_TOKEN_KEY);
+                    boolean result = AppSharedPreference.setToken(self.getActivity(), token);
+                    self.listener.onCompletedLoggedin(result);
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSONException", e);
+                    self.listener.onCompletedLoggedin(false);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                self.callBack.onErrorLogin();
+                self.listener.onCompletedLoggedin(false);
             }
         }) {
             @Override

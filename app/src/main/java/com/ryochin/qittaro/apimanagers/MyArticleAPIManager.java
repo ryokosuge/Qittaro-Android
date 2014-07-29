@@ -27,7 +27,7 @@ public class MyArticleAPIManager {
     private static final String TAG = MyArticleAPIManager.class.getSimpleName();
     private final MyArticleAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/items";
-    private static final int PRE_PAGE = 20;
+    private static final int PER_PAGE = 20;
 
     private static MyArticleAPIManager instance;
     private int page;
@@ -46,6 +46,7 @@ public class MyArticleAPIManager {
     private MyArticleAPIManager() {
         this.page = 1;
         this.loading = false;
+        this.max = false;
         this.items = new ArrayList<ArticleModel>();
         this.token = null;
     }
@@ -71,6 +72,7 @@ public class MyArticleAPIManager {
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
         this.token = token;
         StringRequest request = this.getRequest(this.token, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
@@ -87,6 +89,7 @@ public class MyArticleAPIManager {
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
         StringRequest request = this.getRequest(this.token, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
@@ -108,7 +111,7 @@ public class MyArticleAPIManager {
     }
 
     private StringRequest getRequest(final String token, final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?token=" + token + "&page=" + page + "&per_page=" + PRE_PAGE;
+        String url = API_URL + "?token=" + token + "&page=" + page + "&per_page=" + PER_PAGE;
         return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -118,7 +121,7 @@ public class MyArticleAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
-                            if (items.size() < PRE_PAGE) {
+                            if (items.size() < PER_PAGE) {
                                 self.max = true;
                             }
                             self.items.addAll(items);

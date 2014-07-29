@@ -18,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +28,15 @@ public class SearchArticleAPIManager {
     private static final String TAG = SearchArticleAPIManager.class.getSimpleName();
     private final SearchArticleAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/search";
+    private static final int PER_PAGE = 20;
+
     private static SearchArticleAPIManager instance;
     private int page;
     private boolean loading;
+    private boolean max;
     private String searchWord;
+    private boolean searchInStocked;
+    private String token;
     private List<ArticleModel> items;
 
     public static SearchArticleAPIManager getInstance() {
@@ -42,29 +49,54 @@ public class SearchArticleAPIManager {
     private SearchArticleAPIManager() {
         this.page = 1;
         this.loading = false;
+        this.max = false;
         this.searchWord = "";
+        this.token = null;
         this.items = new ArrayList<ArticleModel>();
     }
 
-    public void getItems(final String searchWord, final APIManagerListener<ArticleModel> listener) {
+    public void cancel() {
+        this.loading = false;
+        AppController.getInstance().cancelPendingRequests(TAG);
+    }
+
+    public boolean isMax() {
+        return this.max;
+    }
+
+    public void getItems(String searchWord, boolean searchInStocked, String token, APIManagerListener<ArticleModel> listener) {
+        Log.e(TAG, "getItems()");
         if (this.loading) {
             return ;
         }
 
-        if (!this.items.isEmpty() && this.searchWord.equals(searchWord)) {
+        if (!this.items.isEmpty() && this.searchWord.equals(searchWord) && this.searchInStocked == searchInStocked) {
             listener.onCompleted(this.items);
             return ;
         }
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
         this.searchWord = searchWord;
-        this.items.clear();
-        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        this.searchInStocked = searchInStocked;
+        this.token = token;
+
+        if (this.searchWord == null || this.searchWord.equals("")) {
+            listener.onError();
+            return ;
+        }
+
+        try {
+            StringRequest stringRequest = this.getRequest(this.searchWord, this.page, this.searchInStocked, this.token, listener);
+            AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        } catch (UnsupportedEncodingException e) {
+            listener.onError();
+        }
     }
 
     public void reloadItems(final APIManagerListener<ArticleModel> listener) {
+        Log.e(TAG, "reloadItems()");
         if (this.loading) {
             return;
         }
@@ -76,25 +108,53 @@ public class SearchArticleAPIManager {
 
         this.page = 1;
         this.loading = true;
-        this.items.clear();
-        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        this.max = false;
+        try {
+            StringRequest stringRequest = this.getRequest(this.searchWord, this.page, this.searchInStocked, token, listener);
+            AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        } catch (UnsupportedEncodingException e) {
+            listener.onError();
+        }
     }
 
     public void addItems(final APIManagerListener<ArticleModel> listener) {
+        Log.e(TAG, "addItems()");
         if (this.loading) {
             return;
         }
 
         this.page++;
         this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.searchWord, this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        StringRequest stringRequest = null;
+        try {
+            stringRequest = this.getRequest(this.searchWord, this.page, this.searchInStocked, token, listener);
+            AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        } catch (UnsupportedEncodingException e) {
+            listener.onError();
+        }
     }
 
-    private StringRequest getRequest(final String searchWord, final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?q=" + searchWord + "&page=" + String.valueOf(page);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+    private StringRequest getRequest(String searchWord, int page, boolean searchInStocked, String token, final APIManagerListener<ArticleModel> listener) throws UnsupportedEncodingException {
+        Log.e(TAG, "searchWord [" + searchWord + "]");
+        String encodeSearchWord = URLEncoder.encode(searchWord, "UTF-8");
+        StringBuilder urlStrBuilder = new StringBuilder();
+        urlStrBuilder.append(API_URL);
+        urlStrBuilder.append("?q=");
+        urlStrBuilder.append(encodeSearchWord);
+        urlStrBuilder.append("&page=");
+        urlStrBuilder.append(page);
+        urlStrBuilder.append("&per_page=");
+        urlStrBuilder.append(PER_PAGE);
+        if (searchInStocked && token != null) {
+            urlStrBuilder.append("&stocked=");
+            urlStrBuilder.append(searchInStocked);
+            urlStrBuilder.append("&token=");
+            urlStrBuilder.append(token);
+        }
+
+        String url = urlStrBuilder.toString();
+        Log.e(TAG, "URL = " + url);
+        return new StringRequest(Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
                     @Override
@@ -105,6 +165,9 @@ public class SearchArticleAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
+                            if (items.size() < PER_PAGE) {
+                                self.max = true;
+                            }
                             self.items.addAll(items);
                             listener.onCompleted(items);
                         }
@@ -119,7 +182,6 @@ public class SearchArticleAPIManager {
                     }
                 }
         );
-        return stringRequest;
     }
 
     private List<ArticleModel> responseToItems(String response) {

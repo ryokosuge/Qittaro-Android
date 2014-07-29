@@ -3,20 +3,14 @@ package com.ryochin.qittaro.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 
 import com.ryochin.qittaro.R;
-import com.ryochin.qittaro.fragments.AlertDialogFragment;
 import com.ryochin.qittaro.fragments.LoginFragment;
-import com.ryochin.qittaro.utils.AppSharedPreference;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by kosugeryou on 2014/07/23.
  */
-public class LoginActivity extends ActionBarActivity implements LoginFragment.LoginFragmentCallBack {
+public class LoginActivity extends ActionBarActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     private final LoginActivity self = this;
@@ -37,7 +31,7 @@ public class LoginActivity extends ActionBarActivity implements LoginFragment.Lo
                     .commit();
         }
     }
-
+/*
     @Override
     public void onSuccessLogin(String jsonResponse) {
         Log.e(TAG, jsonResponse);
@@ -59,9 +53,7 @@ public class LoginActivity extends ActionBarActivity implements LoginFragment.Lo
 
     @Override
     public void onErrorLogin() {
-        String title = this.getResources().getString(R.string.login_error_title);
-        String message = this.getResources().getString(R.string.login_error_message);
-        AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
-        alertDialogFragment.show(this.getSupportFragmentManager(), null);
+
     }
+    */
 }

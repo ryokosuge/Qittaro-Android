@@ -42,15 +42,15 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
     private ArticleAdapter adapter;
-    private ArticlesFragmentListener listener;
+    private FragmentListener listener;
     private View footerLoadingView;
     private int selectedTagIndex = 0;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if ((activity instanceof ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener) activity;
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener) activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -96,6 +96,13 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        TagAPIManager.getInstance().cancel();
+        TagArticleAPIManager.getInstance().cancel();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SAVED_SELECTED_TAG_INDEX_KEY, this.selectedTagIndex);
@@ -106,6 +113,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         public void onCompleted(List<TagModel> items) {
             self.spinnerAdapter.setItems(items);
             self.spinnerAdapter.notifyDataSetChanged();
+            self.listView.addFooterView(self.getFooterLoadingView());
             TagModel tagModel = items.get(self.selectedTagIndex);
             TagArticleAPIManager.getInstance().getItems(tagModel.getUrlName(), self.articleAPIManagerListener);
         }
@@ -120,6 +128,9 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
+            if (TagArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -133,6 +144,9 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
+            if (TagArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -145,6 +159,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
         this.selectedTagIndex = position;
+        self.getFooterLoadingView().setVisibility(View.VISIBLE);
         TagModel tagModel = (TagModel)this.spinnerAdapter.getItem(position);
         TagArticleAPIManager.getInstance()
                 .getItems(tagModel.getUrlName(), this.articleAPIManagerListener);
@@ -175,8 +190,10 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            TagArticleAPIManager.getInstance().addItems(this.addArticleAPIManagerListener);
+        if (!TagArticleAPIManager.getInstance().isMax()) {
+            if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
+                TagArticleAPIManager.getInstance().addItems(this.addArticleAPIManagerListener);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,30 +30,32 @@ import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
 import com.ryochin.qittaro.apimanagers.SearchArticleAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
+import com.ryochin.qittaro.utils.AppSharedPreference;
 
 import java.util.List;
 
-public class SearchArticleFragment extends Fragment implements AdapterView.OnItemClickListener, TextView.OnEditorActionListener, AbsListView.OnScrollListener {
+public class SearchArticleFragment extends Fragment implements AdapterView.OnItemClickListener, TextView.OnEditorActionListener, AbsListView.OnScrollListener, View.OnClickListener {
 
     private static final String TAG = SearchArticleFragment.class.getSimpleName();
     private final SearchArticleFragment self = this;
 
     private static final String SAVED_SEARCH_WORD_KEY = "searchWord";
 
-    private ArticlesFragmentListener listener;
+    private FragmentListener listener;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
     private ArticleAdapter adapter;
     private EditText searchWordEditText;
+    private CheckBox searchInStockedCheckBox;
     private View emptyView;
     private View footerLoadingView;
-    private String searchWord;
+    private String searchWord = "";
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if ((activity instanceof  ArticlesFragmentListener)) {
-            this.listener = (ArticlesFragmentListener)activity;
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener)activity;
         } else {
             throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
         }
@@ -69,10 +73,19 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
             this.searchWord = savedInstanceState.getString(SAVED_SEARCH_WORD_KEY);
         }
         this.listView = (ListView)this.getView().findViewById(R.id.search_article_list_view);
+        this.listView.setEmptyView(this.getEmptyView());
+        this.listView.addFooterView(this.getFooterLoadingView());
         this.searchWordEditText = (EditText)this.getView().findViewById(R.id.search_edit_text);
+        this.searchInStockedCheckBox = (CheckBox)this.getView().findViewById(R.id.search_in_stoked_check_box);
+        if (!AppSharedPreference.isLoggedIn(this.getActivity())) {
+            this.searchInStockedCheckBox.setVisibility(View.GONE);
+        } else {
+            this.searchInStockedCheckBox.setOnClickListener(this);
+        }
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.search_article_swipe_refresh);
         this.searchWordEditText.setOnEditorActionListener(this);
         this.adapter = new ArticleAdapter(this.getActivity());
+        this.listView.setAdapter(this.adapter);
         this.swipeRefreshLayout.setColorSchemeColors(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
@@ -85,14 +98,19 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
                 SearchArticleAPIManager.getInstance().reloadItems(self.managerListener);
             }
         });
-        this.listView.setAdapter(this.adapter);
         this.listView.setOnItemClickListener(this);
         this.listView.setOnScrollListener(this);
 
-        if (this.searchWord != null) {
+        if (!this.searchWord.equals("")) {
             this.searchWordEditText.setText(this.searchWord);
             this.getSearchArticle();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        SearchArticleAPIManager.getInstance().cancel();
     }
 
     @Override
@@ -112,6 +130,7 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 this.searchWord = this.searchWordEditText.getText().toString();
+                Log.e(TAG, "searchWord :: " + this.searchWord);
                 this.getSearchArticle();
             }
             return true;
@@ -125,8 +144,10 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            SearchArticleAPIManager.getInstance().addItems(this.addManagerListener);
+        if (!SearchArticleAPIManager.getInstance().isMax()) {
+            if (this.adapter.getCount() > 0 && !this.searchWord.equals("") && totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
+                SearchArticleAPIManager.getInstance().addItems(this.addManagerListener);
+            }
         }
     }
 
@@ -137,10 +158,13 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
     }
 
     private void getSearchArticle() {
+        this.getFooterLoadingView().setVisibility(View.VISIBLE);
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
-        self.listView.addFooterView(self.getFooterLoadingView());
-        SearchArticleAPIManager.getInstance().getItems(this.searchWord, this.managerListener);
+        boolean searchInStocked = this.searchInStockedCheckBox.isChecked();
+        String token = AppSharedPreference.getToken(this.getActivity());
+        SearchArticleAPIManager.getInstance()
+                .getItems(this.searchWord, searchInStocked, token, this.managerListener);
     }
 
     private APIManagerListener<ArticleModel> managerListener = new APIManagerListener<ArticleModel>() {
@@ -149,16 +173,13 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
-            if (items.size() > 0) {
-
-            } else {
-                self.listView.setEmptyView(self.getEmptyView());
+            if (SearchArticleAPIManager.getInstance().isMax()) {
+                self.getFooterLoadingView().setVisibility(View.GONE);
             }
         }
 
         @Override
         public void onError() {
-            self.listView.setEmptyView(self.getEmptyView());
             self.swipeRefreshLayout.setRefreshing(false);
         }
     };
@@ -168,6 +189,12 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
+            if (!(items.size() > 0)) {
+                self.listView.setEmptyView(self.getEmptyView());
+            }
+            if (SearchArticleAPIManager.getInstance().isMax()) {
+                self.listView.removeFooterView(self.getFooterLoadingView());
+            }
         }
 
         @Override
@@ -192,5 +219,15 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
                     .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
         }
         return this.footerLoadingView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        String searchWord = this.searchWordEditText.getText().toString();
+        if (searchWord == "") {
+            return ;
+        }
+        this.searchWord = searchWord;
+        this.getSearchArticle();
     }
 }

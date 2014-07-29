@@ -27,9 +27,12 @@ public class TagArticleAPIManager {
     private final TagArticleAPIManager self = this;
 
     private static final String API_URL = "https://qiita.com/api/v1/tags";
+    private static final int PER_PAGE = 20;
+
     private static TagArticleAPIManager instance;
     private int page;
     private boolean loading;
+    private boolean max;
     private String tagURL;
     private List<ArticleModel> items;
 
@@ -44,16 +47,17 @@ public class TagArticleAPIManager {
     private TagArticleAPIManager() {
         this.page = 1;
         this.loading = false;
+        this.max = false;
         this.items = new ArrayList<ArticleModel>();
-    }
-
-    public List<ArticleModel> getItems() {
-        return this.items;
     }
 
     public void cancel() {
         this.loading = false;
         AppController.getInstance().cancelPendingRequests(TAG);
+    }
+
+    public boolean isMax() {
+        return this.max;
     }
 
     public void getItems(final String tagURL, final APIManagerListener<ArticleModel> listener) {
@@ -70,6 +74,7 @@ public class TagArticleAPIManager {
 
         this.page = 1;
         this.loading = true;
+        this.max = false;
         this.tagURL = tagURL;
         this.items.clear();
         StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);
@@ -82,6 +87,7 @@ public class TagArticleAPIManager {
         }
         this.page = 1;
         this.loading = true;
+        this.max = false;
         this.items.clear();
         StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
@@ -98,7 +104,7 @@ public class TagArticleAPIManager {
     }
 
     private StringRequest getRequest(final String tagURL, final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "/" + tagURL + "/items?page=" + page;
+        String url = API_URL + "/" + tagURL + "/items?page=" + page + "&per_page=" + PER_PAGE;
         return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -108,6 +114,9 @@ public class TagArticleAPIManager {
                         if (items == null) {
                             listener.onError();
                         } else {
+                            if (items.size() < PER_PAGE) {
+                                self.max = true;
+                            }
                             self.items.addAll(items);
                             listener.onCompleted(items);
                         }
