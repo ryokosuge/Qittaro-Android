@@ -1,8 +1,9 @@
 /**
  * PACKAGE NAME com.ryochin.qittaro.apimanagers
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/07/30
  */
+
 package com.ryochin.qittaro.apimanagers;
 
 import android.util.Log;
@@ -11,28 +12,26 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.ryochin.qittaro.models.ArticleModel;
+import com.ryochin.qittaro.models.ArticleDetailModel;
 import com.ryochin.qittaro.utils.AppController;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ArticleAPIManager {
+
+    public interface ArticleAPIManagerListener {
+        public void onCompleted(ArticleDetailModel model);
+        public void onError();
+    }
 
     private static final String TAG = ArticleAPIManager.class.getSimpleName();
     private final ArticleAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/items";
-    private static final int PER_PAGE = 20;
 
     private static ArticleAPIManager instance;
-    private int page;
     private boolean loading;
-    private boolean max;
-    private List<ArticleModel> items;
+    private ArticleDetailModel item;
 
     public static ArticleAPIManager getInstance() {
         if (instance == null) {
@@ -42,14 +41,7 @@ public class ArticleAPIManager {
     }
 
     private ArticleAPIManager() {
-        this.page = 1;
         this.loading = false;
-        this.max = false;
-        this.items = new ArrayList<ArticleModel>();
-    }
-
-    public boolean isMax() {
-        return this.max;
     }
 
     public void cancel() {
@@ -57,95 +49,138 @@ public class ArticleAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
-
-    public void getItems(final APIManagerListener<ArticleModel> listener) {
+    public void getItem(String articleUUID, String token, ArticleAPIManagerListener listener) {
         if (this.loading) {
-            return;
-        }
-
-        if (!this.items.isEmpty()) {
-            listener.onCompleted(items);
             return ;
         }
 
-        this.page = 1;
+        if (this.item != null && this.item.getUuid().equals(articleUUID)) {
+            listener.onCompleted(this.item);
+            return ;
+        }
+
         this.loading = true;
-        this.max = false;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
+        StringRequest stringRequest = this.getRequest(articleUUID, token, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
-    public void reloadItems(final APIManagerListener<ArticleModel> listener) {
+    public boolean isStockedItem() {
+        return this.item.isStocked();
+    }
+
+    public void unStockArticle(String token, final ArticleAPIManagerListener listener) {
         if (this.loading) {
             return;
         }
-        this.page = 1;
-        this.loading = true;
-        this.max = false;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
 
-    public void addItems(final APIManagerListener<ArticleModel> listener) {
-        if (this.loading) {
-            return;
+        if (this.item == null || token == null) {
+            listener.onError();
         }
-        this.page++;
-        this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
 
-    private StringRequest getRequest(final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                url,
+        String url = this.makeStockURL(this.item.getUuid(), token);
+        StringRequest request = new StringRequest(Request.Method.DELETE, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "onResponse()");
+                        Log.e(TAG, response);
+                        self.item.setStocked(false);
+                        listener.onCompleted(self.item);
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "VolleyError", error);
+                        listener.onError();
+                    }
+                }
+        );
+
+        AppController.getInstance().addToRequestQueue(request, TAG);
+    }
+
+    public void stockArticle(String token, final ArticleAPIManagerListener listener) {
+        if (this.loading) {
+            return;
+        }
+
+        if (this.item == null || token == null) {
+            listener.onError();
+        }
+
+        String url = this.makeStockURL(this.item.getUuid(), token);
+        StringRequest request = new StringRequest(Request.Method.PUT, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e(TAG, response);
+                        self.item.setStocked(true);
+                        listener.onCompleted(self.item);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "VolleyError", error);
+                        listener.onError();
+                    }
+                }
+        );
+
+        AppController.getInstance().addToRequestQueue(request, TAG);
+    }
+
+    private String makeStockURL(String articleUUID, String token) {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(API_URL).append("/").append(articleUUID).append("/stock?token=").append(token);
+        return urlBuilder.toString();
+    }
+
+    private StringRequest getRequest(String articleUUID, String token, final ArticleAPIManagerListener listener) {
+        String url = this.makeURL(articleUUID, token);
+        return new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
                         self.loading = false;
-                        List<ArticleModel> items = self.responseToItems(response);
-                        if (items == null) {
+                        self.item = self.responseToItem(response);
+                        if (self.item == null) {
                             listener.onError();
                         } else {
-                            if (items.size() < PER_PAGE) {
-                                self.max = true;
-                            }
-                            self.items.addAll(items);
-                            listener.onCompleted(items);
+                            listener.onCompleted(self.item);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "onErrorResponse()");
                         self.loading = false;
                         listener.onError();
                     }
                 }
         );
-        return stringRequest;
     }
 
-
-    private List<ArticleModel> responseToItems(String response) {
-        JSONArray jsonArray = null;
+    private ArticleDetailModel responseToItem(String response) {
         try {
-            jsonArray = new JSONArray(response);
-            int responseArrayCount = jsonArray.length();
-            List<ArticleModel> items = new ArrayList<ArticleModel>(responseArrayCount);
-            for (int i = 0; i < responseArrayCount; i ++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                ArticleModel articleModel = new ArticleModel(jsonObject);
-                items.add(articleModel);
-            }
-            return items;
+            JSONObject jsonObject = new JSONObject(response);
+            return new ArticleDetailModel(jsonObject);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException ::", e);
+            Log.e(TAG, "JSONException", e);
             return null;
         }
+    }
+
+    private String makeURL(String articleUUID, String token) {
+        StringBuilder urlBuilder = new StringBuilder();
+
+        urlBuilder.append(API_URL).append("/").append(articleUUID);
+        if (token != null) {
+            urlBuilder.append("?token=").append(token);
+        }
+
+        return urlBuilder.toString();
     }
 
 }

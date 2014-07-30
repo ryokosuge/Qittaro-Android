@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.FragmentPagerAdapter;
@@ -91,8 +92,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
     public void onCompletedLoggedin(boolean result) {
         if (result) {
             this.setLoggedInAdapter();
+            Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
         } else {
-            this.setNoLoggedInAdapter();
             String title = this.getResources().getString(R.string.login_error_title);
             String message = this.getResources().getString(R.string.login_error_message);
             AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
@@ -135,7 +136,15 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
     @Override
     public void onItemSelected(ArticleModel model) {
         Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_URL_KEY, model.getUrl());
+        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
+    }
+
+    @Override
+    public void showSearchEmptyMessage(String searchWord) {
+        String title = "「" + searchWord + "」の検索結果";
+        String message = "投稿が見つかりませんでした。";
+        AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
+        alertDialogFragment.show(this.getSupportFragmentManager(), null);
     }
 }

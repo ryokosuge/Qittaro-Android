@@ -24,7 +24,7 @@ import android.widget.ListView;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
-import com.ryochin.qittaro.apimanagers.MyArticleAPIManager;
+import com.ryochin.qittaro.apimanagers.MyArticlesAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -62,7 +62,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         this.listView = (ListView)this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
         this.adapter = new ArticleAdapter(this.getActivity());
-        this.swipeRefreshLayout.setColorSchemeColors(
+        this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
                 R.color.app_main_orange_color,
@@ -71,21 +71,21 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MyArticleAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
+                MyArticlesAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
             }
         });
         this.listView.addFooterView(this.getFooterLoadingView());
         this.listView.setOnItemClickListener(this);
         this.listView.setAdapter(this.adapter);
         String token = AppSharedPreference.getToken(this.getActivity());
-        MyArticleAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
+        MyArticlesAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
         this.listView.setOnScrollListener(this);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        MyArticleAPIManager.getInstance().cancel();
+        MyArticlesAPIManager.getInstance().cancel();
     }
 
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
@@ -93,7 +93,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
-            if (MyArticleAPIManager.getInstance().isMax()) {
+            if (MyArticlesAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -109,7 +109,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
-            if (MyArticleAPIManager.getInstance().isMax()) {
+            if (MyArticlesAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -125,7 +125,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
-            if (MyArticleAPIManager.getInstance().isMax()) {
+            if (MyArticlesAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -141,9 +141,9 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        if (!MyArticleAPIManager.getInstance().isMax()) {
+        if (!MyArticlesAPIManager.getInstance().isMax()) {
             if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-                MyArticleAPIManager.getInstance().addItems(this.addAPIManagerListener);
+                MyArticlesAPIManager.getInstance().addItems(this.addAPIManagerListener);
             }
         }
     }

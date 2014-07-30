@@ -8,6 +8,7 @@ package com.ryochin.qittaro.fragments;
 import com.ryochin.qittaro.models.ArticleModel;
 
 public interface FragmentListener {
+    public void showSearchEmptyMessage(String searchWord);
     public void onItemSelected(ArticleModel model);
     public void onCompletedLoggedin(boolean result);
 }

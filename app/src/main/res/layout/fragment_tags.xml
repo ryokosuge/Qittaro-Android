@@ -11,6 +11,7 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_marginBottom="3dp"
+        style="@style/SpinnerAppTheme"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout

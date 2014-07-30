@@ -47,6 +47,7 @@ public class ArticleModel {
     private int commentCount;
     private String url;
     private String gistURL;
+    private boolean stocked;
 
     public ArticleModel(JSONObject jsonObject) throws JSONException {
         this.id = jsonObject.getInt(API_ARTICLE_ID_KEY);

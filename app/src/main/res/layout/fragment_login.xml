@@ -14,6 +14,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
+        style="@style/EditTextAppTheme"
         />
 
     <EditText
@@ -27,6 +28,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
         android:hint="@string/login_password_hint"
+        style="@style/EditTextAppTheme"
         />
 
     <Button
@@ -39,8 +41,9 @@
         android:layout_marginTop="20dp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:text="@string/login_btn_text"
+        style="@style/ButtonAppTheme"
         />
 
 </RelativeLayout>

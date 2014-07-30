@@ -3,10 +3,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/article_detail_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#55000000"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        >
+
+        <Button
+            android:id="@+id/article_detail_stocked_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/article_detail_stock_text"
+            android:textColor="@android:color/white"
+            style="@style/ButtonAppTheme"
+            />
+
+    </RelativeLayout>
+
     <WebView
         android:id="@+id/article_detail_body_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/article_detail_btn_layout"
+        android:visibility="gone"
     />
+
+    <RelativeLayout
+        android:id="@+id/article_detail_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_detail_progress_bar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,7 @@ import android.widget.TextView;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
-import com.ryochin.qittaro.apimanagers.SearchArticleAPIManager;
+import com.ryochin.qittaro.apimanagers.SearchArticlesAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -43,11 +42,9 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
 
     private FragmentListener listener;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ListView listView;
     private ArticleAdapter adapter;
     private EditText searchWordEditText;
     private CheckBox searchInStockedCheckBox;
-    private View emptyView;
     private View footerLoadingView;
     private String searchWord = "";
 
@@ -72,9 +69,9 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         if (savedInstanceState != null) {
             this.searchWord = savedInstanceState.getString(SAVED_SEARCH_WORD_KEY);
         }
-        this.listView = (ListView)this.getView().findViewById(R.id.search_article_list_view);
-        this.listView.setEmptyView(this.getEmptyView());
-        this.listView.addFooterView(this.getFooterLoadingView());
+        ListView listView = (ListView) this.getView().findViewById(R.id.search_article_list_view);
+        listView.addFooterView(this.getFooterLoadingView());
+        this.hideFooterLoadingView();
         this.searchWordEditText = (EditText)this.getView().findViewById(R.id.search_edit_text);
         this.searchInStockedCheckBox = (CheckBox)this.getView().findViewById(R.id.search_in_stoked_check_box);
         if (!AppSharedPreference.isLoggedIn(this.getActivity())) {
@@ -85,8 +82,8 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.search_article_swipe_refresh);
         this.searchWordEditText.setOnEditorActionListener(this);
         this.adapter = new ArticleAdapter(this.getActivity());
-        this.listView.setAdapter(this.adapter);
-        this.swipeRefreshLayout.setColorSchemeColors(
+        listView.setAdapter(this.adapter);
+        this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
                 R.color.app_main_orange_color,
@@ -95,11 +92,11 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                SearchArticleAPIManager.getInstance().reloadItems(self.managerListener);
+                SearchArticlesAPIManager.getInstance().reloadItems(self.managerListener);
             }
         });
-        this.listView.setOnItemClickListener(this);
-        this.listView.setOnScrollListener(this);
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
 
         if (!this.searchWord.equals("")) {
             this.searchWordEditText.setText(this.searchWord);
@@ -110,7 +107,7 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        SearchArticleAPIManager.getInstance().cancel();
+        SearchArticlesAPIManager.getInstance().cancel();
     }
 
     @Override
@@ -130,7 +127,6 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 this.searchWord = this.searchWordEditText.getText().toString();
-                Log.e(TAG, "searchWord :: " + this.searchWord);
                 this.getSearchArticle();
             }
             return true;
@@ -144,9 +140,9 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (!SearchArticleAPIManager.getInstance().isMax()) {
+        if (!SearchArticlesAPIManager.getInstance().isMax()) {
             if (this.adapter.getCount() > 0 && !this.searchWord.equals("") && totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-                SearchArticleAPIManager.getInstance().addItems(this.addManagerListener);
+                SearchArticlesAPIManager.getInstance().addItems(this.addManagerListener);
             }
         }
     }
@@ -158,23 +154,28 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
     }
 
     private void getSearchArticle() {
-        this.getFooterLoadingView().setVisibility(View.VISIBLE);
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
+        this.showFooterLoadingView();
         boolean searchInStocked = this.searchInStockedCheckBox.isChecked();
         String token = AppSharedPreference.getToken(this.getActivity());
-        SearchArticleAPIManager.getInstance()
+        SearchArticlesAPIManager.getInstance()
                 .getItems(this.searchWord, searchInStocked, token, this.managerListener);
     }
 
     private APIManagerListener<ArticleModel> managerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void onCompleted(List<ArticleModel> items) {
-            self.adapter.setItems(items);
-            self.adapter.notifyDataSetChanged();
-            self.swipeRefreshLayout.setRefreshing(false);
-            if (SearchArticleAPIManager.getInstance().isMax()) {
-                self.getFooterLoadingView().setVisibility(View.GONE);
+            if (items.size() > 0) {
+                self.adapter.setItems(items);
+                self.adapter.notifyDataSetChanged();
+                self.swipeRefreshLayout.setRefreshing(false);
+                if (SearchArticlesAPIManager.getInstance().isMax()) {
+                    self.hideFooterLoadingView();
+                }
+            } else {
+                self.hideFooterLoadingView();
+                self.listener.showSearchEmptyMessage(self.searchWord);
             }
         }
 
@@ -189,11 +190,8 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
-            if (!(items.size() > 0)) {
-                self.listView.setEmptyView(self.getEmptyView());
-            }
-            if (SearchArticleAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
+            if (SearchArticlesAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
             }
         }
 
@@ -202,23 +200,22 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         }
     };
 
-    private View getEmptyView() {
-        if (this.emptyView == null) {
-            LayoutInflater inflater = LayoutInflater.from(this.getActivity());
-            View emptyView = inflater.inflate(R.layout.fragment_article_empty_message, null);
-            ((TextView)emptyView.findViewById(R.id.empty_message_text_view))
-                    .setText(R.string.search_empty_message);
-            this.emptyView = emptyView;
-        }
-        return this.emptyView;
-    }
-
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
                     .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
         }
         return this.footerLoadingView;
+    }
+
+    private void hideFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void showFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -21,7 +21,7 @@ import android.widget.ListView;
 import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
-import com.ryochin.qittaro.apimanagers.StockAPIManager;
+import com.ryochin.qittaro.apimanagers.StocksAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -58,7 +58,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         super.onActivityCreated(savedInstanceState);
         this.listView = (ListView)this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
-        this.swipeRefreshLayout.setColorSchemeColors(
+        this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
                 R.color.app_main_orange_color,
@@ -67,7 +67,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                StockAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
+                StocksAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
             }
         });
         this.listView.addFooterView(this.getFooterLoadingView());
@@ -76,13 +76,13 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         this.adapter = new ArticleAdapter(this.getActivity());
         this.listView.setAdapter(this.adapter);
         String token = AppSharedPreference.getToken(this.getActivity());
-        StockAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
+        StocksAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        StockAPIManager.getInstance().cancel();
+        StocksAPIManager.getInstance().cancel();
     }
 
     private View getFooterLoadingView() {
@@ -99,7 +99,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
-            if (StockAPIManager.getInstance().isMax()) {
+            if (StocksAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -115,7 +115,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
-            if (StockAPIManager.getInstance().isMax()) {
+            if (StocksAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -130,7 +130,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
-            if (StockAPIManager.getInstance().isMax()) {
+            if (StocksAPIManager.getInstance().isMax()) {
                 self.listView.removeFooterView(self.getFooterLoadingView());
             }
         }
@@ -146,9 +146,9 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (!StockAPIManager.getInstance().isMax()) {
+        if (!StocksAPIManager.getInstance().isMax()) {
             if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-                StockAPIManager.getInstance().addItems(this.addAPIManagerListener);
+                StocksAPIManager.getInstance().addItems(this.addAPIManagerListener);
             }
         }
     }

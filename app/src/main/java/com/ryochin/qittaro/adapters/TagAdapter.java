@@ -26,6 +26,7 @@ public class TagAdapter extends BaseAdapter {
     private List<TagModel> items;
 
     private static class ViewHolder {
+
         TextView nameTextView;
         TextView itemCountTextView;
 
@@ -42,10 +43,6 @@ public class TagAdapter extends BaseAdapter {
 
     public void setItems(List<TagModel> items) {
         this.items = items;
-    }
-
-    public void addItem(TagModel item) {
-        this.items.add(item);
     }
 
     public void addItems(List<TagModel> items) {
@@ -83,7 +80,7 @@ public class TagAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_tags_spinner_detail, null);
+            convertView = inflater.inflate(R.layout.fragment_tags_spinner_detail, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

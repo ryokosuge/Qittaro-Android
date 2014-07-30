@@ -13,6 +13,7 @@
         android:layout_marginBottom="5dp"
         android:textSize="14sp"
         android:hint="@string/search_edit_text_hint"
+        style="@style/EditTextAppTheme"
         />
     
     <CheckBox
@@ -25,6 +26,7 @@
         android:layout_below="@id/search_edit_text"
         android:text="@string/search_in_stoked_text"
         android:checked="false"
+        style="@style/CheckBoxAppTheme"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -38,6 +40,7 @@
             android:id="@+id/search_article_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/ListViewAppTheme"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

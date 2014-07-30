@@ -23,8 +23,8 @@ import com.ryochin.qittaro.R;
 import com.ryochin.qittaro.adapters.ArticleAdapter;
 import com.ryochin.qittaro.adapters.TagAdapter;
 import com.ryochin.qittaro.apimanagers.APIManagerListener;
-import com.ryochin.qittaro.apimanagers.TagAPIManager;
-import com.ryochin.qittaro.apimanagers.TagArticleAPIManager;
+import com.ryochin.qittaro.apimanagers.TagArticlesAPIManager;
+import com.ryochin.qittaro.apimanagers.TagsAPIManager;
 import com.ryochin.qittaro.models.ArticleModel;
 import com.ryochin.qittaro.models.TagModel;
 
@@ -71,7 +71,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
 
         this.spinner = (Spinner)this.getView().findViewById(R.id.tags_spinner);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.tags_article_swipe_refresh);
-        this.swipeRefreshLayout.setColorSchemeColors(
+        this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
                 R.color.app_main_bleu_color,
                 R.color.app_main_orange_color,
@@ -80,7 +80,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                TagArticleAPIManager.getInstance().reloadItems(self.articleAPIManagerListener);
+                TagArticlesAPIManager.getInstance().reloadItems(self.articleAPIManagerListener);
             }
         });
         this.listView = (ListView)this.getView().findViewById(R.id.tags_article_list_view);
@@ -92,14 +92,14 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         this.listView.setAdapter(this.adapter);
         this.spinner.setAdapter(this.spinnerAdapter);
         this.spinner.setOnItemSelectedListener(this);
-        TagAPIManager.getInstance().getItems(this.tagAPIManagerListener);
+        TagsAPIManager.getInstance().getItems(this.tagAPIManagerListener);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        TagAPIManager.getInstance().cancel();
-        TagArticleAPIManager.getInstance().cancel();
+        TagsAPIManager.getInstance().cancel();
+        TagArticlesAPIManager.getInstance().cancel();
     }
 
     @Override
@@ -113,9 +113,8 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         public void onCompleted(List<TagModel> items) {
             self.spinnerAdapter.setItems(items);
             self.spinnerAdapter.notifyDataSetChanged();
-            self.listView.addFooterView(self.getFooterLoadingView());
             TagModel tagModel = items.get(self.selectedTagIndex);
-            TagArticleAPIManager.getInstance().getItems(tagModel.getUrlName(), self.articleAPIManagerListener);
+            TagArticlesAPIManager.getInstance().getItems(tagModel.getUrlName(), self.articleAPIManagerListener);
         }
 
         @Override
@@ -128,8 +127,8 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
-            if (TagArticleAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
+            if (TagArticlesAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
             }
         }
 
@@ -144,13 +143,14 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
             self.adapter.setItems(items);
             self.adapter.notifyDataSetChanged();
             self.swipeRefreshLayout.setRefreshing(false);
-            if (TagArticleAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
+            if (TagArticlesAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
             }
         }
 
         @Override
         public void onError() {
+            self.swipeRefreshLayout.setRefreshing(false);
         }
     };
 
@@ -159,9 +159,9 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
         this.selectedTagIndex = position;
-        self.getFooterLoadingView().setVisibility(View.VISIBLE);
+        this.showFooterLoadingView();
         TagModel tagModel = (TagModel)this.spinnerAdapter.getItem(position);
-        TagArticleAPIManager.getInstance()
+        TagArticlesAPIManager.getInstance()
                 .getItems(tagModel.getUrlName(), this.articleAPIManagerListener);
     }
 
@@ -178,6 +178,16 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         return this.footerLoadingView;
     }
 
+    private void hideFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void showFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ArticleModel articleModel = (ArticleModel)this.adapter.getItem(position);
@@ -190,9 +200,9 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (!TagArticleAPIManager.getInstance().isMax()) {
+        if (!TagArticlesAPIManager.getInstance().isMax() && this.adapter.getCount() > 0) {
             if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-                TagArticleAPIManager.getInstance().addItems(this.addArticleAPIManagerListener);
+                TagArticlesAPIManager.getInstance().addItems(this.addArticleAPIManagerListener);
             }
         }
     }
