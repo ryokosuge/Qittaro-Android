@@ -82,6 +82,10 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         String token = AppSharedPreference.getToken(this.getActivity());
         ArticleAPIManager.getInstance().getItem(articleUUID, token, new ArticleAPIManager.ArticleAPIManagerListener() {
             @Override
+            public void willStart(ArticleDetailModel model) {
+            }
+
+            @Override
             public void onCompleted(ArticleDetailModel model) {
                 self.setWebView(model);
             }
@@ -91,6 +95,13 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
                 listener.onLoadError();
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.webView.stopLoading();
+        ArticleAPIManager.getInstance().cancel();
     }
 
     private void setWebView(ArticleDetailModel model) {
@@ -105,8 +116,10 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
                 super.onPageFinished(view, url);
                 view.setVisibility(View.VISIBLE);
                 self.loadingView.setVisibility(View.GONE);
-                if (AppSharedPreference.isLoggedIn(self.getActivity())) {
-                    self.bottomBtnView.setVisibility(View.VISIBLE);
+                if (self.getActivity() != null) {
+                    if (AppSharedPreference.isLoggedIn(self.getActivity())) {
+                        self.bottomBtnView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -116,6 +129,15 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
         if (AppSharedPreference.isLoggedIn(this.getActivity())) {
             this.changeBtnText(model.isStocked());
+        }
+    }
+
+    private void changeBtnProcessText(boolean stocked) {
+        Button stockedBtn = (Button)this.getView().findViewById(R.id.article_detail_stocked_btn);
+        if (stocked) {
+            stockedBtn.setText(R.string.article_detail_un_stock_process_text);
+        } else {
+            stockedBtn.setText(R.string.article_detail_stock_process_text);
         }
     }
 
@@ -140,6 +162,11 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     }
 
     private ArticleAPIManager.ArticleAPIManagerListener stockListener = new ArticleAPIManager.ArticleAPIManagerListener() {
+        @Override
+        public void willStart(ArticleDetailModel model) {
+            self.changeBtnProcessText(model.isStocked());
+        }
+
         @Override
         public void onCompleted(ArticleDetailModel model) {
             self.changeBtnText(model.isStocked());

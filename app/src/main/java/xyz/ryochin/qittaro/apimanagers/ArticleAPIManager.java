@@ -12,15 +12,17 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import xyz.ryochin.qittaro.models.ArticleDetailModel;
-import xyz.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import xyz.ryochin.qittaro.models.ArticleDetailModel;
+import xyz.ryochin.qittaro.utils.AppController;
+
 public class ArticleAPIManager {
 
     public interface ArticleAPIManagerListener {
+        public void willStart(ArticleDetailModel model);
         public void onCompleted(ArticleDetailModel model);
         public void onError();
     }
@@ -77,6 +79,8 @@ public class ArticleAPIManager {
             listener.onError();
         }
 
+        listener.willStart(this.item);
+
         String url = this.makeStockURL(this.item.getUuid(), token);
         StringRequest request = new StringRequest(Request.Method.DELETE, url,
                 new Response.Listener<String>() {
@@ -108,6 +112,8 @@ public class ArticleAPIManager {
         if (this.item == null || token == null) {
             listener.onError();
         }
+
+        listener.willStart(this.item);
 
         String url = this.makeStockURL(this.item.getUuid(), token);
         StringRequest request = new StringRequest(Request.Method.PUT, url,
