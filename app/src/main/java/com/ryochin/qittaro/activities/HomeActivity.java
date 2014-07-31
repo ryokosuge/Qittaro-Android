@@ -1,5 +1,6 @@
 package com.ryochin.qittaro.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -9,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.ryochin.qittaro.R;
@@ -41,6 +44,13 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
         } else {
             this.setNoLoggedInAdapter();
         }
+        this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    @Override
+    protected void onPause() {
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        super.onPause();
     }
 
     private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -51,6 +61,12 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
         @Override
         public void onPageSelected(int i) {
             self.getSupportActionBar().setSelectedNavigationItem(i);
+            View view = self.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager)self.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
 
         @Override

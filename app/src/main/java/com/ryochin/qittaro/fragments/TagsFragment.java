@@ -37,6 +37,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
 
     private static final String SAVED_SELECTED_TAG_INDEX_KEY = "selectedTagIndex";
 
+    private Spinner spinner;
     private TagAdapter spinnerAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleAdapter adapter;
@@ -67,7 +68,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
             this.selectedTagIndex = savedInstanceState.getInt(SAVED_SELECTED_TAG_INDEX_KEY, 0);
         }
 
-        Spinner spinner = (Spinner) this.getView().findViewById(R.id.tags_spinner);
+        this.spinner = (Spinner) this.getView().findViewById(R.id.tags_spinner);
         ListView listView = (ListView) this.getView().findViewById(R.id.tags_article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.tags_article_swipe_refresh);
         this.swipeRefreshLayout.setColorScheme(
@@ -88,8 +89,8 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
         listView.setAdapter(this.adapter);
-        spinner.setAdapter(this.spinnerAdapter);
-        spinner.setOnItemSelectedListener(this);
+        this.spinner.setAdapter(this.spinnerAdapter);
+        this.spinner.setOnItemSelectedListener(this);
         TagsAPIManager.getInstance().getItems(this.tagAPIManagerListener);
     }
 
@@ -111,6 +112,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         @Override
         public void willStart() {
             self.showFullLoadingView();
+            self.spinner.setVisibility(View.GONE);
             self.swipeRefreshLayout.setVisibility(View.GONE);
         }
 
@@ -119,6 +121,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
             self.spinnerAdapter.setItems(items);
             self.spinnerAdapter.notifyDataSetChanged();
             self.hideFullLoadingView();
+            self.spinner.setVisibility(View.VISIBLE);
             self.swipeRefreshLayout.setVisibility(View.VISIBLE);
             TagModel tagModel = items.get(self.selectedTagIndex);
             TagArticlesAPIManager.getInstance().getItems(tagModel.getUrlName(), self.articleAPIManagerListener);

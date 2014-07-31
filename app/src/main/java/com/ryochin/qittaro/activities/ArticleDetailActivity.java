@@ -41,11 +41,18 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
                 this.finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        super.onBackPressed();
     }
 
     @Override
@@ -65,4 +72,5 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
         fragment.show(this.getSupportFragmentManager(), null);
         this.finish();
     }
+
 }

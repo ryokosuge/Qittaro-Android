@@ -164,6 +164,7 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
     }
 
     private void getSearchArticle() {
+        SearchArticlesAPIManager.getInstance().cancel();
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
         this.showFooterLoadingView();
