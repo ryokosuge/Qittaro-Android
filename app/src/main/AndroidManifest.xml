@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ryochin.qittaro" >
+    package="xyz.ryochin.qittaro" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="com.ryochin.qittaro.utils.AppController"
+        android:name="xyz.ryochin.qittaro.utils.AppController"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Qittaro" >
         <activity
-            android:name="com.ryochin.qittaro.activities.HomeActivity"
+            android:name="xyz.ryochin.qittaro.activities.HomeActivity"
             android:windowSoftInputMode="stateHidden"
             >
             <intent-filter>
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.ryochin.qittaro.activities.ArticleDetailActivity"
+        <activity android:name=".activities.ArticleDetailActivity"
             android:label="@string/app_name"
             />
 

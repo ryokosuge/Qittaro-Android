@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ryochin.qittaro.activities.HomeActivity">
+    tools:context="xyz.ryochin.qittaroactivities.HomeActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

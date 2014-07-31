@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.ryochin.qittaro"
+        applicationId "xyz.ryochin.qittaro"
         minSdkVersion 9
         targetSdkVersion 20
         versionCode 1
