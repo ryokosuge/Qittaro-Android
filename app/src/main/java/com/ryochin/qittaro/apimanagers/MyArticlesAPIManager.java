@@ -70,6 +70,8 @@ public class MyArticlesAPIManager {
             return ;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -87,6 +89,8 @@ public class MyArticlesAPIManager {
             return ;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -103,6 +107,8 @@ public class MyArticlesAPIManager {
             listener.onError();
             return ;
         }
+
+        listener.willStart();
 
         this.page ++;
         this.loading = true;

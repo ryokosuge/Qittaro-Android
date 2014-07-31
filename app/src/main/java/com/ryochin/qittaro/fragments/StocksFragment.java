@@ -33,7 +33,6 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private final StocksFragment self = this;
 
     private FragmentListener listener;
-    private ListView listView;
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View footerLoadingView;
@@ -56,7 +55,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        this.listView = (ListView)this.getView().findViewById(R.id.article_list_view);
+        ListView listView = (ListView) this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
         this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
@@ -70,11 +69,11 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
                 StocksAPIManager.getInstance().reloadItems(self.reloadAPIManagerListener);
             }
         });
-        this.listView.addFooterView(this.getFooterLoadingView());
-        this.listView.setOnItemClickListener(this);
-        this.listView.setOnScrollListener(this);
+        listView.addFooterView(this.getFooterLoadingView());
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
         this.adapter = new ArticleAdapter(this.getActivity());
-        this.listView.setAdapter(this.adapter);
+        listView.setAdapter(this.adapter);
         String token = AppSharedPreference.getToken(this.getActivity());
         StocksAPIManager.getInstance().getItems(token, this.getAPIManagerListener);
     }
@@ -84,61 +83,6 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         super.onDestroyView();
         StocksAPIManager.getInstance().cancel();
     }
-
-    private View getFooterLoadingView() {
-        if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
-        }
-        return this.footerLoadingView;
-    }
-
-    private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
-        @Override
-        public void onCompleted(List<ArticleModel> items) {
-            self.adapter.setItems(items);
-            self.adapter.notifyDataSetChanged();
-            self.swipeRefreshLayout.setRefreshing(false);
-            if (StocksAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
-            }
-        }
-
-        @Override
-        public void onError() {
-            self.swipeRefreshLayout.setRefreshing(false);
-        }
-    };
-
-    private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
-        @Override
-        public void onCompleted(List<ArticleModel> items) {
-            self.adapter.setItems(items);
-            self.adapter.notifyDataSetChanged();
-            if (StocksAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
-            }
-        }
-
-        @Override
-        public void onError() {
-        }
-    };
-
-    private APIManagerListener<ArticleModel> addAPIManagerListener = new APIManagerListener<ArticleModel>() {
-        @Override
-        public void onCompleted(List<ArticleModel> items) {
-            self.adapter.addItems(items);
-            self.adapter.notifyDataSetChanged();
-            if (StocksAPIManager.getInstance().isMax()) {
-                self.listView.removeFooterView(self.getFooterLoadingView());
-            }
-        }
-
-        @Override
-        public void onError() {
-        }
-    };
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -157,5 +101,101 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ArticleModel articleModel = (ArticleModel)this.adapter.getItem(position);
         this.listener.onItemSelected(articleModel);
+    }
+
+    private View getFooterLoadingView() {
+        if (this.footerLoadingView == null) {
+            this.footerLoadingView = this.getActivity()
+                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+        }
+        return this.footerLoadingView;
+    }
+
+    private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+        }
+
+        @Override
+        public void onCompleted(List<ArticleModel> items) {
+            self.adapter.setItems(items);
+            self.adapter.notifyDataSetChanged();
+            self.swipeRefreshLayout.setRefreshing(false);
+            if (StocksAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
+            }
+        }
+
+        @Override
+        public void onError() {
+            self.swipeRefreshLayout.setRefreshing(false);
+        }
+    };
+
+    private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+            self.showFullLoadingView();
+            self.swipeRefreshLayout.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onCompleted(List<ArticleModel> items) {
+            self.adapter.setItems(items);
+            self.adapter.notifyDataSetChanged();
+            if (StocksAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
+            }
+            self.hideFullLoadingView();
+            self.swipeRefreshLayout.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onError() {
+        }
+    };
+
+    private APIManagerListener<ArticleModel> addAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+        }
+
+        @Override
+        public void onCompleted(List<ArticleModel> items) {
+            self.adapter.addItems(items);
+            self.adapter.notifyDataSetChanged();
+            if (StocksAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
+            }
+        }
+
+        @Override
+        public void onError() {
+        }
+    };
+    private void showFullLoadingView() {
+        View fullLoadingView = this.getView().findViewById(R.id.article_loading_layout);
+        fullLoadingView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideFullLoadingView() {
+        View fullLoadingView = this.getView().findViewById(R.id.article_loading_layout);
+        fullLoadingView.setVisibility(View.GONE);
+    }
+
+    private void hideFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void showFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 }

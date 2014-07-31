@@ -3,6 +3,7 @@
     package="com.ryochin.qittaro" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name="com.ryochin.qittaro.utils.AppController"
@@ -11,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Qittaro" >
         <activity
-            android:name=".activities.HomeActivity"
+            android:name="com.ryochin.qittaro.activities.HomeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,12 +20,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.ryochin.qittaro.activities.LoginActivity"
-            android:label="@string/login_activity_label"
-            />
         <activity android:name="com.ryochin.qittaro.activities.ArticleDetailActivity"
             android:label="@string/app_name"
             />
+
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <meta-data android:name="NendDebuggable" android:value="true" />
     </application>
 
 </manifest>

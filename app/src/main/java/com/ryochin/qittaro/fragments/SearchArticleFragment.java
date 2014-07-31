@@ -153,6 +153,16 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         this.listener.onItemSelected(articleModel);
     }
 
+    @Override
+    public void onClick(View v) {
+        String searchWord = this.searchWordEditText.getText().toString();
+        if (searchWord == "") {
+            return ;
+        }
+        this.searchWord = searchWord;
+        this.getSearchArticle();
+    }
+
     private void getSearchArticle() {
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
@@ -165,6 +175,11 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
 
     private APIManagerListener<ArticleModel> managerListener = new APIManagerListener<ArticleModel>() {
         @Override
+        public void willStart() {
+            self.showFooterLoadingView();
+        }
+
+        @Override
         public void onCompleted(List<ArticleModel> items) {
             if (items.size() > 0) {
                 self.adapter.setItems(items);
@@ -172,6 +187,8 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
                 self.swipeRefreshLayout.setRefreshing(false);
                 if (SearchArticlesAPIManager.getInstance().isMax()) {
                     self.hideFooterLoadingView();
+                } else {
+                    self.showFooterLoadingView();
                 }
             } else {
                 self.hideFooterLoadingView();
@@ -187,11 +204,17 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
 
     private APIManagerListener<ArticleModel> addManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
+        public void willStart() {
+        }
+
+        @Override
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
             self.adapter.notifyDataSetChanged();
             if (SearchArticlesAPIManager.getInstance().isMax()) {
                 self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
             }
         }
 
@@ -216,15 +239,5 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
     private void showFooterLoadingView() {
         View footerLoadingView = this.getFooterLoadingView();
         footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onClick(View v) {
-        String searchWord = this.searchWordEditText.getText().toString();
-        if (searchWord == "") {
-            return ;
-        }
-        this.searchWord = searchWord;
-        this.getSearchArticle();
     }
 }

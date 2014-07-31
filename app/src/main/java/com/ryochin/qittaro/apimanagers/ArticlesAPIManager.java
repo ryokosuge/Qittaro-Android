@@ -68,6 +68,8 @@ public class ArticlesAPIManager {
             return ;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -79,6 +81,7 @@ public class ArticlesAPIManager {
         if (this.loading) {
             return;
         }
+        listener.willStart();
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -90,6 +93,7 @@ public class ArticlesAPIManager {
         if (this.loading) {
             return;
         }
+        listener.willStart();
         this.page++;
         this.loading = true;
         StringRequest stringRequest = this.getRequest(this.page, listener);

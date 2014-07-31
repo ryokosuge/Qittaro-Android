@@ -72,6 +72,8 @@ public class TagArticlesAPIManager {
             }
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -85,6 +87,8 @@ public class TagArticlesAPIManager {
         if (this.loading || this.tagURL == null) {
             return;
         }
+
+        listener.willStart();
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -97,6 +101,7 @@ public class TagArticlesAPIManager {
         if (this.loading || this.tagURL == null) {
             return ;
         }
+        listener.willStart();
         this.page ++;
         this.loading = true;
         StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);

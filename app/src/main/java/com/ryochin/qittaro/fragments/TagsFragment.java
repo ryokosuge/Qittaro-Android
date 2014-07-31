@@ -37,10 +37,8 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
 
     private static final String SAVED_SELECTED_TAG_INDEX_KEY = "selectedTagIndex";
 
-    private Spinner spinner;
     private TagAdapter spinnerAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ListView listView;
     private ArticleAdapter adapter;
     private FragmentListener listener;
     private View footerLoadingView;
@@ -69,7 +67,8 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
             this.selectedTagIndex = savedInstanceState.getInt(SAVED_SELECTED_TAG_INDEX_KEY, 0);
         }
 
-        this.spinner = (Spinner)this.getView().findViewById(R.id.tags_spinner);
+        Spinner spinner = (Spinner) this.getView().findViewById(R.id.tags_spinner);
+        ListView listView = (ListView) this.getView().findViewById(R.id.tags_article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.tags_article_swipe_refresh);
         this.swipeRefreshLayout.setColorScheme(
                 R.color.app_main_green_color,
@@ -83,15 +82,14 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
                 TagArticlesAPIManager.getInstance().reloadItems(self.articleAPIManagerListener);
             }
         });
-        this.listView = (ListView)this.getView().findViewById(R.id.tags_article_list_view);
         this.spinnerAdapter = new TagAdapter(this.getActivity());
         this.adapter = new ArticleAdapter(this.getActivity());
-        this.listView.addFooterView(this.getFooterLoadingView());
-        this.listView.setOnItemClickListener(this);
-        this.listView.setOnScrollListener(this);
-        this.listView.setAdapter(this.adapter);
-        this.spinner.setAdapter(this.spinnerAdapter);
-        this.spinner.setOnItemSelectedListener(this);
+        listView.addFooterView(this.getFooterLoadingView());
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
+        listView.setAdapter(this.adapter);
+        spinner.setAdapter(this.spinnerAdapter);
+        spinner.setOnItemSelectedListener(this);
         TagsAPIManager.getInstance().getItems(this.tagAPIManagerListener);
     }
 
@@ -108,11 +106,20 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         outState.putInt(SAVED_SELECTED_TAG_INDEX_KEY, this.selectedTagIndex);
     }
 
+
     private APIManagerListener<TagModel> tagAPIManagerListener = new APIManagerListener<TagModel>() {
+        @Override
+        public void willStart() {
+            self.showFullLoadingView();
+            self.swipeRefreshLayout.setVisibility(View.GONE);
+        }
+
         @Override
         public void onCompleted(List<TagModel> items) {
             self.spinnerAdapter.setItems(items);
             self.spinnerAdapter.notifyDataSetChanged();
+            self.hideFullLoadingView();
+            self.swipeRefreshLayout.setVisibility(View.VISIBLE);
             TagModel tagModel = items.get(self.selectedTagIndex);
             TagArticlesAPIManager.getInstance().getItems(tagModel.getUrlName(), self.articleAPIManagerListener);
         }
@@ -123,6 +130,10 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     };
 
     private APIManagerListener<ArticleModel> addArticleAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+        }
+
         @Override
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.addItems(items);
@@ -138,6 +149,10 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     };
 
     private APIManagerListener<ArticleModel> articleAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+        }
+
         @Override
         public void onCompleted(List<ArticleModel> items) {
             self.adapter.setItems(items);
@@ -170,24 +185,6 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         Log.e(TAG, "onNothingSelected()");
     }
 
-    private View getFooterLoadingView() {
-        if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
-        }
-        return this.footerLoadingView;
-    }
-
-    private void hideFooterLoadingView() {
-        View footerLoadingView = this.getFooterLoadingView();
-        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    private void showFooterLoadingView() {
-        View footerLoadingView = this.getFooterLoadingView();
-        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ArticleModel articleModel = (ArticleModel)this.adapter.getItem(position);
@@ -205,5 +202,33 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
                 TagArticlesAPIManager.getInstance().addItems(this.addArticleAPIManagerListener);
             }
         }
+    }
+
+    private View getFooterLoadingView() {
+        if (this.footerLoadingView == null) {
+            this.footerLoadingView = this.getActivity()
+                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+        }
+        return this.footerLoadingView;
+    }
+
+    private void showFullLoadingView() {
+        View fullLoadingView = this.getView().findViewById(R.id.tags_loading_layout);
+        fullLoadingView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideFullLoadingView() {
+        View fullLoadingView = this.getView().findViewById(R.id.tags_loading_layout);
+        fullLoadingView.setVisibility(View.GONE);
+    }
+
+    private void hideFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void showFooterLoadingView() {
+        View footerLoadingView = this.getFooterLoadingView();
+        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 }

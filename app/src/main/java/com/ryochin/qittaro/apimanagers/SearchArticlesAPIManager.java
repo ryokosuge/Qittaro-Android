@@ -75,6 +75,8 @@ public class SearchArticlesAPIManager {
             return ;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -106,6 +108,8 @@ public class SearchArticlesAPIManager {
             return;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -122,6 +126,8 @@ public class SearchArticlesAPIManager {
         if (this.loading) {
             return;
         }
+
+        listener.willStart();
 
         this.page++;
         this.loading = true;

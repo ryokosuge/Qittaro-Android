@@ -1,16 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v4.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/article_swipe_refresh"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent" >
+    >
 
-    <ListView
-        android:id="@+id/article_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/ListViewAppTheme"
+    <net.nend.android.NendAdView
+        android:id="@+id/article_nend_ad"
+        android:layout_height="50dp"
+        android:layout_width="300dp"
+        NendApiKey="c0b78d9e084f707bd10caf30f30a706cf7293310"
+        NendSpotId="211118"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         />
 
-</android.support.v4.widget.SwipeRefreshLayout>
+    <RelativeLayout
+        android:id="@+id/article_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/article_nend_ad"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_detail_progress_bar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/article_swipe_refresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_above="@id/article_nend_ad"
+        >
+
+        <ListView
+            android:id="@+id/article_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/ListViewAppTheme.White"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</RelativeLayout>

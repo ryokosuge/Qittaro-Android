@@ -70,6 +70,8 @@ public class StocksAPIManager {
             return ;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.token = token;
         this.loading = true;
@@ -89,6 +91,8 @@ public class StocksAPIManager {
             return;
         }
 
+        listener.willStart();
+
         this.page = 1;
         this.loading = true;
         this.max = false;
@@ -107,6 +111,8 @@ public class StocksAPIManager {
             listener.onError();
             return ;
         }
+
+        listener.willStart();
 
         this.page ++;
         this.loading = true;

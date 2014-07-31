@@ -65,6 +65,8 @@ public class TagsAPIManager {
             return;
         }
 
+        listener.willStart();
+
         this.loading = true;
         this.page = 1;
         this.max = false;
@@ -78,6 +80,8 @@ public class TagsAPIManager {
             return;
         }
 
+        listener.willStart();
+
         this.loading = true;
         this.max = false;
         this.page = 1;
@@ -90,6 +94,8 @@ public class TagsAPIManager {
         if (this.loading) {
             return;
         }
+
+        listener.willStart();
 
         this.loading = true;
         this.page ++;

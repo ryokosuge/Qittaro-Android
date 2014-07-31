@@ -3,6 +3,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <net.nend.android.NendAdView
+        android:id="@+id/tags_nend_ad"
+        android:layout_height="50dp"
+        android:layout_width="300dp"
+        NendApiKey="c0b78d9e084f707bd10caf30f30a706cf7293310"
+        NendSpotId="211118"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/tags_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tags_nend_ad"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tags_progress_bar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
     <Spinner
         android:id="@+id/tags_spinner"
         android:layout_width="match_parent"
@@ -19,16 +46,16 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_below="@id/tags_spinner"
+        android:layout_above="@id/tags_nend_ad"
         >
 
         <ListView
             android:id="@+id/tags_article_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/ListViewAppTheme.White"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 
 </RelativeLayout>

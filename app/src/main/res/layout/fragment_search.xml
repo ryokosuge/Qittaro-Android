@@ -3,6 +3,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <net.nend.android.NendAdView
+        android:id="@+id/search_nend_ad"
+        android:layout_height="50dp"
+        android:layout_width="300dp"
+        NendApiKey="c0b78d9e084f707bd10caf30f30a706cf7293310"
+        NendSpotId="211118"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        />
+
     <EditText
         android:id="@+id/search_edit_text"
         android:layout_width="match_parent"
@@ -34,13 +44,14 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_below="@id/search_in_stoked_check_box"
+        android:layout_above="@id/search_nend_ad"
         >
 
         <ListView
             android:id="@+id/search_article_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            style="@style/ListViewAppTheme"
+            style="@style/ListViewAppTheme.White"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

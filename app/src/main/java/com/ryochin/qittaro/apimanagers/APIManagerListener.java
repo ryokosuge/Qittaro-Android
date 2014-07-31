@@ -8,6 +8,7 @@ package com.ryochin.qittaro.apimanagers;
 import java.util.List;
 
 public interface APIManagerListener<T> {
+    public void willStart();
     public void onCompleted(List<T> items);
     public void onError();
 }
