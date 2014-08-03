@@ -6,6 +6,7 @@ bin/
 gen/
 build/
 local.properties
+gradle.properties
 .classpath
 .project
 proguard/

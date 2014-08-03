@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.ArticleDetailFragment;
+import xyz.ryochin.qittaro.models.ArticleDetailModel;
 
 public class ArticleDetailActivity extends ActionBarActivity implements ArticleDetailFragment.ArticleDetailFragmentListener {
 
@@ -25,6 +26,7 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_article_detail);
+        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
@@ -37,6 +39,14 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
 
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
+    }
+
+    @Override
+    public void onCompleted(ArticleDetailModel model) {
+        this.getSupportActionBar().setDisplayShowTitleEnabled(true);
+        this.getSupportActionBar().setTitle(model.getTitle());
+        String subTitle = "ストック数 : " + model.getStockCount();
+        this.getSupportActionBar().setSubtitle(subTitle);
     }
 
     @Override

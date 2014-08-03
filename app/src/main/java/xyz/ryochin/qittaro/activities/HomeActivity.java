@@ -36,6 +36,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         this.viewPager = (ViewPager)this.findViewById(R.id.view_pager);
         this.viewPager.setOnPageChangeListener(this.pageChangeListener);

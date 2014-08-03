@@ -19,7 +19,7 @@
 
 <resources>
 
-    <style name="Theme.Qittaro" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Qittaro" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_qittaro</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Qittaro</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Qittaro</item>
@@ -30,19 +30,17 @@
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_qittaro</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Qittaro</item>
         
-                <!-- Light.DarkActionBar specific -->
-        <item name="android:actionBarWidgetTheme">@style/Theme.Qittaro.Widget</item>
-
+        
     </style>
 
-    <style name="ActionBar.Solid.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="ActionBar.Solid.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_qittaro</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_qittaro</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_qittaro</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Qittaro</item>
     </style>
 
-    <style name="ActionBar.Transparent.Qittaro" parent="@style/Widget.AppCompat.ActionBar">
+    <style name="ActionBar.Transparent.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@drawable/ab_transparent_qittaro</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Qittaro</item>
     </style>

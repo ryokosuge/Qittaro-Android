@@ -83,11 +83,11 @@ public class SearchArticleFragment extends Fragment implements AdapterView.OnIte
         this.searchWordEditText.setOnEditorActionListener(this);
         this.adapter = new ArticleAdapter(this.getActivity());
         listView.setAdapter(this.adapter);
-        this.swipeRefreshLayout.setColorScheme(
-                R.color.app_main_green_color,
-                R.color.app_main_bleu_color,
-                R.color.app_main_orange_color,
-                R.color.app_main_red_color
+        this.swipeRefreshLayout.setColorSchemeResources(
+                R.color.app_first_green_color,
+                R.color.app_second_green_color,
+                R.color.app_third_green_color,
+                R.color.app_fourth_green_color
         );
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

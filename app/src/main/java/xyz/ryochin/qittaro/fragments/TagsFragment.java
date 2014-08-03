@@ -71,11 +71,11 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         this.spinner = (Spinner) this.getView().findViewById(R.id.tags_spinner);
         ListView listView = (ListView) this.getView().findViewById(R.id.tags_article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.tags_article_swipe_refresh);
-        this.swipeRefreshLayout.setColorScheme(
-                R.color.app_main_green_color,
-                R.color.app_main_bleu_color,
-                R.color.app_main_orange_color,
-                R.color.app_main_red_color
+        this.swipeRefreshLayout.setColorSchemeResources(
+                R.color.app_first_green_color,
+                R.color.app_second_green_color,
+                R.color.app_third_green_color,
+                R.color.app_fourth_green_color
         );
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -37,6 +37,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private View bottomBtnView;
 
     public interface ArticleDetailFragmentListener {
+        public void onCompleted(ArticleDetailModel model);
         public void onLoadError();
         public void onStockedError();
     }
@@ -130,6 +131,8 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         if (AppSharedPreference.isLoggedIn(this.getActivity())) {
             this.changeBtnText(model.isStocked());
         }
+
+        this.listener.onCompleted(model);
     }
 
     private void changeBtnProcessText(boolean stocked) {

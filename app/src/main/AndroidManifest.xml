@@ -13,7 +13,6 @@
         android:theme="@style/Theme.Qittaro" >
         <activity
             android:name="xyz.ryochin.qittaro.activities.HomeActivity"
-            android:windowSoftInputMode="stateHidden"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

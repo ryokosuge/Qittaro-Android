@@ -5,7 +5,7 @@
 
   <style name="AppTheme" parent="@style/_AppTheme"/>
 
-  <style name="_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+  <style name="_AppTheme" parent="Theme.AppCompat.Light">
 
     <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
 
@@ -17,11 +17,11 @@
 
     <item name="android:dropDownSpinnerStyle">@style/SpinnerAppTheme</item>
 
-    <item name="android:progressBarStyleHorizontal">@style/ProgressBarAppTheme</item>
-
     <item name="android:listChoiceBackgroundIndicator">@drawable/apptheme_list_selector_holo_light</item>
 
     <item name="android:activatedBackgroundIndicator">@drawable/apptheme_activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/apptheme_fastscroll_thumb_holo</item>
 
   </style>
 
