@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -28,6 +29,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
 
     private static final String TAG = ArticleDetailFragment.class.getSimpleName();
     private final ArticleDetailFragment self = this;
+    private static final int APP_CACHE_MAX_SIZE = 8 * 1024 * 1024;
 
     private static final String BUNDLE_ARGS_ARTICLE_UUID_KEY = "article_uuid";
 
@@ -124,6 +126,9 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
                 }
             }
         });
+        this.webView.getSettings().setAppCacheEnabled(true);
+        // this.webView.getSettings().setAppCacheMaxSize(APP_CACHE_MAX_SIZE);
+        this.webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         this.webView.getSettings().setLoadWithOverviewMode(true);
         this.webView.getSettings().setJavaScriptEnabled(true);
         this.webView.loadUrl(model.getUrl());
