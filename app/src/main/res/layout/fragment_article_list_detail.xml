@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     >
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/article_user_icon_image_view"
         android:layout_width="50dp"
         android:layout_height="50dp"

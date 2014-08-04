@@ -10,27 +10,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagAdapter extends BaseAdapter {
     private static final String TAG = TagAdapter.class.getSimpleName();
     private final TagAdapter self = this;
+    private static final int SPINNER_TAG_ICON_WIDTH = 25;
+    private static final int SPINNER_TAG_ICON_HEIGHT = 25;
+
 
     private Context context;
     private List<TagModel> items;
 
     private static class ViewHolder {
 
+        ImageView tagIconImageView;
         TextView nameTextView;
         TextView itemCountTextView;
 
         public ViewHolder(View v) {
+            this.tagIconImageView = (ImageView)v.findViewById(R.id.spinner_tag_icon_image);
             this.nameTextView = (TextView)v.findViewById(R.id.spinner_tag_name);
             this.itemCountTextView = (TextView)v.findViewById(R.id.spinner_tag_item_count);
         }
@@ -87,9 +96,53 @@ public class TagAdapter extends BaseAdapter {
             viewHolder = (ViewHolder)convertView.getTag();
         }
 
+        /*
+        ImageLoader.ImageContainer imageContainer =
+                (ImageLoader.ImageContainer)viewHolder.userIconImageView.getTag();
+        if (imageContainer != null) {
+            imageContainer.cancelRequest();
+        }
+         */
+        ImageLoader.ImageContainer imageContainer =
+                (ImageLoader.ImageContainer)viewHolder.tagIconImageView.getTag();
+        if (imageContainer != null) {
+            imageContainer.cancelRequest();
+        }
+
         viewHolder.nameTextView.setText(tagModel.getName());
         String itemCountStr = "記事数 : " + tagModel.getItemCount() + "  /  フォロー数 : " + tagModel.getFollowerCount();
         viewHolder.itemCountTextView.setText(itemCountStr);
+
+        /*
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
+                viewHolder.userIconImageView,
+                R.drawable.ic_launcher,
+                android.R.drawable.ic_dialog_alert);
+        viewHolder.userIconImageView.setTag(
+                imageLoader.get(
+                        userModel.getProfileImageURL(),
+                        imageListener,
+                        USER_ICON_IMAGE_WIDTH,
+                        USER_ICON_IMAGE_HEIGHT
+                )
+        );
+         */
+
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
+                viewHolder.tagIconImageView,
+                R.drawable.ic_launcher,
+                android.R.drawable.ic_dialog_alert
+        );
+        viewHolder.tagIconImageView.setTag(
+                imageLoader.get(
+                        tagModel.getIconURL(),
+                        imageListener,
+                        SPINNER_TAG_ICON_WIDTH,
+                        SPINNER_TAG_ICON_HEIGHT
+                )
+        );
 
         return convertView;
     }

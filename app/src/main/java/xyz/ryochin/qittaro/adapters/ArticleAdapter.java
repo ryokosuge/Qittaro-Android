@@ -10,10 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ import xyz.ryochin.qittaro.utils.AppController;
 public class ArticleAdapter extends BaseAdapter {
     private static final String TAG = ArticleAdapter.class.getSimpleName();
     private final ArticleAdapter self = this;
+    private static final int USER_ICON_IMAGE_WIDTH = 50;
+    private static final int USER_ICON_IMAGE_HEIGHT = 50;
 
     private Context context;
     private List<ArticleModel> items;
@@ -34,7 +36,7 @@ public class ArticleAdapter extends BaseAdapter {
         TextView titleTextView;
         TextView createdAtTextView;
         TextView updatedAtTextView;
-        NetworkImageView userIconImageView;
+        ImageView userIconImageView;
         TextView userNameTextView;
 
         public ViewHolder(View v) {
@@ -42,7 +44,7 @@ public class ArticleAdapter extends BaseAdapter {
             this.createdAtTextView = (TextView) v.findViewById(R.id.article_created_at_text_view);
             this.updatedAtTextView = (TextView) v.findViewById(R.id.article_updated_at_text_view);
             this.userNameTextView = (TextView) v.findViewById(R.id.article_user_name_text_view);
-            this.userIconImageView = (NetworkImageView) v.findViewById(R.id.article_user_icon_image_view);
+            this.userIconImageView = (ImageView) v.findViewById(R.id.article_user_icon_image_view);
         }
     }
 
@@ -96,9 +98,26 @@ public class ArticleAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        ImageLoader.ImageContainer imageContainer =
+                (ImageLoader.ImageContainer)viewHolder.userIconImageView.getTag();
+        if (imageContainer != null) {
+            imageContainer.cancelRequest();
+        }
+
         ArticleUserModel userModel = articleModel.getUser();
-        viewHolder.userIconImageView.setImageUrl(userModel.getProfileImageURL(), imageLoader);
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
+                viewHolder.userIconImageView,
+                R.drawable.ic_launcher,
+                android.R.drawable.ic_dialog_alert);
+        viewHolder.userIconImageView.setTag(
+                imageLoader.get(
+                        userModel.getProfileImageURL(),
+                        imageListener,
+                        USER_ICON_IMAGE_WIDTH,
+                        USER_ICON_IMAGE_HEIGHT
+                )
+        );
         viewHolder.titleTextView.setText(articleModel.getTitle());
         String userText = userModel.getUrlName() + "さんが投稿しました。";
         String createdAt = "投稿日 : " + articleModel.getCreatedAtInWords() + "前";
