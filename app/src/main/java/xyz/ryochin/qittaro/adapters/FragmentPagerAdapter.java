@@ -11,18 +11,16 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import xyz.ryochin.qittaro.fragments.ArticlesFragment;
 import xyz.ryochin.qittaro.fragments.LoginFragment;
-import xyz.ryochin.qittaro.fragments.SearchArticleFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 
 public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = FragmentPagerAdapter.class.getSimpleName();
     private final FragmentPagerAdapter self = this;
 
-    private static final int FRAGMENT_MAX_COUNT = 4;
+    private static final int FRAGMENT_MAX_COUNT = 3;
     private static final int FRAGMENT_ARTICLE_INDEX = 0;
     private static final int FRAGMENT_TAGS_INDEX = 1;
-    private static final int FRAGMENT_SEARCH_INDEX = 2;
-    private static final int FRAGMENT_LOGIN_INDEX = 3;
+    private static final int FRAGMENT_LOGIN_INDEX = 2;
 
     public FragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -35,8 +33,6 @@ public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return new ArticlesFragment();
             case FRAGMENT_TAGS_INDEX:
                 return new TagsFragment();
-            case FRAGMENT_SEARCH_INDEX:
-                return new SearchArticleFragment();
             case FRAGMENT_LOGIN_INDEX:
                 return new LoginFragment();
             default:
@@ -56,8 +52,6 @@ public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
                 return "PUBLIC";
             case FRAGMENT_TAGS_INDEX:
                 return "TAGS";
-            case FRAGMENT_SEARCH_INDEX:
-                return "SEARCH";
             case FRAGMENT_LOGIN_INDEX:
                 return "LOGIN";
             default:

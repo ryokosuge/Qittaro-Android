@@ -102,7 +102,14 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.home_menu_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                this.startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
