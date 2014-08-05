@@ -7,34 +7,35 @@
 
     <ImageView
         android:id="@+id/article_user_icon_image_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="10dp"
+        android:layout_width="@dimen/user_icon_width"
+        android:layout_height="@dimen/user_icon_height"
+        android:layout_margin="@dimen/large_margin"
     />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="@dimen/large_margin"
         >
 
         <TextView
             android:id="@+id/article_user_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="@dimen/large_margin"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/medium_margin"
+            android:textSize="@dimen/medium_text_size"
             />
 
         <TextView
             android:id="@+id/article_title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/large_margin"
             android:layout_below="@id/article_user_name_text_view"
-            android:textSize="20sp"
+            android:textSize="@dimen/large_text_size"
             android:textStyle="bold"
             android:textColor="@android:color/primary_text_light"
             />
@@ -43,11 +44,11 @@
             android:id="@+id/article_created_at_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/small_margin"
             android:layout_below="@id/article_title_text_view"
             android:textColor="@android:color/secondary_text_light"
-            android:textSize="13sp"
+            android:textSize="@dimen/small_text_size"
             />
 
         <TextView
@@ -55,11 +56,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/article_created_at_text_view"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/large_margin"
             android:textColor="@android:color/secondary_text_light"
-            android:textSize="13sp"
+            android:textSize="@dimen/small_text_size"
             />
+
 
     </RelativeLayout>
 

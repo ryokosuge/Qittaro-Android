@@ -8,4 +8,5 @@
     <color name="app_second_green_color">#37D22F</color>
     <color name="app_third_green_color">#08A000</color>
     <color name="app_fourth_green_color">#067E00</color>
+    <color name="apptheme_color">#0ace00</color>
 </resources>
