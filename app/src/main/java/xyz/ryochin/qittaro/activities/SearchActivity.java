@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 import xyz.ryochin.qittaro.R;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.SearchFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 
@@ -57,5 +58,19 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
             default:
                 break;
         }
+    }
+
+    @Override
+    public void noSerchArticle(String searchWord) {
+        String title = this.getResources().getString(R.string.search_empty_title);
+        StringBuilder builder = new StringBuilder();
+        String message = builder.append(this.getResources().getString(R.string.search_empty_message))
+                .append("\n")
+                .append(this.getResources().getString(R.string.search_empty_search_word_top))
+                .append(" [")
+                .append(searchWord)
+                .append("]").toString();
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(this.getSupportFragmentManager(), null);
     }
 }

@@ -41,6 +41,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private final SearchFragment self = this;
 
     public interface Listener {
+        public void noSerchArticle(String searchWord);
         public void onItemClicked(ArticleModel model);
         public void onOptionMenuClicked(MenuItem menu);
     }
@@ -236,6 +237,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                 }
             } else {
                 self.hideFooterLoadingView();
+                self.listener.noSerchArticle(self.searchWord);
             }
         }
 
