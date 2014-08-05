@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Qittaro</string>
-    <string name="login_user_name_hint">ユーザー名</string>
-    <string name="login_password_hint">パスワード</string>
-    <string name="login_btn_text">ログイン</string>
+    <string name="login_user_name_hint">url_name</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_btn_text">Sing In</string>
     <string name="login_error_title">Login Error</string>
-    <string name="login_error_message">ユーザー名かパスワードが間違っています。</string>
-    <string name="login_success_message">ログインが完了しました！</string>
-    <string name="article_empty_message">記事がありませんでした。</string>
-    <string name="search_empty_title">検索エラー</string>
-    <string name="search_empty_message">記事がみつかりませんでした。\n検索キーワードを変えてみてください。</string>
-    <string name="search_empty_search_word_top">検索ワード</string>
-    <string name="search_in_stoked_text">ストックしている記事から検索</string>
-    <string name="article_detail_stock_text">この投稿をストックする</string>
-    <string name="article_detail_stock_process_text">ストック中…</string>
-    <string name="article_detail_un_stock_text">ストックを解除する</string>
-    <string name="article_detail_un_stock_process_text">ストック解除中…</string>
-    <string name="article_detail_stock_message">この記事をストックしました</string>
-    <string name="article_detail_un_stock_message">ストックを解除しました</string>
+    <string name="login_error_message">Either the username or password is incorrect.</string>
+    <string name="login_success_message">Login has been completed.</string>
+    <string name="article_empty_message">Article was not found.</string>
+    <string name="search_empty_title">Search Error</string>
+    <string name="search_empty_message">Article was not found.</string>
+    <string name="search_empty_search_word_top">SearchWord</string>
+    <string name="search_in_stoked_text">Search from the article you have stock.</string>
+    <string name="article_detail_stock_text">Stock this article.</string>
+    <string name="article_detail_stock_process_text">now stocked…</string>
+    <string name="article_detail_un_stock_text">Release the stock.</string>
+    <string name="article_detail_un_stock_process_text">now release stock…</string>
+    <string name="article_detail_stock_message">stock article.</string>
+    <string name="article_detail_un_stock_message">release stock</string>
     <string name="home_menu_search_text">Search</string>
     <string name="search_menu_search_text">Search</string>
-    <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>
+    <string name="search_menu_query_hint_text">Please separated by a space when you search multiple.</string>
 </resources>
