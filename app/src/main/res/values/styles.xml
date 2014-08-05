@@ -47,6 +47,7 @@
         <item name="popupMenuStyle">@style/PopupMenu.Qittaro</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Qittaro</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Qittaro</item>
+        <item name="actionBarTabTextStyle">@style/ActionBar.TabText.Qittaro</item>
         <item name="actionDropDownStyle">@style/DropDownNav.Qittaro</item>
         <item name="actionBarStyle">@style/ActionBar.Solid.Qittaro</item>
         <item name="actionModeBackground">@drawable/cab_background_top_qittaro</item>
@@ -61,6 +62,11 @@
         <item name="backgroundStacked">@drawable/ab_stacked_solid_qittaro</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_qittaro</item>
         <item name="progressBarStyle">@style/ProgressBar.Qittaro</item>
+        <item name="actionBarTabTextStyle">@style/ActionBar.TabText.Qittaro</item>
+    </style>
+
+    <style name="ActionBar.TabText.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+        <item name="android:textColor">@color/action_bar_tab_text</item>
     </style>
 
     <style name="ActionBar.Transparent.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar">

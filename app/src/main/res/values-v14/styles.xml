@@ -24,13 +24,12 @@
         <item name="android:popupMenuStyle">@style/PopupMenu.Qittaro</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Qittaro</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Qittaro</item>
+        <item name="android:actionBarTabTextStyle">@style/ActionBar.TabText.Qittaro</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.Qittaro</item>
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Qittaro</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_qittaro</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_qittaro</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Qittaro</item>
-        
-        
     </style>
 
     <style name="ActionBar.Solid.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
@@ -38,6 +37,11 @@
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_qittaro</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_qittaro</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Qittaro</item>
+        <item name="android:actionBarTabTextStyle">@style/ActionBar.TabText.Qittaro</item>
+    </style>
+
+    <style name="ActionBar.TabText.Qittaro." parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+        <item name="android:textColor">@color/action_bar_tab_text</item>
     </style>
 
     <style name="ActionBar.Transparent.Qittaro" parent="@style/Widget.AppCompat.Light.ActionBar">
