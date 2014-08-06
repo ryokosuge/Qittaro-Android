@@ -237,11 +237,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
 
     private void setAdView() {
         this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("E7BC9CB9CFE61F02CF1CB17ED85FA7B6")
-                .addTestDevice("47B76C38515FC5B269076AAB6D6DB5EE")
-                .addTestDevice("C3578474900D7CA6D88C34E3634A24AD")
-                .build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         this.adView.loadAd(adRequest);
     }
 }
