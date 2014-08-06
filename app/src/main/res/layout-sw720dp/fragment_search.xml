@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/search_admob_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adUnitId="ca-app-pub-3010029359415397/7317826064"
+        ads:adSize="SMART_BANNER"
+        />
+
+    <CheckBox
+        android:id="@+id/search_in_stoked_check_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/large_margin"
+        android:text="@string/search_in_stoked_text"
+        android:checked="false"
+        style="@style/CheckBoxAppTheme"
+        />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/search_article_swipe_refresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@id/search_in_stoked_check_box"
+        android:layout_above="@id/search_admob_view"
+        >
+
+        <ListView
+            android:id="@+id/search_article_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/ListViewAppTheme.White"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

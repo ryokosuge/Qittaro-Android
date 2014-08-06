@@ -23,17 +23,15 @@ import com.google.analytics.tracking.android.Tracker;
 public class AppController extends Application {
 
     private static final String TAG = AppController.class.getSimpleName();
-    private final AppController self = this;
     private static final String GA_PROPERTY_ID = "UA-42849812-5";
     private static final boolean GA_IS_DRY_RUN = false;
-    private static final Logger.LogLevel GA_LOG_VERBOSITY = Logger.LogLevel.VERBOSE;
+    private static final Logger.LogLevel GA_LOG_LEVEL = Logger.LogLevel.VERBOSE;
     private static final String TRACKING_PREF_KEY = "trackingPreference";
 
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
     private static AppController instance;
 
-    private GoogleAnalytics analytics;
     private Tracker tracker;
 
     @Override
@@ -83,12 +81,12 @@ public class AppController extends Application {
     }
 
     private void initializeGa() {
-        this.analytics = GoogleAnalytics.getInstance(this);
-        this.tracker = this.analytics.getTracker(GA_PROPERTY_ID);
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        this.tracker = analytics.getTracker(GA_PROPERTY_ID);
 
         // GAServiceManager.getInstance().setLocalDispatchPeriod(GA_DISPATCH_PERIOD);
-        this.analytics.setDryRun(GA_IS_DRY_RUN);
-        this.analytics.getLogger().setLogLevel(GA_LOG_VERBOSITY);
+        analytics.setDryRun(GA_IS_DRY_RUN);
+        analytics.getLogger().setLogLevel(GA_LOG_LEVEL);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override

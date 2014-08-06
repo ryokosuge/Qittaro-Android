@@ -327,6 +327,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("E7BC9CB9CFE61F02CF1CB17ED85FA7B6")
                 .addTestDevice("47B76C38515FC5B269076AAB6D6DB5EE")
+                .addTestDevice("C3578474900D7CA6D88C34E3634A24AD")
                 .build();
         this.adView.loadAd(adRequest);
     }
