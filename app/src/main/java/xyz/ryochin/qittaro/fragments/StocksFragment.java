@@ -18,6 +18,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
@@ -25,6 +28,7 @@ import xyz.ryochin.qittaro.adapters.ArticleAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.StocksAPIManager;
 import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 public class StocksFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
@@ -36,6 +40,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View footerLoadingView;
+    private AdView adView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -55,6 +60,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        this.setAdView();
         ListView listView = (ListView) this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
         this.swipeRefreshLayout.setColorSchemeResources(
@@ -82,6 +88,36 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     public void onDestroyView() {
         super.onDestroyView();
         StocksAPIManager.getInstance().cancel();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (this.adView != null) {
+            this.adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (this.adView != null) {
+            this.adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.adView != null) {
+            this.adView.destroy();
+        }
     }
 
     @Override
@@ -197,5 +233,14 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private void showFooterLoadingView() {
         View footerLoadingView = this.getFooterLoadingView();
         footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
+
+    private void setAdView() {
+        this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E7BC9CB9CFE61F02CF1CB17ED85FA7B6")
+                .addTestDevice("47B76C38515FC5B269076AAB6D6DB5EE")
+                .build();
+        this.adView.loadAd(adRequest);
     }
 }

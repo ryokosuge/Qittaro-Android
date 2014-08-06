@@ -26,9 +26,7 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_article_detail);
-        // this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         if (savedInstanceState == null) {
             Intent intent = this.getIntent();
             String articleUUID = intent.getStringExtra(INTENT_ARTICLE_UUID_KEY);

@@ -19,6 +19,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
@@ -29,6 +32,7 @@ import xyz.ryochin.qittaro.apimanagers.TagArticlesAPIManager;
 import xyz.ryochin.qittaro.apimanagers.TagsAPIManager;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagsFragment extends Fragment implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
@@ -44,6 +48,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     private FragmentListener listener;
     private View footerLoadingView;
     private int selectedTagIndex = 0;
+    private AdView adView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -63,6 +68,7 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        this.setAdView();
 
         if (savedInstanceState != null) {
             this.selectedTagIndex = savedInstanceState.getInt(SAVED_SELECTED_TAG_INDEX_KEY, 0);
@@ -107,6 +113,35 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
         outState.putInt(SAVED_SELECTED_TAG_INDEX_KEY, this.selectedTagIndex);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (this.adView != null) {
+            this.adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (this.adView != null) {
+            this.adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.adView != null) {
+            this.adView.destroy();
+        }
+    }
 
     private APIManagerListener<TagModel> tagAPIManagerListener = new APIManagerListener<TagModel>() {
         @Override
@@ -233,5 +268,14 @@ public class TagsFragment extends Fragment implements AdapterView.OnItemSelected
     private void showFooterLoadingView() {
         View footerLoadingView = this.getFooterLoadingView();
         footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
+
+    private void setAdView() {
+        this.adView = (AdView)this.getView().findViewById(R.id.tags_admob_view);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E7BC9CB9CFE61F02CF1CB17ED85FA7B6")
+                .addTestDevice("47B76C38515FC5B269076AAB6D6DB5EE")
+                .build();
+        this.adView.loadAd(adRequest);
     }
 }

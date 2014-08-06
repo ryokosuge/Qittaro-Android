@@ -19,8 +19,8 @@
 -libraryjars ./libs/nendSDK-2.4.1.jar
 
 -keep class com.google.android.gms.** { *; }
+-keep class com.google.ads.** { *; }
 -keep class android.support.v4.** { *; }
 -keep class android.support.v7.** { *; }
 -keep class net.nend.android.NendAdView.** { *; }
 -keep class com.android.volley.** { *; }
-

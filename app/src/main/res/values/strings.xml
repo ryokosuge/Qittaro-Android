@@ -12,6 +12,7 @@
     <string name="search_empty_message">Article was not found.</string>
     <string name="search_empty_search_word_top">SearchWord</string>
     <string name="search_in_stoked_text">Search from the article you have stock.</string>
+    <string name="article_detail_loading_title">Loading…</string>
     <string name="article_detail_stock_text">Stock this article.</string>
     <string name="article_detail_stock_process_text">now stocked…</string>
     <string name="article_detail_un_stock_text">Release the stock.</string>

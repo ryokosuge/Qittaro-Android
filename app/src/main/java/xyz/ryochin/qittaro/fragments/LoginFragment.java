@@ -42,6 +42,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private final LoginFragment self = this;
 
     private static final String LOGIN_RESPONSE_TOKEN_KEY = "token";
+    private static final String LOGIN_API_KEY = "https://qiita.com/api/v1/auth";
     private FragmentListener listener;
     private EditText userNameEditText;
     private EditText passwordEditText;
@@ -67,20 +68,39 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-        this.userNameEditText = (EditText)rootView.findViewById(R.id.user_name_edittext);
-        this.passwordEditText = (EditText)rootView.findViewById(R.id.password_edittext);
-        ((Button)rootView.findViewById(R.id.qiita_login_btn)).setOnClickListener(this);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        this.userNameEditText = (EditText)this.getView().findViewById(R.id.user_name_edittext);
+        this.userNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    InputMethodManager inputMethodManager = (InputMethodManager)self.getActivity()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+        this.passwordEditText = (EditText)this.getView().findViewById(R.id.password_edittext);
+        ((Button)this.getView().findViewById(R.id.qiita_login_btn)).setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
     }
 
     @Override
     public void onClick(View v) {
         InputMethodManager inputMethodManager = (InputMethodManager)this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        String loginURL = "https://qiita.com/api/v1/auth";
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                loginURL, new Response.Listener<String>() {
+                LOGIN_API_KEY, new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonResponse) {
                 try {

@@ -12,8 +12,10 @@
         android:hint="@string/login_user_name_hint"
         android:layout_margin="@dimen/large_margin"
         android:textSize="@dimen/large_text_size"
+        android:inputType="text"
         style="@style/EditTextAppTheme"
         />
+    <requestFocus />
 
     <EditText
         android:id="@+id/password_edittext"

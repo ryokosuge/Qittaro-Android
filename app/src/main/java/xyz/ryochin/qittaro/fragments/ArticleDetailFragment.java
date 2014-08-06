@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +21,14 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.apimanagers.ArticleAPIManager;
 import xyz.ryochin.qittaro.models.ArticleDetailModel;
+import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -30,6 +37,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private static final String TAG = ArticleDetailFragment.class.getSimpleName();
     private final ArticleDetailFragment self = this;
     private static final int APP_CACHE_MAX_SIZE = 8 * 1024 * 1024;
+    private static final String AD_UNIT_ID = "ca-app-pub-3010029359415397/5967347269";
 
     private static final String BUNDLE_ARGS_ARTICLE_UUID_KEY = "article_uuid";
 
@@ -37,6 +45,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     private WebView webView;
     private View loadingView;
     private View bottomBtnView;
+    private InterstitialAd interstitialAd;
 
     public interface ArticleDetailFragmentListener {
         public void onCompleted(ArticleDetailModel model);
@@ -73,6 +82,9 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        this.setInterstitialView();
+        ((ActionBarActivity)this.getActivity()).getSupportActionBar().setTitle(R.string.article_detail_loading_title);
+
         Bundle args = this.getArguments();
         String articleUUID = args.getString(BUNDLE_ARGS_ARTICLE_UUID_KEY);
 
@@ -107,7 +119,13 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         ArticleAPIManager.getInstance().cancel();
     }
 
-    private void setWebView(ArticleDetailModel model) {
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
+    }
+
+    private void setWebView(final ArticleDetailModel model) {
         this.webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -124,6 +142,7 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
                         self.bottomBtnView.setVisibility(View.VISIBLE);
                     }
                 }
+                self.listener.onCompleted(model);
             }
         });
         this.webView.getSettings().setAppCacheEnabled(true);
@@ -136,8 +155,6 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
         if (AppSharedPreference.isLoggedIn(this.getActivity())) {
             this.changeBtnText(model.isStocked());
         }
-
-        this.listener.onCompleted(model);
     }
 
     private void changeBtnProcessText(boolean stocked) {
@@ -190,4 +207,51 @@ public class ArticleDetailFragment extends Fragment implements View.OnClickListe
             self.listener.onStockedError();
         }
     };
+
+    private void setInterstitialView() {
+        this.interstitialAd = new InterstitialAd(this.getActivity());
+        this.interstitialAd.setAdUnitId(AD_UNIT_ID);
+        this.interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.d(TAG, "onAdLoaded");
+                if (self.interstitialAd.isLoaded()) {
+                    self.interstitialAd.show();
+                }
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.d(TAG, "onAdFailedToLoad()");
+                String errorReason = self.getErrorReason(errorCode);
+                String message = String.format("onAdFailedToLoad (%s)", errorReason);
+                Toast.makeText(self.getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E7BC9CB9CFE61F02CF1CB17ED85FA7B6")
+                .addTestDevice("47B76C38515FC5B269076AAB6D6DB5EE")
+                .build();
+        this.interstitialAd.loadAd(adRequest);
+    }
+
+    private String getErrorReason(int errorCode) {
+        String errorReason = "";
+        switch (errorCode) {
+            case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+                errorReason = "Internal error.";
+                break;
+            case AdRequest.ERROR_CODE_INVALID_REQUEST:
+                errorReason = "Invalid request.";
+                break;
+            case AdRequest.ERROR_CODE_NETWORK_ERROR:
+                errorReason = "Network error.";
+                break;
+            case AdRequest.ERROR_CODE_NO_FILL:
+                errorReason = "No fill";
+                break;
+        }
+        return errorReason;
+    }
 }

@@ -12,6 +12,7 @@
     <string name="search_empty_message">記事がみつかりませんでした。\n検索キーワードを変えてみてください。</string>
     <string name="search_empty_search_word_top">検索ワード</string>
     <string name="search_in_stoked_text">ストックしている記事から検索</string>
+    <string name="article_detail_loading_title">ロード中…</string>
     <string name="article_detail_stock_text">この投稿をストックする</string>
     <string name="article_detail_stock_process_text">ストック中…</string>
     <string name="article_detail_un_stock_text">ストックを解除する</string>

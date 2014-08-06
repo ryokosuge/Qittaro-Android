@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <net.nend.android.NendAdView
-        android:id="@+id/article_nend_ad"
-        android:layout_height="50dp"
-        android:layout_width="300dp"
-        NendApiKey="c0b78d9e084f707bd10caf30f30a706cf7293310"
-        NendSpotId="211118"
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/article_admob_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        ads:adUnitId="ca-app-pub-3010029359415397/8656788469"
+        ads:adSize="BANNER"
         />
 
     <RelativeLayout
         android:id="@+id/article_loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/article_nend_ad"
+        android:layout_above="@id/article_admob_view"
         android:visibility="gone"
         >
 
@@ -37,7 +39,7 @@
         android:id="@+id/article_swipe_refresh"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_above="@id/article_nend_ad"
+        android:layout_above="@id/article_admob_view"
         >
 
         <ListView
