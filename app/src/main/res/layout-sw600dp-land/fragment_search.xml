@@ -17,21 +17,10 @@
         ads:adSize="LEADERBOARD"
         />
 
-    <CheckBox
-        android:id="@+id/search_in_stoked_check_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/large_margin"
-        android:text="@string/search_in_stoked_text"
-        android:checked="false"
-        style="@style/CheckBoxAppTheme"
-        />
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/search_article_swipe_refresh"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@id/search_in_stoked_check_box"
         android:layout_above="@id/search_admob_view"
         >
 
