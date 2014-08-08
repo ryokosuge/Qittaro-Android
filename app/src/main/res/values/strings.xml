@@ -22,4 +22,8 @@
     <string name="home_menu_search_text">Search</string>
     <string name="search_menu_search_text">Search</string>
     <string name="search_menu_query_hint_text">Please separated by a space when you search multiple.</string>
+    <string name="menu_article_detail_browser_title">Browser</string>
+    <string name="menu_article_detail_stocked_title">Stock</string>
+    <string name="menu_article_detail_share_title">Share</string>
+    <string name="menu_article_detail_share_chooser_title">Choose Share App</string>
 </resources>

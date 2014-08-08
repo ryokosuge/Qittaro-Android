@@ -6,6 +6,7 @@
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
@@ -87,4 +88,11 @@ public class ArticleDetailActivity extends ActionBarActivity implements ArticleD
         this.finish();
     }
 
+    @Override
+    public void openBrowser(String articleURL) {
+        Uri uri = Uri.parse(articleURL);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        this.startActivity(intent);
+        this.finish();
+    }
 }

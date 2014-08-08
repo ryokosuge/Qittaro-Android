@@ -135,6 +135,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             String queryHint = self.getResources().getString(R.string.search_menu_query_hint_text);
             this.searchView.setQueryHint(queryHint);
         }
+        this.searchView.setFocusable(true);
         this.searchView.setOnQueryTextListener(self.onQueryTextListener);
     }
 

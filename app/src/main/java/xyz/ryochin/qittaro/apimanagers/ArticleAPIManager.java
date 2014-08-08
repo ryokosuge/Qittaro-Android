@@ -66,6 +66,22 @@ public class ArticleAPIManager {
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
+    public String getArticleURL() {
+        if (this.item != null) {
+            return this.item.getUrl();
+        } else {
+            return null;
+        }
+    }
+
+    public String getArticleTitle() {
+        if (this.item != null) {
+            return this.item.getTitle();
+        } else {
+            return null;
+        }
+    }
+
     public boolean isStockedItem() {
         return this.item.isStocked();
     }
