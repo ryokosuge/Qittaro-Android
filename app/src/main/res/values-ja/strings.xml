@@ -19,6 +19,7 @@
     <string name="article_detail_un_stock_process_text">ストック解除中…</string>
     <string name="article_detail_stock_message">この記事をストックしました</string>
     <string name="article_detail_un_stock_message">ストックを解除しました</string>
+    <string name="search_sub_title_prefix">検索ワード</string>
     <string name="home_menu_search_text">Search</string>
     <string name="search_menu_search_text">Search</string>
     <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>

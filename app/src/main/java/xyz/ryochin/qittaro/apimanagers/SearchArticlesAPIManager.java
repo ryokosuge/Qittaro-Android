@@ -11,8 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +20,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class SearchArticlesAPIManager {
 
@@ -70,7 +71,10 @@ public class SearchArticlesAPIManager {
             return ;
         }
 
-        if (!this.items.isEmpty() && this.searchWord.equals(searchWord) && this.searchInStocked == searchInStocked) {
+        if (!this.items.isEmpty() && this.searchWord.equals(searchWord)
+                && this.searchInStocked == searchInStocked
+                && this.token.equals(token)) {
+
             listener.onCompleted(this.items);
             return ;
         }

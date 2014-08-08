@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="search_spinner_strings">
+        <item>Search In Articles</item>
+        <item>Search In My Stocked</item>
+    </string-array>
+</resources>

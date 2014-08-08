@@ -82,6 +82,10 @@ public class ArticleAPIManager {
         }
     }
 
+    public boolean isNull() {
+        return this.item == null;
+    }
+
     public boolean isStockedItem() {
         return this.item.isStocked();
     }

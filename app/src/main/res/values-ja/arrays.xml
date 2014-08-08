@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="search_spinner_strings">
+        <item>全ての記事から検索</item>
+        <item>ストック記事から検索</item>
+    </string-array>
+</resources>

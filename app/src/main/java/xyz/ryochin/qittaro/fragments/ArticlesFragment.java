@@ -104,11 +104,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (this.adView != null) {

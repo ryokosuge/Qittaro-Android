@@ -7,6 +7,7 @@
 package xyz.ryochin.qittaro.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,9 +22,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -39,35 +40,44 @@ import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener, View.OnClickListener {
+public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
     private final SearchFragment self = this;
-
-    public interface Listener {
-        public void noSerchArticle(String searchWord);
-        public void onItemClicked(ArticleModel model);
-        public void onOptionMenuClicked(MenuItem menu);
-    }
-
     private static final String SAVED_SEARCH_WORD_KEY = "searchWord";
+    private static final String SAVED_SEARCH_IN_STOCKED_KEY = "searchInStocked";
+    private static final String ARGS_SEARCH_WORD_KEY = "searchWord";
+    private static final String ARGS_SEARCH_IN_STOCKED_KEY = "searchInStocked";
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleAdapter adapter;
-    private CheckBox searchInStockedCheckBox;
     private View footerLoadingView;
-    private String searchWord = "";
+    private String searchWord;
+    private boolean searchInStocked;
     private SearchView searchView;
-    private Listener listener;
+    private SearchFragmentListener listener;
     private AdView adView;
+
+    public SearchFragment() {}
+
+    public static SearchFragment newInstance(String searchWord, boolean searchInStocked) {
+        Bundle args = new Bundle();
+        if (searchWord != null && !searchWord.equals("")) {
+            args.putString(ARGS_SEARCH_WORD_KEY, searchWord);
+        }
+        args.putBoolean(ARGS_SEARCH_IN_STOCKED_KEY, searchInStocked);
+        SearchFragment fragment = new SearchFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.listener = (Listener)activity;
+            this.listener = (SearchFragmentListener)activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Please implement the SearchFragment.Listener.");
+            throw new ClassCastException("Please implement the SearchFragmentListener.");
         }
     }
 
@@ -87,20 +97,30 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         super.onActivityCreated(savedInstanceState);
         this.setAdView();
         if (savedInstanceState != null) {
-            this.searchWord = savedInstanceState.getString(SAVED_SEARCH_WORD_KEY);
-            ActionBar actionBar = ((ActionBarActivity)this.getActivity()).getSupportActionBar();
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setTitle(this.searchWord);
+            if (savedInstanceState.containsKey(SAVED_SEARCH_WORD_KEY)) {
+                this.searchWord = savedInstanceState.getString(SAVED_SEARCH_WORD_KEY);
+                ActionBar actionBar = ((ActionBarActivity) this.getActivity()).getSupportActionBar();
+                actionBar.setDisplayShowTitleEnabled(true);
+                actionBar.setTitle(this.searchWord);
+            }
+
+            if (savedInstanceState.containsKey(SAVED_SEARCH_IN_STOCKED_KEY)) {
+                this.searchInStocked = savedInstanceState.getBoolean(SAVED_SEARCH_IN_STOCKED_KEY);
+            }
+        } else {
+            Bundle args = this.getArguments();
+            this.searchInStocked = (args.containsKey(ARGS_SEARCH_IN_STOCKED_KEY)) && args.getBoolean(ARGS_SEARCH_IN_STOCKED_KEY);
+            if (args.containsKey(ARGS_SEARCH_WORD_KEY)) {
+                String searchWord = args.getString(ARGS_SEARCH_WORD_KEY);
+                if (searchWord != null && !searchWord.equals("")) {
+                    this.searchWord = searchWord;
+                }
+            }
         }
+
         ListView listView = (ListView) this.getView().findViewById(R.id.search_article_list_view);
         listView.addFooterView(this.getFooterLoadingView());
         this.hideFooterLoadingView();
-        this.searchInStockedCheckBox = (CheckBox)this.getView().findViewById(R.id.search_in_stoked_check_box);
-        if (!AppSharedPreference.isLoggedIn(this.getActivity())) {
-            this.searchInStockedCheckBox.setVisibility(View.GONE);
-        } else {
-            this.searchInStockedCheckBox.setOnClickListener(this);
-        }
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.search_article_swipe_refresh);
         this.adapter = new ArticleAdapter(this.getActivity());
         listView.setAdapter(this.adapter);
@@ -118,6 +138,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         });
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
+
+        if (this.searchWord != null && !this.searchWord.equals("")) {
+            this.getSearchArticle();
+        }
     }
 
     @Override
@@ -129,11 +153,12 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         this.searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         this.searchView.setIconifiedByDefault(true);
         this.searchView.setSubmitButtonEnabled(false);
-        if (!this.searchWord.equals("")) {
+        if (this.searchWord != null && !this.searchWord.equals("")) {
             this.searchView.setQuery(this.searchWord, false);
         } else {
             String queryHint = self.getResources().getString(R.string.search_menu_query_hint_text);
             this.searchView.setQueryHint(queryHint);
+            this.searchView.onActionViewExpanded();
         }
         this.searchView.setFocusable(true);
         this.searchView.setOnQueryTextListener(self.onQueryTextListener);
@@ -182,18 +207,18 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     };
 
     private boolean setSearchWord(String searchWord) {
-        ActionBar actionBar = ((ActionBarActivity)this.getActivity()).getSupportActionBar();
-        actionBar.setTitle(searchWord);
-        actionBar.setDisplayShowTitleEnabled(true);
         if (searchWord != null && !searchWord.equals("")) {
             this.searchWord = searchWord;
+            this.listener.setSearchWord(searchWord);
             this.getSearchArticle();
         }
 
         this.searchView.setIconified(false);
-        // SearchViewを隠す
         this.searchView.onActionViewCollapsed();
         this.searchView.clearFocus();
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(this.searchView.getWindowToken(), 0);
         return false;
     }
 
@@ -206,7 +231,8 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (this.searchWord != null) {
+        outState.putBoolean(SAVED_SEARCH_IN_STOCKED_KEY, this.searchInStocked);
+        if (this.searchWord != null && this.searchWord.equals("")) {
             outState.putString(SAVED_SEARCH_WORD_KEY, this.searchWord);
         }
     }
@@ -236,23 +262,14 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         this.listener.onItemClicked(articleModel);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (this.searchWord == null || this.searchWord.equals("")) {
-            return;
-        }
-        this.getSearchArticle();
-    }
-
     private void getSearchArticle() {
         SearchArticlesAPIManager.getInstance().cancel();
         this.adapter.clear();
         this.adapter.notifyDataSetChanged();
         this.showFooterLoadingView();
-        boolean searchInStocked = this.searchInStockedCheckBox.isChecked();
         String token = AppSharedPreference.getToken(this.getActivity());
         SearchArticlesAPIManager.getInstance()
-                .getItems(this.searchWord, searchInStocked, token, this.managerListener);
+                .getItems(this.searchWord, this.searchInStocked, token, this.managerListener);
     }
 
     private APIManagerListener<ArticleModel> managerListener = new APIManagerListener<ArticleModel>() {

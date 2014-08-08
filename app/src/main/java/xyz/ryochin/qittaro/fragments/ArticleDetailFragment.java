@@ -129,6 +129,12 @@ public class ArticleDetailFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.article_detail, menu);
         this.menu = menu;
+        if (!ArticleAPIManager.getInstance().isNull()) {
+            this.changeMenuStocked(
+                    AppSharedPreference.isLoggedIn(this.getActivity()),
+                    ArticleAPIManager.getInstance().isStockedItem()
+            );
+        }
     }
 
     @Override
@@ -149,6 +155,30 @@ public class ArticleDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
         AppController.getInstance().sendView(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (this.adView != null) {
+            this.adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (this.adView != null) {
+            this.adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.adView != null) {
+            this.adView.destroy();
+        }
     }
 
     private void setAdView() {
@@ -213,14 +243,16 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void changeMenuStocked(boolean isLoggedIn, boolean stocked) {
-        if (isLoggedIn) {
-            MenuItem stockedMenu = menu.findItem(R.id.menu_article_detail_stocked);
-            stockedMenu.setVisible(true);
-            MenuItemCompat.setActionView(stockedMenu, null);
-            if (stocked) {
-                stockedMenu.setIcon(R.drawable.ic_menu_stocked);
-            } else {
-                stockedMenu.setIcon(R.drawable.ic_menu_stock);
+        if (this.menu != null) {
+            if (isLoggedIn) {
+                MenuItem stockedMenu = menu.findItem(R.id.menu_article_detail_stocked);
+                stockedMenu.setVisible(true);
+                MenuItemCompat.setActionView(stockedMenu, null);
+                if (stocked) {
+                    stockedMenu.setIcon(R.drawable.ic_menu_stocked);
+                } else {
+                    stockedMenu.setIcon(R.drawable.ic_menu_stock);
+                }
             }
         }
     }
