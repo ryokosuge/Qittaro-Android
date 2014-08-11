@@ -52,7 +52,7 @@ public class SearchActivity extends ActionBarActivity implements SearchFragmentL
         if (AppSharedPreference.isLoggedIn(this)) {
             actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            String[] spinnerStrings = this.getResources().getStringArray(R.array.search_spinner_strings);
+            String[] spinnerStrings = this.getResources().getStringArray(R.array.search_spinner_titles);
             this.adapter = new SearchSpinnerAdapter(this, spinnerStrings);
             this.adapter.setSearchWord(this.searchWord);
             actionBar.setListNavigationCallbacks(this.adapter, new ActionBar.OnNavigationListener() {

@@ -21,6 +21,8 @@
     <string name="article_detail_un_stock_message">release stock</string>
     <string name="home_menu_search_text">Search</string>
     <string name="home_menu_tags_text">Tags</string>
+    <string name="tag_no_logged_in_title">Tags</string>
+    <string name="tag_logged_in_title">Following Tags</string>
     <string name="search_sub_title_prefix">Search Keyword</string>
     <string name="search_menu_search_text">Search</string>
     <string name="search_menu_query_hint_text">Please separated by a space when you search multiple.</string>

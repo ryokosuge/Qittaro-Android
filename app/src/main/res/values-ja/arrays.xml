@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="search_spinner_strings">
+    <string-array name="search_spinner_titles">
         <item>全ての記事から検索</item>
         <item>ストック記事から検索</item>
+    </string-array>
+    <string-array name="tag_spinner_titles">
+        <item>All Tags</item>
+        <item>Following Tags</item>
     </string-array>
 </resources>

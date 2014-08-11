@@ -4,4 +4,8 @@
         <item>Search In Articles</item>
         <item>Search In My Stocked</item>
     </string-array>
+    <string-array name="tag_spinner_titles">
+        <item>All Tags</item>
+        <item>Following Tags</item>
+    </string-array>
 </resources>
