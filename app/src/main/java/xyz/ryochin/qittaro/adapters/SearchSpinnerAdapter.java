@@ -26,13 +26,21 @@ public class SearchSpinnerAdapter extends BaseAdapter {
     private String[] titles;
     private String searchWord;
 
-    public static class ViewHolder {
+    private static class ViewHolder {
         TextView titleTextView;
         TextView searchWordTextView;
 
         public ViewHolder(View v) {
             this.titleTextView = (TextView)v.findViewById(R.id.search_spinner_title);
             this.searchWordTextView = (TextView)v.findViewById(R.id.search_spinner_search_word);
+        }
+    }
+
+    private static class DropDownViewHolder {
+        TextView titleTextView;
+
+        public DropDownViewHolder(View v) {
+            this.titleTextView = (TextView)v.findViewById(R.id.search_spinner_drop_down_title);
         }
     }
 
@@ -67,7 +75,20 @@ public class SearchSpinnerAdapter extends BaseAdapter {
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return this.getCustomView(position, convertView, parent);
+        DropDownViewHolder viewHolder;
+        String title = this.titles[position];
+
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(this.context);
+            convertView = inflater.inflate(R.layout.fragment_search_spinner_drop_down_view, parent, false);
+            viewHolder = new DropDownViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (DropDownViewHolder)convertView.getTag();
+        }
+
+        viewHolder.titleTextView.setText(title);
+        return convertView;
     }
 
     private View getCustomView(int position, View convertView, ViewGroup parent) {
@@ -76,7 +97,7 @@ public class SearchSpinnerAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_search_spinner_detail, parent, false);
+            convertView = inflater.inflate(R.layout.fragment_search_spinner_view, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
