@@ -8,10 +8,14 @@
     <string name="login_error_message">ユーザー名かパスワードが間違っています。</string>
     <string name="login_success_message">ログインが完了しました！</string>
     <string name="article_empty_message">記事がありませんでした。</string>
+    <string name="article_post_detail_format">by %1$s / at %2$s前</string>
     <string name="search_empty_title">検索エラー</string>
     <string name="search_empty_message">記事がみつかりませんでした。\n検索キーワードを変えてみてください。</string>
     <string name="search_empty_search_word_top">検索ワード</string>
     <string name="search_in_stoked_text">ストックしている記事から検索</string>
+    <string name="search_menu_search_title">Search</string>
+    <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>
+    <string name="search_sub_title_prefix">検索ワード</string>
     <string name="article_detail_loading_title">ロード中…</string>
     <string name="article_detail_stock_text">この投稿をストックする</string>
     <string name="article_detail_stock_process_text">ストック中…</string>
@@ -19,16 +23,13 @@
     <string name="article_detail_un_stock_process_text">ストック解除中…</string>
     <string name="article_detail_stock_message">この記事をストックしました</string>
     <string name="article_detail_un_stock_message">ストックを解除しました</string>
-    <string name="search_sub_title_prefix">検索ワード</string>
-    <string name="home_menu_search_text">Search</string>
-    <string name="home_menu_tags_text">All Tags</string>
-    <string name="home_menu_following_tags_text">Following Tags</string>
     <string name="tag_no_logged_in_title">全てのタグ一覧</string>
     <string name="tag_logged_in_title">フォローしているタグ一覧</string>
-    <string name="search_menu_search_text">Search</string>
-    <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>
     <string name="menu_article_detail_browser_title">ブラウザ</string>
     <string name="menu_article_detail_stocked_title">ストック</string>
     <string name="menu_article_detail_share_title">シェア</string>
     <string name="menu_article_detail_share_chooser_title">アプリを選択</string>
+    <string name="menu_home_search_title">Search</string>
+    <string name="menu_home_tags_title">All Tags</string>
+    <string name="menu_home_following_tags_title">Following Tags</string>
 </resources>

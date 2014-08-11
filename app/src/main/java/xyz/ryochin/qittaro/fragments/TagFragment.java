@@ -36,12 +36,16 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
     private static final String TAG = TagFragment.class.getSimpleName();
     private final TagFragment self = this;
     private static final String ARGS_URL_NAME_KEY = "urlname";
-    private FragmentListener listener;
+    private Listener listener;
     private AdView adView;
     private View footerLoadingView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleAdapter adapter;
     private String tagURLName;
+
+    public interface Listener {
+        public void onItemSelected(ArticleModel model);
+    }
 
     public static TagFragment newInstance(String urlName) {
         Bundle args = new Bundle();
@@ -55,7 +59,7 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.listener = (FragmentListener)activity;
+            this.listener = (Listener)activity;
         } catch (ClassCastException e) {
             throw  new ClassCastException("Please implement the FragmentListener.");
         }

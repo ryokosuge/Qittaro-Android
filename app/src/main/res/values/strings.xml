@@ -8,6 +8,7 @@
     <string name="login_error_message">Either the username or password is incorrect.</string>
     <string name="login_success_message">Login has been completed.</string>
     <string name="article_empty_message">Article was not found.</string>
+    <string name="article_post_detail_format">by %1$s / at %2$s ago.</string>
     <string name="search_empty_title">Search Error</string>
     <string name="search_empty_message">Article was not found.</string>
     <string name="search_empty_search_word_top">SearchWord</string>
@@ -19,16 +20,16 @@
     <string name="article_detail_un_stock_process_text">now release stock…</string>
     <string name="article_detail_stock_message">stock article.</string>
     <string name="article_detail_un_stock_message">release stock</string>
-    <string name="home_menu_search_text">Search</string>
-    <string name="home_menu_tags_text">Tags</string>
-    <string name="home_menu_following_tags_text">Following Tags</string>
     <string name="tag_no_logged_in_title">Tags</string>
     <string name="tag_logged_in_title">Following Tags</string>
+    <string name="search_menu_search_title">Search</string>
     <string name="search_sub_title_prefix">Search Keyword</string>
-    <string name="search_menu_search_text">Search</string>
     <string name="search_menu_query_hint_text">Please separated by a space when you search multiple.</string>
     <string name="menu_article_detail_browser_title">Browser</string>
     <string name="menu_article_detail_stocked_title">Stock</string>
     <string name="menu_article_detail_share_title">Share</string>
     <string name="menu_article_detail_share_chooser_title">Choose Share App</string>
+    <string name="menu_home_search_title">Search</string>
+    <string name="menu_home_tags_title">All Tags</string>
+    <string name="menu_home_following_tags_title">Following Tags</string>
 </resources>

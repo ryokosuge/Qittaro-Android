@@ -3,17 +3,17 @@
     >
     <item android:id="@+id/home_menu_following_tags"
         android:icon="@drawable/ic_menu_following_tag"
-        android:title="@string/home_menu_following_tags_text"
+        android:title="@string/menu_home_following_tags_title"
         app:showAsAction="always"
         />
     <item android:id="@+id/home_menu_tags"
         android:icon="@drawable/ic_menu_tag"
-        android:title="@string/home_menu_tags_text"
+        android:title="@string/menu_home_tags_title"
         app:showAsAction="always"
         />
     <item android:id="@+id/home_menu_search"
         android:icon="@drawable/ic_menu_search"
-        android:title="@string/home_menu_search_text"
+        android:title="@string/menu_home_search_title"
         app:showAsAction="always"
         />
 

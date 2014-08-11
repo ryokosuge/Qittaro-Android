@@ -19,16 +19,15 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.SearchSpinnerAdapter;
 import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.SearchFragment;
-import xyz.ryochin.qittaro.fragments.SearchFragmentListener;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class SearchActivity extends ActionBarActivity implements SearchFragmentListener {
+public class SearchActivity extends ActionBarActivity implements SearchFragment.Listener {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
     private final SearchActivity self = this;
 
-    private static final int SPINNER_FRAGMENT_SEARCHIN_ARTICLES_POSITION = 0;
+    private static final int SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION = 0;
     private static final int SPINNER_FRAGMENT_SEARCH_IN_STOCKS_POSITION = 1;
     private static final String SPINNER_SELECTED_NAVIGATION_ITEM_INDEX_KEY = "selectItemIndex";
     private static final String BUNDLE_SEARCH_WORD_KEY = "searchWord";
@@ -55,34 +54,36 @@ public class SearchActivity extends ActionBarActivity implements SearchFragmentL
             String[] spinnerStrings = this.getResources().getStringArray(R.array.search_spinner_titles);
             this.adapter = new SearchSpinnerAdapter(this, spinnerStrings);
             this.adapter.setSearchWord(this.searchWord);
-            actionBar.setListNavigationCallbacks(this.adapter, new ActionBar.OnNavigationListener() {
-                @Override
-                public boolean onNavigationItemSelected(int position, long id) {
-                    Fragment fragment;
-                    Log.e(TAG, "onNavigationItemSelected() :: self.searchWord = " + self.searchWord);
-                    switch (position) {
-                        case SPINNER_FRAGMENT_SEARCHIN_ARTICLES_POSITION:
-                            fragment = SearchFragment.newInstance(self.searchWord, false);
-                            break;
-                        case SPINNER_FRAGMENT_SEARCH_IN_STOCKS_POSITION:
-                            fragment = SearchFragment.newInstance(self.searchWord, true);
-                            break;
-                        default:
-                            fragment = null;
-                    }
-
-                    if (fragment != null) {
-                        self.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, fragment).commit();
-                    }
-                    return false;
-                }
-            });
+            actionBar.setListNavigationCallbacks(this.adapter, this.onNavigationListener);
         } else {
             actionBar.setDisplayShowTitleEnabled(true);
         }
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
+
+    private ActionBar.OnNavigationListener onNavigationListener = new ActionBar.OnNavigationListener() {
+        @Override
+        public boolean onNavigationItemSelected(int position, long id) {
+            Fragment fragment;
+            Log.e(TAG, "onNavigationItemSelected() :: self.searchWord = " + self.searchWord);
+            switch (position) {
+                case SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION:
+                    fragment = SearchFragment.newInstance(self.searchWord, false);
+                    break;
+                case SPINNER_FRAGMENT_SEARCH_IN_STOCKS_POSITION:
+                    fragment = SearchFragment.newInstance(self.searchWord, true);
+                    break;
+                default:
+                    fragment = null;
+            }
+
+            if (fragment != null) {
+                self.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment).commit();
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onPause() {
@@ -136,7 +137,7 @@ public class SearchActivity extends ActionBarActivity implements SearchFragmentL
     }
 
     @Override
-    public void noSerchArticle(String searchWord) {
+    public void noSearchArticle(String searchWord) {
         String title = this.getResources().getString(R.string.search_empty_title);
         StringBuilder builder = new StringBuilder();
         String message = builder.append(this.getResources().getString(R.string.search_empty_message))

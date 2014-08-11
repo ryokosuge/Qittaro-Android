@@ -25,12 +25,12 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.TagViewPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.FollowTagsAPIManager;
-import xyz.ryochin.qittaro.fragments.FragmentListener;
+import xyz.ryochin.qittaro.fragments.TagFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class FollowingTagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener{
+public class FollowingTagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, TagFragment.Listener {
 
     private static final String TAG = FollowingTagActivity.class.getSimpleName();
     private final FollowingTagActivity self = this;
@@ -40,6 +40,7 @@ public class FollowingTagActivity extends ActionBarActivity implements ViewPager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_tag);
 
@@ -72,26 +73,40 @@ public class FollowingTagActivity extends ActionBarActivity implements ViewPager
         this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
-    private APIManagerListener<TagModel> addTagListener = new APIManagerListener<TagModel>() {
-        @Override
-        public void willStart() {
-            Log.e(TAG, "willStart()");
-        }
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+    }
 
-        @Override
-        public void onCompleted(List<TagModel> items) {
-            int currentTabIndex = self.getSupportActionBar().getSelectedNavigationIndex();
-            self.adapter.addItems(items);
-            ActionBar actionBar = self.getSupportActionBar();
-            self.addActionBarTabs(actionBar, items);
-            self.adapter.notifyDataSetChanged();
-            self.getSupportActionBar().setSelectedNavigationItem(currentTabIndex);
+    @Override
+    public void onPageSelected(int position) {
+        self.getSupportActionBar().setSelectedNavigationItem(position);
+        int pageCount = this.adapter.getCount();
+        if (ADD_TAGS_LOADING_INDICATION > (pageCount - position)) {
+            if (!FollowTagsAPIManager.getInstance().isMax()) {
+                FollowTagsAPIManager.getInstance().addItems(this.addTagListener);
+            }
         }
+    }
 
-        @Override
-        public void onError() {
+    @Override
+    public void onPageScrollStateChanged(int position) {
+    }
+
+    @Override
+    public void onItemSelected(ArticleModel model) {
+        Intent intent = new Intent(this, ArticleDetailActivity.class);
+        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        this.startActivity(intent);
+    }
+
+    private void addActionBarTabs(final ActionBar actionBar, List<TagModel> items) {
+        for (TagModel tagModel : items) {
+            ActionBar.Tab tab = actionBar.newTab()
+                    .setText(tagModel.getName())
+                    .setTabListener(self.tabListener);
+            actionBar.addTab(tab);
         }
-    };
+    }
 
     private APIManagerListener<TagModel> reloadTagListener = new APIManagerListener<TagModel>() {
         @Override
@@ -119,14 +134,26 @@ public class FollowingTagActivity extends ActionBarActivity implements ViewPager
         }
     };
 
-    private void addActionBarTabs(final ActionBar actionBar, List<TagModel> items) {
-        for (TagModel tagModel : items) {
-            ActionBar.Tab tab = actionBar.newTab()
-                    .setText(tagModel.getName())
-                    .setTabListener(self.tabListener);
-            actionBar.addTab(tab);
+    private APIManagerListener<TagModel> addTagListener = new APIManagerListener<TagModel>() {
+        @Override
+        public void willStart() {
+            Log.e(TAG, "willStart()");
         }
-    }
+
+        @Override
+        public void onCompleted(List<TagModel> items) {
+            int currentTabIndex = self.getSupportActionBar().getSelectedNavigationIndex();
+            self.adapter.addItems(items);
+            ActionBar actionBar = self.getSupportActionBar();
+            self.addActionBarTabs(actionBar, items);
+            self.adapter.notifyDataSetChanged();
+            self.getSupportActionBar().setSelectedNavigationItem(currentTabIndex);
+        }
+
+        @Override
+        public void onError() {
+        }
+    };
 
     private ActionBar.TabListener tabListener = new ActionBar.TabListener() {
         @Override
@@ -153,37 +180,5 @@ public class FollowingTagActivity extends ActionBarActivity implements ViewPager
         fullLoadingView.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onPageScrolled(int i, float v, int i2) {
-    }
 
-    @Override
-    public void onPageSelected(int position) {
-        self.getSupportActionBar().setSelectedNavigationItem(position);
-        int pageCount = this.adapter.getCount();
-        if (ADD_TAGS_LOADING_INDICATION > (pageCount - position)) {
-            if (!FollowTagsAPIManager.getInstance().isMax()) {
-                FollowTagsAPIManager.getInstance().addItems(this.addTagListener);
-            }
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int position) {
-    }
-
-    @Override
-    public void showSearchEmptyMessage(String searchWord) {
-    }
-
-    @Override
-    public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void onCompletedLoggedin(boolean result) {
-    }
 }

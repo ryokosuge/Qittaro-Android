@@ -139,14 +139,6 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         this.listener.onItemSelected(articleModel);
     }
 
-    private View getFooterLoadingView() {
-        if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
-        }
-        return this.footerLoadingView;
-    }
-
     private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void willStart() {
@@ -215,6 +207,21 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
         public void onError() {
         }
     };
+
+    private void setAdView() {
+        this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        this.adView.loadAd(adRequest);
+    }
+
+    private View getFooterLoadingView() {
+        if (this.footerLoadingView == null) {
+            this.footerLoadingView = this.getActivity()
+                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+        }
+        return this.footerLoadingView;
+    }
+
     private void showFullLoadingView() {
         View fullLoadingView = this.getView().findViewById(R.id.article_loading_layout);
         fullLoadingView.setVisibility(View.VISIBLE);
@@ -233,11 +240,5 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private void showFooterLoadingView() {
         View footerLoadingView = this.getFooterLoadingView();
         footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-    }
-
-    private void setAdView() {
-        this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        this.adView.loadAd(adRequest);
     }
 }

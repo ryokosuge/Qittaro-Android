@@ -34,16 +34,12 @@ public class ArticleAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         TextView titleTextView;
-        TextView createdAtTextView;
-        TextView updatedAtTextView;
+        TextView detailTextView;
         ImageView userIconImageView;
-        TextView userNameTextView;
 
         public ViewHolder(View v) {
             this.titleTextView = (TextView) v.findViewById(R.id.article_title_text_view);
-            this.createdAtTextView = (TextView) v.findViewById(R.id.article_created_at_text_view);
-            this.updatedAtTextView = (TextView) v.findViewById(R.id.article_updated_at_text_view);
-            this.userNameTextView = (TextView) v.findViewById(R.id.article_user_name_text_view);
+            this.detailTextView = (TextView) v.findViewById(R.id.article_post_user_and_created_at_text_view);
             this.userIconImageView = (ImageView) v.findViewById(R.id.article_user_icon_image_view);
         }
     }
@@ -119,12 +115,11 @@ public class ArticleAdapter extends BaseAdapter {
                 )
         );
         viewHolder.titleTextView.setText(articleModel.getTitle());
-        String userText = userModel.getUrlName() + "さんが投稿しました。";
-        String createdAt = "投稿日 : " + articleModel.getCreatedAtInWords() + "前";
-        String updatedAt = "更新日 : " + articleModel.getUpdatedAtInWords() + "前";
-        viewHolder.createdAtTextView.setText(createdAt);
-        viewHolder.updatedAtTextView.setText(updatedAt);
-        viewHolder.userNameTextView.setText(userText);
+        String articlePostDetail = this.context.getResources().getString(
+                R.string.article_post_detail_format,
+                userModel.getUrlName(),
+                articleModel.getCreatedAtInWords());
+        viewHolder.detailTextView.setText(articlePostDetail);
         return convertView;
     }
 }

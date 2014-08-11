@@ -49,13 +49,20 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private static final String ARGS_SEARCH_WORD_KEY = "searchWord";
     private static final String ARGS_SEARCH_IN_STOCKED_KEY = "searchInStocked";
 
+    public interface Listener {
+        public void noSearchArticle(String searchWord);
+        public void onItemClicked(ArticleModel model);
+        public void setSearchWord(String searchWord);
+        public void onOptionMenuClicked(MenuItem menu);
+    }
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleAdapter adapter;
     private View footerLoadingView;
     private String searchWord;
     private boolean searchInStocked;
     private SearchView searchView;
-    private SearchFragmentListener listener;
+    private Listener listener;
     private AdView adView;
 
     public SearchFragment() {}
@@ -75,7 +82,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.listener = (SearchFragmentListener)activity;
+            this.listener = (Listener)activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Please implement the SearchFragmentListener.");
         }
@@ -89,7 +96,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_article, container, false);
     }
 
     @Override
@@ -118,10 +125,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             }
         }
 
-        ListView listView = (ListView) this.getView().findViewById(R.id.search_article_list_view);
+        ListView listView = (ListView) this.getView().findViewById(R.id.article_list_view);
         listView.addFooterView(this.getFooterLoadingView());
         this.hideFooterLoadingView();
-        this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.search_article_swipe_refresh);
+        this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
         this.adapter = new ArticleAdapter(this.getActivity());
         listView.setAdapter(this.adapter);
         this.swipeRefreshLayout.setColorSchemeResources(
@@ -291,7 +298,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                 }
             } else {
                 self.hideFooterLoadingView();
-                self.listener.noSerchArticle(self.searchWord);
+                self.listener.noSearchArticle(self.searchWord);
             }
         }
 
@@ -341,7 +348,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void setAdView() {
-        this.adView = (AdView)this.getView().findViewById(R.id.search_admob_view);
+        this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
         AdRequest adRequest = new AdRequest.Builder().build();
         this.adView.loadAd(adRequest);
     }

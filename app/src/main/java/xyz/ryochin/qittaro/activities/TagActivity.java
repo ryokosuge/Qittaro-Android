@@ -21,11 +21,11 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.TagViewPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.TagsAPIManager;
-import xyz.ryochin.qittaro.fragments.FragmentListener;
+import xyz.ryochin.qittaro.fragments.TagFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.TagModel;
 
-public class TagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener {
+public class TagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, TagFragment.Listener {
 
     private static final String TAG = TagActivity.class.getSimpleName();
     private static final int ADD_TAGS_LOADING_INDICATION = 5;
@@ -167,17 +167,10 @@ public class TagActivity extends ActionBarActivity implements ViewPager.OnPageCh
     }
 
     @Override
-    public void showSearchEmptyMessage(String searchWord) {
-    }
-
-    @Override
     public void onItemSelected(ArticleModel model) {
         Intent intent = new Intent(this, ArticleDetailActivity.class);
         intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 
-    @Override
-    public void onCompletedLoggedin(boolean result) {
-    }
 }
