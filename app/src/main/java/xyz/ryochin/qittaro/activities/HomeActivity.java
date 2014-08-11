@@ -31,7 +31,6 @@ import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 public class HomeActivity extends ActionBarActivity implements FragmentListener {
 
-    private static final int RESULT_CODE_FOR_LOGIN = 1;
     private static final String TAG = HomeActivity.class.getSimpleName();
     private final HomeActivity self = this;
 
@@ -104,6 +103,13 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean loggedIn = AppSharedPreference.isLoggedIn(this);
+        menu.findItem(R.id.home_menu_following_tags).setVisible(loggedIn);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -113,20 +119,26 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
             case R.id.home_menu_search:
                 intent = new Intent(this, SearchActivity.class);
                 this.startActivity(intent);
-                return true;
+                break;
             case R.id.home_menu_tags:
                 intent = new Intent(this, TagActivity.class);
                 this.startActivity(intent);
-                return true;
+                break;
+            case R.id.home_menu_following_tags:
+                intent = new Intent(this, FollowingTagActivity.class);
+                this.startActivity(intent);
+                break;
             default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onCompletedLoggedin(boolean result) {
         if (result) {
             this.setLoggedInAdapter();
+            this.supportInvalidateOptionsMenu();
             Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
         } else {
             String title = this.getResources().getString(R.string.login_error_title);

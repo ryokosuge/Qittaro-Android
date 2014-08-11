@@ -1,8 +1,12 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.activities
- * CREATED BY kosugeryou
- * CREATED AT 2014/08/11
+ * =====================================================
+ * ENCODE : UTF-8
+ * CREATED AT 14/08/11.
+ * CREATED BY kosuge.
+ * Copyright © Samurai Factory Inc. All rights reserved.
+ * ===================================================== 
  */
+
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Intent;
@@ -20,16 +24,17 @@ import java.util.List;
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.TagViewPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
-import xyz.ryochin.qittaro.apimanagers.TagsAPIManager;
+import xyz.ryochin.qittaro.apimanagers.FollowTagsAPIManager;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class TagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener {
+public class FollowingTagActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener{
 
-    private static final String TAG = TagActivity.class.getSimpleName();
+    private static final String TAG = FollowingTagActivity.class.getSimpleName();
+    private final FollowingTagActivity self = this;
     private static final int ADD_TAGS_LOADING_INDICATION = 5;
-    private final TagActivity self = this;
     private ViewPager viewPager;
     private TagViewPagerAdapter adapter;
 
@@ -45,8 +50,9 @@ public class TagActivity extends ActionBarActivity implements ViewPager.OnPageCh
         this.viewPager.setOnPageChangeListener(this);
 
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(R.string.tag_no_logged_in_title);
-        TagsAPIManager.getInstance().reloadItems(this.reloadTagListener);
+        actionBar.setTitle(R.string.tag_logged_in_title);
+        String urlName = AppSharedPreference.getURLName(this);
+        FollowTagsAPIManager.getInstance().getItems(urlName, this.reloadTagListener);
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
@@ -156,8 +162,8 @@ public class TagActivity extends ActionBarActivity implements ViewPager.OnPageCh
         self.getSupportActionBar().setSelectedNavigationItem(position);
         int pageCount = this.adapter.getCount();
         if (ADD_TAGS_LOADING_INDICATION > (pageCount - position)) {
-            if (!TagsAPIManager.getInstance().isMax()) {
-                TagsAPIManager.getInstance().addItems(this.addTagListener);
+            if (!FollowTagsAPIManager.getInstance().isMax()) {
+                FollowTagsAPIManager.getInstance().addItems(this.addTagListener);
             }
         }
     }

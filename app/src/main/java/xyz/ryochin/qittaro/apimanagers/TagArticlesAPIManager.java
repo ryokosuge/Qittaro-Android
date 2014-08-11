@@ -11,8 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +18,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagArticlesAPIManager {
 
@@ -33,9 +34,8 @@ public class TagArticlesAPIManager {
     private int page;
     private boolean loading;
     private boolean max;
-    private String tagURL;
+    private String tagURLName;
     private List<ArticleModel> items;
-
 
     public static TagArticlesAPIManager getInstance() {
         if (instance == null) {
@@ -51,60 +51,37 @@ public class TagArticlesAPIManager {
         this.items = new ArrayList<ArticleModel>();
     }
 
-    public void cancel() {
+    public void cancel(String tagURLName) {
         this.loading = false;
-        AppController.getInstance().cancelPendingRequests(TAG);
+        AppController.getInstance().cancelPendingRequests(TAG + ":" + this.tagURLName);
     }
 
     public boolean isMax() {
         return this.max;
     }
 
-    public void getItems(final String tagURL, final APIManagerListener<ArticleModel> listener) {
+    public void reloadItems(String tagURLName, final APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
-            return;
-        }
-
-        if (this.tagURL != null && this.tagURL.equals(tagURL)) {
-            if (this.items.size() > 0) {
-                listener.onCompleted(this.items);
-                return;
-            }
-        }
-
-        listener.willStart();
-
-        this.page = 1;
-        this.loading = true;
-        this.max = false;
-        this.tagURL = tagURL;
-        this.items.clear();
-        StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
-
-    public void reloadItems(final APIManagerListener<ArticleModel> listener) {
-        if (this.loading || this.tagURL == null) {
-            return;
+            return ;
         }
 
         listener.willStart();
         this.page = 1;
         this.loading = true;
         this.max = false;
-        this.items.clear();
-        StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        this.tagURLName = tagURLName;
+        StringRequest stringRequest = this.getRequest(this.tagURLName, this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG + ":" + this.tagURLName);
     }
 
     public void addItems(final APIManagerListener<ArticleModel> listener) {
-        if (this.loading || this.tagURL == null) {
+        if (this.loading || this.tagURLName == null) {
             return ;
         }
         listener.willStart();
         this.page ++;
         this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.tagURL, this.page, listener);
+        StringRequest stringRequest = this.getRequest(this.tagURLName, this.page, listener);
         AppController.getInstance().addToRequestQueue(stringRequest, TAG);
     }
 
@@ -122,7 +99,6 @@ public class TagArticlesAPIManager {
                             if (items.size() < PER_PAGE) {
                                 self.max = true;
                             }
-                            self.items.addAll(items);
                             listener.onCompleted(items);
                         }
                     }
