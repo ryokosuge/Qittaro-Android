@@ -1,3 +1,9 @@
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.activities
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/07/23
+ */
+
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Context;
@@ -102,9 +108,14 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener 
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.home_menu_search:
-                Intent intent = new Intent(this, SearchActivity.class);
+                intent = new Intent(this, SearchActivity.class);
+                this.startActivity(intent);
+                return true;
+            case R.id.home_menu_tags:
+                intent = new Intent(this, TagActivity.class);
                 this.startActivity(intent);
                 return true;
             default:

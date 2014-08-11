@@ -21,6 +21,7 @@
     <string name="article_detail_un_stock_message">ストックを解除しました</string>
     <string name="search_sub_title_prefix">検索ワード</string>
     <string name="home_menu_search_text">Search</string>
+    <string name="home_menu_tags_text">Tags</string>
     <string name="search_menu_search_text">Search</string>
     <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>
     <string name="menu_article_detail_browser_title">ブラウザ</string>
