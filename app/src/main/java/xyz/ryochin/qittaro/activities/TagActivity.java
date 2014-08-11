@@ -8,14 +8,22 @@ package xyz.ryochin.qittaro.activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
+import java.util.List;
+
 import xyz.ryochin.qittaro.R;
+import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
+import xyz.ryochin.qittaro.apimanagers.FollowTagsAPIManager;
+import xyz.ryochin.qittaro.apimanagers.TagsAPIManager;
+import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class TagActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
+public class TagActivity extends ActionBarActivity implements ActionBar.OnNavigationListener, APIManagerListener<TagModel> {
 
     private static final String TAG = TagActivity.class.getSimpleName();
     private final TagActivity self = this;
@@ -37,14 +45,18 @@ public class TagActivity extends ActionBarActivity implements ActionBar.OnNaviga
                     R.array.tag_spinner_titles,
                     android.R.layout.simple_dropdown_item_1line);
             actionBar.setListNavigationCallbacks(spinnerAdapter, this);
+            String urlName = AppSharedPreference.getURLName(this);
+            FollowTagsAPIManager.getInstance().getItems(urlName, this);
         } else {
             // No logged in.
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(R.string.tag_no_logged_in_title);
+            TagsAPIManager.getInstance().reloadItems(this);
         }
 
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -66,5 +78,32 @@ public class TagActivity extends ActionBarActivity implements ActionBar.OnNaviga
     @Override
     public boolean onNavigationItemSelected(int position, long id) {
         return false;
+    }
+
+    @Override
+    public void willStart() {
+        Log.e(TAG, "willStart");
+        this.showFullLoadingView();
+    }
+
+    @Override
+    public void onCompleted(List<TagModel> items) {
+        Log.e(TAG, "onCompleted()");
+        this.hideFullLoadingView();
+    }
+
+    @Override
+    public void onError() {
+        Log.e(TAG, "onError()");
+    }
+
+    private void showFullLoadingView() {
+        View fullLoadingView = this.findViewById(R.id.tag_loading_layout);
+        fullLoadingView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideFullLoadingView() {
+        View fullLoadingView = this.findViewById(R.id.tag_loading_layout);
+        fullLoadingView.setVisibility(View.GONE);
     }
 }

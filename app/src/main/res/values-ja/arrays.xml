@@ -5,7 +5,7 @@
         <item>ストック記事から検索</item>
     </string-array>
     <string-array name="tag_spinner_titles">
-        <item>All Tags</item>
         <item>Following Tags</item>
+        <item>All Tags</item>
     </string-array>
 </resources>

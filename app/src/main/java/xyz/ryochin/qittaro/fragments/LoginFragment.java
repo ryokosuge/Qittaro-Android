@@ -41,6 +41,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = LoginFragment.class.getSimpleName();
     private final LoginFragment self = this;
 
+    private static final String LOGIN_RESPONSE_URL_NAME_KEY = "url_name";
     private static final String LOGIN_RESPONSE_TOKEN_KEY = "token";
     private static final String LOGIN_API_KEY = "https://qiita.com/api/v1/auth";
     private FragmentListener listener;
@@ -106,7 +107,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 try {
                     JSONObject jsonObject = new JSONObject(jsonResponse);
                     String token = jsonObject.getString(LOGIN_RESPONSE_TOKEN_KEY);
-                    boolean result = AppSharedPreference.setToken(self.getActivity(), token);
+                    String urlName = jsonObject.getString(LOGIN_RESPONSE_URL_NAME_KEY);
+                    boolean result = (
+                            AppSharedPreference.setToken(self.getActivity(), token) &&
+                                    AppSharedPreference.setURLName(self.getActivity(), urlName)
+                    );
                     self.listener.onCompletedLoggedin(result);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException", e);
