@@ -17,12 +17,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.LeftDrawerAdapter;
@@ -180,6 +180,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         if (AppSharedPreference.isLoggedIn(this)) {
             this.loggedInNavigateTo(position);
         } else {
+            AppSharedPreference.logout(this);
             this.notLoggedInNavigateTo(position);
         }
         this.drawerLayout.closeDrawer(this.drawerList);
@@ -257,14 +258,9 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             String urlName = AppSharedPreference.getURLName(this);
             String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
             ((TextView)this.headerUserInfo.findViewById(R.id.user_info_user_name)).setText(urlName);
-            ImageView imageView = (ImageView)this.headerUserInfo.findViewById(R.id.user_info_icon);
+            NetworkImageView imageView = (NetworkImageView)this.headerUserInfo.findViewById(R.id.user_info_icon);
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-            ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
-                    imageView,
-                    R.drawable.ic_launcher,
-                    android.R.drawable.ic_dialog_alert
-            );
-            imageLoader.get(profileImageURL, imageListener);
+            imageView.setImageUrl(profileImageURL, imageLoader);
         }
         return this.headerUserInfo;
     }

@@ -54,7 +54,7 @@ public class AppController extends Application {
 
     public ImageLoader getImageLoader() {
         if (this.imageLoader == null) {
-            this.imageLoader = new ImageLoader(this.requestQueue,
+            this.imageLoader = new ImageLoader(this.getRequestQueue(),
                     new LruBitmapCache());
         }
         return this.imageLoader;

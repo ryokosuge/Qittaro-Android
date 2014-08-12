@@ -12,8 +12,6 @@ import android.preference.PreferenceManager;
 
 public class AppSharedPreference {
 
-    private static final String TAG = AppSharedPreference.class.getSimpleName();
-    private final AppSharedPreference self = this;
     private static final String TOKEN_KEY = "token";
     private static final String URL_NAME_KEY = "urlName";
     private static final String PROFILE_IMAGE_URL_KEY = "profileImageURL";
@@ -36,7 +34,14 @@ public class AppSharedPreference {
     public static boolean isLoggedIn(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String token = sp.getString(TOKEN_KEY, null);
-        return (token != null);
+        String urlName = sp.getString(URL_NAME_KEY, null);
+        String imageProfileImageURL = sp.getString(PROFILE_IMAGE_URL_KEY, null);
+        return ((token != null) && (urlName != null) && (imageProfileImageURL != null));
+    }
+
+    public static boolean logout(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.edit().clear().commit();
     }
 
     public static boolean setToken(Context context, String token) {
