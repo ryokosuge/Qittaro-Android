@@ -22,8 +22,6 @@
     <string name="article_detail_un_stock_process_text">now release stock…</string>
     <string name="article_detail_stock_message">stock article.</string>
     <string name="article_detail_un_stock_message">release stock</string>
-    <string name="tag_no_logged_in_title">Tags</string>
-    <string name="tag_logged_in_title">Following Tags</string>
     <string name="search_menu_search_title">Search</string>
     <string name="search_sub_title_prefix">Search Keyword</string>
     <string name="search_menu_query_hint_text">Please separated by a space when you search multiple.</string>
@@ -32,13 +30,9 @@
     <string name="menu_article_detail_share_title">Share</string>
     <string name="menu_article_detail_share_chooser_title">Choose Share App</string>
     <string name="menu_home_search_title">Search</string>
-    <string name="menu_home_tags_title">All Tags</string>
-    <string name="menu_home_following_tags_title">Following Tags</string>
-
     <string name="left_drawer_login_title">Login</string>
     <string name="left_drawer_public_title">Public</string>
     <string name="left_drawer_tag_title">Tag</string>
-    <string name="left_drawer_search_title">Search</string>
     <string name="left_drawer_stocked_title">Stocked</string>
     <string name="left_drawer_mine_title">Mine</string>
     <string name="left_drawer_following_tag_title">Following Tag</string>

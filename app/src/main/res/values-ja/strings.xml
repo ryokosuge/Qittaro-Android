@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Qittaro</string>
+    <string name="activity_home_drawer_open">Open</string>
+    <string name="activity_home_drawer_close">Close</string>
     <string name="login_user_name_hint">ユーザー名</string>
     <string name="login_password_hint">パスワード</string>
     <string name="login_btn_text">ログイン</string>
@@ -23,13 +25,15 @@
     <string name="article_detail_un_stock_process_text">ストック解除中…</string>
     <string name="article_detail_stock_message">この記事をストックしました</string>
     <string name="article_detail_un_stock_message">ストックを解除しました</string>
-    <string name="tag_no_logged_in_title">全てのタグ一覧</string>
-    <string name="tag_logged_in_title">フォローしているタグ一覧</string>
     <string name="menu_article_detail_browser_title">ブラウザ</string>
     <string name="menu_article_detail_stocked_title">ストック</string>
     <string name="menu_article_detail_share_title">シェア</string>
     <string name="menu_article_detail_share_chooser_title">アプリを選択</string>
     <string name="menu_home_search_title">Search</string>
-    <string name="menu_home_tags_title">All Tags</string>
-    <string name="menu_home_following_tags_title">Following Tags</string>
+    <string name="left_drawer_login_title">ログイン</string>
+    <string name="left_drawer_public_title">記事一覧</string>
+    <string name="left_drawer_tag_title">タグ一覧</string>
+    <string name="left_drawer_stocked_title">ストックした記事</string>
+    <string name="left_drawer_mine_title">自分の投稿</string>
+    <string name="left_drawer_following_tag_title">フォローしているタグ一覧</string>
 </resources>

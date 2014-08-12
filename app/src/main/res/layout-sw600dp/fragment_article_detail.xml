@@ -17,6 +17,7 @@
         ads:adSize="SMART_BANNER"
         />
 
+
     <WebView
         android:id="@+id/article_detail_body_web_view"
         android:layout_width="match_parent"

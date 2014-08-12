@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/tags_admob_view"
+        android:id="@+id/fragment_tags_admob_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -17,49 +14,24 @@
         ads:adSize="LEADERBOARD"
         />
 
-    <RelativeLayout
-        android:id="@+id/tags_loading_layout"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/fragment_tags_view_pager"
+        android:layout_above="@id/fragment_tags_admob_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tags_admob_view"
-        android:visibility="gone"
         >
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tags_progress_bar"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
-
-    </RelativeLayout>
-
-    <Spinner
-        android:id="@+id/tags_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
-        style="@style/SpinnerAppTheme"
-        />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/tags_article_swipe_refresh"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_below="@id/tags_spinner"
-        android:layout_above="@id/tags_admob_view"
-        >
-
-        <ListView
-            android:id="@+id/tags_article_list_view"
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/fragment_tags_pager_tab_strip"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/ListViewAppTheme.White"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@drawable/ab_solid_qittaro"
+            android:textColor="#000000"
+            android:paddingTop="@dimen/large_padding"
+            android:paddingBottom="@dimen/large_padding"
             />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>

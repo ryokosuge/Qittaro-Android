@@ -4,12 +4,4 @@
         <item>Search In Articles</item>
         <item>Search In My Stocked</item>
     </string-array>
-    <string-array name="tag_spinner_titles">
-        <item>Following Tags</item>
-        <item>All Tags</item>
-    </string-array>
-    <string-array name="drawer_name">
-        <item>Hoge</item>
-        <item>Fuga</item>
-    </string-array>
 </resources>

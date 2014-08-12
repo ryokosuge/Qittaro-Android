@@ -4,8 +4,4 @@
         <item>全ての記事から検索</item>
         <item>ストック記事から検索</item>
     </string-array>
-    <string-array name="tag_spinner_titles">
-        <item>Following Tags</item>
-        <item>All Tags</item>
-    </string-array>
 </resources>

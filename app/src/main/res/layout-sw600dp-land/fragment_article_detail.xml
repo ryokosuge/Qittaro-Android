@@ -13,9 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adUnitId="ca-app-pub-3010029359415397/7317826064"
-        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-3010029359415397/4364359663"
+        ads:adSize="LEADERBOARD"
         />
+
 
     <WebView
         android:id="@+id/article_detail_body_web_view"
