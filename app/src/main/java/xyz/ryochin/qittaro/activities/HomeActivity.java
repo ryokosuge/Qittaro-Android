@@ -12,12 +12,17 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.toolbox.ImageLoader;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.LeftDrawerAdapter;
@@ -31,6 +36,7 @@ import xyz.ryochin.qittaro.fragments.MyArticleFragment;
 import xyz.ryochin.qittaro.fragments.StocksFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 
@@ -42,6 +48,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
+    private View headerUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +162,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private void setAdapter() {
         if (AppSharedPreference.isLoggedIn(this)) {
+            this.drawerList.addHeaderView(this.getHeaderUserInfo());
             this.drawerList.setAdapter(new LoginLeftDrawerAdapter(this));
         } else {
             this.drawerList.setAdapter(new LeftDrawerAdapter(this));
@@ -178,7 +186,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     }
 
     private void loggedInNavigateTo(int position) {
-        switch (position) {
+        switch (position - 1) {
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
                 FollowingTagsFragment followFragment = FollowingTagsFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
@@ -241,5 +249,23 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_tag_title);
                 break;
         }
+    }
+
+    private View getHeaderUserInfo() {
+        if (this.headerUserInfo == null) {
+            this.headerUserInfo = LayoutInflater.from(this).inflate(R.layout.left_drawer_header_user_info, null);
+            String urlName = AppSharedPreference.getURLName(this);
+            String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
+            ((TextView)this.headerUserInfo.findViewById(R.id.user_info_user_name)).setText(urlName);
+            ImageView imageView = (ImageView)this.headerUserInfo.findViewById(R.id.user_info_icon);
+            ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+            ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
+                    imageView,
+                    R.drawable.ic_launcher,
+                    android.R.drawable.ic_dialog_alert
+            );
+            imageLoader.get(profileImageURL, imageListener);
+        }
+        return this.headerUserInfo;
     }
 }

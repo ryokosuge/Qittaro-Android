@@ -1,7 +1,7 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="user_icon_width">50dp</dimen>
-    <dimen name="user_icon_height">50dp</dimen>
+    <dimen name="user_icon_width">45dp</dimen>
+    <dimen name="user_icon_height">45dp</dimen>
     <dimen name="tag_icon_width">25dp</dimen>
     <dimen name="tag_icon_height">25dp</dimen>
     <dimen name="large_margin">10dp</dimen>
