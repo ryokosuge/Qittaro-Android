@@ -63,6 +63,10 @@ public class TagsAPIManager {
 
         listener.willStart();
 
+        if (this.items != null && this.items.size() > 0) {
+            listener.onCompleted(this.items);
+        }
+
         this.loading = true;
         this.max = false;
         this.page = 1;

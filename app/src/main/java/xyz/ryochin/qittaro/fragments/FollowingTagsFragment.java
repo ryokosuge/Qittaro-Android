@@ -25,6 +25,7 @@ import xyz.ryochin.qittaro.adapters.TagViewPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.FollowTagsAPIManager;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 public class FollowingTagsFragment extends Fragment {
@@ -32,10 +33,12 @@ public class FollowingTagsFragment extends Fragment {
     private static final String TAG = FollowingTagsFragment.class.getSimpleName();
     private final FollowingTagsFragment self = this;
 
+    private static final String BUNDLE_CURRENT_INDEX_KEY = "currentIndex";
     private static final int ADD_TAGS_LOADING_INDICATION = 5;
     private ViewPager viewPager;
     private TagViewPagerAdapter adapter;
     private AdView adView;
+    private int currentIndex;
 
     public static FollowingTagsFragment newInstance() {
         return new FollowingTagsFragment();
@@ -54,6 +57,15 @@ public class FollowingTagsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            this.currentIndex = 0;
+        } else {
+            if (savedInstanceState.containsKey(BUNDLE_CURRENT_INDEX_KEY)) {
+                this.currentIndex = savedInstanceState.getInt(BUNDLE_CURRENT_INDEX_KEY);
+            }
+        }
+
         this.setAdView();
         this.viewPager = (ViewPager)this.getView().findViewById(R.id.fragment_tags_view_pager);
         this.viewPager.setOnPageChangeListener(this.pageChangeListener);
@@ -62,6 +74,36 @@ public class FollowingTagsFragment extends Fragment {
         pagerTabStrip.setTabIndicatorColorResource(R.color.apptheme_color);
         String urlName = AppSharedPreference.getURLName(this.getActivity());
         FollowTagsAPIManager.getInstance().getItems(urlName, this.reloadTagListener);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (this.adView != null) {
+            this.adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (this.adView != null) {
+            this.adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.adView != null) {
+            this.adView.destroy();
+        }
     }
 
     private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -77,6 +119,7 @@ public class FollowingTagsFragment extends Fragment {
                     FollowTagsAPIManager.getInstance().addItems(self.addTagListener);
                 }
             }
+            self.currentIndex = position;
         }
 
         @Override
@@ -93,7 +136,11 @@ public class FollowingTagsFragment extends Fragment {
         public void onCompleted(List<TagModel> items) {
             self.adapter = new TagViewPagerAdapter(getChildFragmentManager(), items);
             self.viewPager.setAdapter(self.adapter);
-            self.viewPager.setCurrentItem(0, true);
+            if (items.size() < self.currentIndex) {
+                self.viewPager.setCurrentItem(0, true);
+            } else {
+                self.viewPager.setCurrentItem(self.currentIndex, true);
+            }
         }
 
         @Override
@@ -121,5 +168,11 @@ public class FollowingTagsFragment extends Fragment {
         this.adView = (AdView)this.getView().findViewById(R.id.fragment_tags_admob_view);
         AdRequest adRequest = new AdRequest.Builder().build();
         this.adView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(BUNDLE_CURRENT_INDEX_KEY, this.currentIndex);
     }
 }

@@ -83,6 +83,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                     .beginTransaction()
                     .add(R.id.activity_home_fragment_container, fragment)
                     .commit();
+            this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
         }
     }
 
