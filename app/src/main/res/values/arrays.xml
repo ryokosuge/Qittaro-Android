@@ -8,4 +8,8 @@
         <item>Following Tags</item>
         <item>All Tags</item>
     </string-array>
+    <string-array name="drawer_name">
+        <item>Hoge</item>
+        <item>Fuga</item>
+    </string-array>
 </resources>

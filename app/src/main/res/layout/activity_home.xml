@@ -1,13 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_home_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="xyz.ryochin.qittaroactivities.HomeActivity">
+    >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+    <FrameLayout
+        android:id="@+id/activity_home_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
 
-</RelativeLayout>
+    <ListView
+        android:id="@+id/activity_home_left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:layout_gravity="start"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#EEEEEE"
+        style="@style/ListViewAppTheme.White"
+        />
+
+</android.support.v4.widget.DrawerLayout>

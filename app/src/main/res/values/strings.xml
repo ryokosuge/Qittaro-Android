@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Qittaro</string>
+    <string name="activity_home_drawer_open">Open</string>
+    <string name="activity_home_drawer_close">Close</string>
     <string name="login_user_name_hint">url_name</string>
     <string name="login_password_hint">Password</string>
     <string name="login_btn_text">Sing In</string>
@@ -32,4 +34,9 @@
     <string name="menu_home_search_title">Search</string>
     <string name="menu_home_tags_title">All Tags</string>
     <string name="menu_home_following_tags_title">Following Tags</string>
+
+    <string name="left_drawer_login_title">Login</string>
+    <string name="left_drawer_public_title">Public</string>
+    <string name="left_drawer_tag_title">Tag</string>
+    <string name="left_drawer_search_title">Search</string>
 </resources>

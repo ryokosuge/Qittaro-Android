@@ -6,192 +6,123 @@
 
 package xyz.ryochin.qittaro.activities;
 
-import android.content.Context;
-import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.adapters.FragmentPagerAdapter;
-import xyz.ryochin.qittaro.adapters.LoggedInFragmentPagerAdapter;
-import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
-import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.adapters.LeftDrawerAdapter;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 
-public class HomeActivity extends ActionBarActivity implements FragmentListener {
+public class HomeActivity extends ActionBarActivity {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private final HomeActivity self = this;
 
-    ViewPager viewPager;
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
+    private ActionBarDrawerToggle drawerToggle;
+    private BaseAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        ActionBar actionBar = this.getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        this.viewPager = (ViewPager)this.findViewById(R.id.view_pager);
-        this.viewPager.setOnPageChangeListener(this.pageChangeListener);
-        if (AppSharedPreference.isLoggedIn(this)) {
-            this.setLoggedInAdapter();
-        } else {
-            this.setNoLoggedInAdapter();
-        }
-        this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-    }
+        this.setContentView(R.layout.activity_home);
+        this.drawerLayout = (DrawerLayout)this.findViewById(R.id.activity_home_drawer_layout);
+        this.drawerList = (ListView)this.findViewById(R.id.activity_home_left_drawer);
+        this.adapter = new LeftDrawerAdapter(this);
+        this.drawerList.setAdapter(this.adapter);
+        this.drawerList.setOnItemClickListener(this.clickListener);
 
-    @Override
-    protected void onPause() {
-        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
-        super.onPause();
-    }
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.getSupportActionBar().setHomeButtonEnabled(true);
 
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int i, float v, int i2) {
-        }
-
-        @Override
-        public void onPageSelected(int i) {
-            self.getSupportActionBar().setSelectedNavigationItem(i);
-            View view = self.getCurrentFocus();
-            if (view != null) {
-                InputMethodManager inputMethodManager =
-                        (InputMethodManager)self.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        this.drawerToggle = new ActionBarDrawerToggle(
+                this,
+                this.drawerLayout,
+                R.drawable.apptheme_ic_navigation_drawer,
+                R.string.activity_home_drawer_open,
+                R.string.activity_home_drawer_close
+                ) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                self.getSupportActionBar().setTitle(R.string.app_name);
+                supportInvalidateOptionsMenu();
             }
-        }
 
-        @Override
-        public void onPageScrollStateChanged(int i) {
-        }
-    };
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                supportInvalidateOptionsMenu();
+            }
+        };
+        this.drawerLayout.setDrawerListener(this.drawerToggle);
+        this.navigateTo(0);
 
-    private ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-        @Override
-        public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-            self.viewPager.setCurrentItem(tab.getPosition(), true);
-        }
-
-        @Override
-        public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        }
-
-        @Override
-        public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        }
-    };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean loggedIn = AppSharedPreference.isLoggedIn(this);
-        menu.findItem(R.id.home_menu_following_tags).setVisible(loggedIn);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        Intent intent = null;
-        switch (item.getItemId()) {
-            case R.id.home_menu_search:
-                intent = new Intent(this, SearchActivity.class);
-                this.startActivity(intent);
-                break;
-            case R.id.home_menu_tags:
-                intent = new Intent(this, TagActivity.class);
-                this.startActivity(intent);
-                break;
-            case R.id.home_menu_following_tags:
-                intent = new Intent(this, FollowingTagActivity.class);
-                this.startActivity(intent);
-                break;
-            default:
-                break;
+        if (this.drawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onCompletedLoggedin(boolean result) {
-        if (result) {
-            this.setLoggedInAdapter();
-            this.supportInvalidateOptionsMenu();
-            Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        this.drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        this.drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            self.navigateTo(position);
+        }
+    };
+
+    private void navigateTo(int position) {
+        if (AppSharedPreference.isLoggedIn(this)) {
+            this.loggedInNavigateTo(position);
         } else {
-            String title = this.getResources().getString(R.string.login_error_title);
-            String message = this.getResources().getString(R.string.login_error_message);
-            AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
-            alertDialogFragment.show(this.getSupportFragmentManager(), null);
+            this.notLoggedInNavigateTo(position);
         }
+        this.drawerLayout.closeDrawer(this.drawerList);
     }
 
-    private void setNoLoggedInAdapter() {
-        Log.e(TAG, "setNoLoggedInAdapter()");
-        FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(this.getSupportFragmentManager());
-        this.viewPager.setAdapter(pagerAdapter);
-        ActionBar actionBar = this.getSupportActionBar();
-        actionBar.removeAllTabs();
-        for (int i = 0; i < pagerAdapter.getCount(); i++) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(pagerAdapter.getPageTitle(i))
-                            .setTabListener(this.tabListener)
-            );
+    private void loggedInNavigateTo(int position) {
+    }
+
+    private void notLoggedInNavigateTo(int position) {
+        switch (position) {
+            case LeftDrawerAdapter.LEFT_DRAWER_ITEM_LOGIN_INDEX:
+                this.getSupportActionBar().setTitle(R.string.left_drawer_login_title);
+                break;
+            case LeftDrawerAdapter.LEFT_DRAWER_ITEM_PUBLIC_INDEX:
+                this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
+                break;
+            case LeftDrawerAdapter.LEFT_DRAWER_ITEM_SEARCH_INDEX:
+                this.getSupportActionBar().setTitle(R.string.left_drawer_search_title);
+                break;
+            case LeftDrawerAdapter.LEFT_DRAWER_ITEM_TAG_INDEX:
+                this.getSupportActionBar().setTitle(R.string.left_drawer_tag_title);
+                break;
         }
-        this.viewPager.setCurrentItem(0, true);
-    }
-
-    private void setLoggedInAdapter() {
-        Log.e(TAG, "setLoggedInAdapter()");
-        LoggedInFragmentPagerAdapter pagerAdapter = new LoggedInFragmentPagerAdapter(this.getSupportFragmentManager());
-        this.viewPager.setAdapter(pagerAdapter);
-        ActionBar actionBar = this.getSupportActionBar();
-        actionBar.removeAllTabs();
-        for (int i = 0; i < pagerAdapter.getCount(); i++) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(pagerAdapter.getPageTitle(i))
-                            .setTabListener(this.tabListener)
-            );
-        }
-        this.viewPager.setCurrentItem(0, true);
-    }
-
-    @Override
-    public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void showSearchEmptyMessage(String searchWord) {
-        String title = "「" + searchWord + "」の検索結果";
-        String message = "投稿が見つかりませんでした。";
-        AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
-        alertDialogFragment.show(this.getSupportFragmentManager(), null);
     }
 }
