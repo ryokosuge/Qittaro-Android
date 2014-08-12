@@ -42,6 +42,10 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
     private View footerLoadingView;
     private AdView adView;
 
+    public static MyArticleFragment newInstance() {
+        return new MyArticleFragment();
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -225,7 +229,7 @@ public class MyArticleFragment extends Fragment implements AbsListView.OnScrollL
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
         }
         return this.footerLoadingView;
     }

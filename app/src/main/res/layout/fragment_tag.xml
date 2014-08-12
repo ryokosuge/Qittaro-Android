@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/fragment_tag_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_tag_progress_bar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_tag_swipe_refresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+        <ListView
+            android:id="@+id/fragment_tag_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/ListViewAppTheme.White"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</RelativeLayout>

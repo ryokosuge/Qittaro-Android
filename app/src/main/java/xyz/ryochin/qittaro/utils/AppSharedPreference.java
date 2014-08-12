@@ -15,18 +15,22 @@ public class AppSharedPreference {
     private static final String TAG = AppSharedPreference.class.getSimpleName();
     private final AppSharedPreference self = this;
     private static final String TOKEN_KEY = "token";
-    private static final String URL_NAME_KEY = "urlname";
+    private static final String URL_NAME_KEY = "urlName";
+    private static final String PROFILE_IMAGE_URL_KEY = "profileImageURL";
 
     public static String getToken(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String token = sp.getString(TOKEN_KEY, null);
-        return token;
+        return sp.getString(TOKEN_KEY, null);
     }
 
     public static String getURLName(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String urlName = sp.getString(URL_NAME_KEY, null);
-        return urlName;
+        return sp.getString(URL_NAME_KEY, null);
+    }
+
+    public static String getProfileImageUrlKey(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(PROFILE_IMAGE_URL_KEY, null);
     }
 
     public static boolean isLoggedIn(Context context) {
@@ -43,5 +47,10 @@ public class AppSharedPreference {
     public static boolean setURLName(Context context, String urlName) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.edit().putString(URL_NAME_KEY, urlName).commit();
+    }
+
+    public static boolean setProfileImageURL(Context context, String profileImageURL) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.edit().putString(PROFILE_IMAGE_URL_KEY, profileImageURL).commit();
     }
 }

@@ -26,12 +26,6 @@
         <activity android:name="xyz.ryochin.qittaro.activities.SearchActivity"
             android:label="@string/menu_home_search_title"
             />
-        <activity android:name="xyz.ryochin.qittaro.activities.TagActivity"
-            android:label="@string/tag_no_logged_in_title"
-            />
-        <activity android:name="xyz.ryochin.qittaro.activities.FollowingTagActivity"
-            android:label="@string/tag_logged_in_title"
-            />
 
         <activity android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>

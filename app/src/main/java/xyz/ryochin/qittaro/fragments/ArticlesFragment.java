@@ -48,7 +48,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         if ((activity instanceof FragmentListener)) {
             this.listener = (FragmentListener) activity;
         } else {
-            throw new ClassCastException("activity が ArticlesFragmentListener を実装していません.");
+            throw new ClassCastException("Please implement the FragmentListener.");
         }
     }
 
@@ -221,7 +221,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
         }
         return this.footerLoadingView;
     }

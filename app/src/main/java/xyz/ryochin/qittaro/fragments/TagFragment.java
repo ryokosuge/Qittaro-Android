@@ -19,9 +19,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
@@ -36,16 +33,11 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
     private static final String TAG = TagFragment.class.getSimpleName();
     private final TagFragment self = this;
     private static final String ARGS_URL_NAME_KEY = "urlname";
-    private Listener listener;
-    private AdView adView;
+    private FragmentListener listener;
     private View footerLoadingView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArticleAdapter adapter;
     private String tagURLName;
-
-    public interface Listener {
-        public void onItemSelected(ArticleModel model);
-    }
 
     public static TagFragment newInstance(String urlName) {
         Bundle args = new Bundle();
@@ -59,7 +51,7 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.listener = (Listener)activity;
+            this.listener = (FragmentListener)activity;
         } catch (ClassCastException e) {
             throw  new ClassCastException("Please implement the FragmentListener.");
         }
@@ -73,18 +65,17 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_article, container, false);
+        return inflater.inflate(R.layout.fragment_tag, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        this.setAdView();
         Bundle args = this.getArguments();
         if (args.containsKey(ARGS_URL_NAME_KEY)) {
             this.tagURLName = args.getString(ARGS_URL_NAME_KEY);
         }
-        this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
+        this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.fragment_tag_swipe_refresh);
         this.swipeRefreshLayout.setColorSchemeResources(
                 R.color.app_first_green_color,
                 R.color.app_second_green_color,
@@ -92,7 +83,7 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
                 R.color.app_fourth_green_color
         );
         this.swipeRefreshLayout.setOnRefreshListener(this);
-        ListView listView = (ListView)this.getView().findViewById(R.id.article_list_view);
+        ListView listView = (ListView)this.getView().findViewById(R.id.fragment_tag_list_view);
         this.adapter = new ArticleAdapter(this.getActivity());
         listView.addFooterView(this.getFooterLoadingView());
         listView.setOnItemClickListener(this);
@@ -131,30 +122,6 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
     public void onStart() {
         super.onStart();
         AppController.getInstance().sendView(TAG + ":" + this.tagURLName);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (this.adView != null) {
-            this.adView.pause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (this.adView != null) {
-            this.adView.resume();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (this.adView != null) {
-            this.adView.destroy();
-        }
     }
 
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
@@ -205,15 +172,9 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
         }
     };
 
-    private void setAdView() {
-        this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        this.adView.loadAd(adRequest);
-    }
-
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity().getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+            this.footerLoadingView = this.getActivity().getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
         }
         return this.footerLoadingView;
     }

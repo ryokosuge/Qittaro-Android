@@ -16,15 +16,17 @@ import android.widget.TextView;
 
 import xyz.ryochin.qittaro.R;
 
-public class LeftDrawerAdapter extends BaseAdapter {
+public class LoginLeftDrawerAdapter extends BaseAdapter {
 
-    private static final String TAG = LeftDrawerAdapter.class.getSimpleName();
-    private final LeftDrawerAdapter self = this;
+    private static final String TAG = LoginLeftDrawerAdapter.class.getSimpleName();
+    private final LoginLeftDrawerAdapter self = this;
 
-    private static final int LEFT_DRAWER_ITEM_COUNT = 3;
-    public static final int LEFT_DRAWER_ITEM_LOGIN_INDEX = 0;
-    public static final int LEFT_DRAWER_ITEM_PUBLIC_INDEX = 1;
-    public static final int LEFT_DRAWER_ITEM_TAG_INDEX = 2;
+    private static final int LOG_IN_LEFT_DRAWER_ITEM_COUNT = 5;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX = 0;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_STOCKED_INDEX = 1;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX = 2;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX = 3;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX = 4;
 
     private Context context;
 
@@ -39,13 +41,13 @@ public class LeftDrawerAdapter extends BaseAdapter {
         }
     }
 
-    public LeftDrawerAdapter(Context context) {
+    public LoginLeftDrawerAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return LEFT_DRAWER_ITEM_COUNT;
+        return LOG_IN_LEFT_DRAWER_ITEM_COUNT;
     }
 
     @Override
@@ -60,6 +62,7 @@ public class LeftDrawerAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         ViewHolder viewHolder;
         int titleResID = 0;
         int imgResID = 0;
@@ -74,17 +77,26 @@ public class LeftDrawerAdapter extends BaseAdapter {
         }
 
         switch (position) {
-            case LEFT_DRAWER_ITEM_LOGIN_INDEX:
-                titleResID = R.string.left_drawer_login_title;
-                imgResID = R.drawable.ic_menu_login;
-                break;
-            case LEFT_DRAWER_ITEM_PUBLIC_INDEX:
+            case LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX:
                 titleResID = R.string.left_drawer_public_title;
                 imgResID = R.drawable.ic_menu_public;
                 break;
-            case LEFT_DRAWER_ITEM_TAG_INDEX:
+            case LOG_IN_LEFT_DRAWER_ITEM_STOCKED_INDEX:
+                titleResID = R.string.left_drawer_stocked_title;
+                imgResID = R.drawable.ic_menu_stock;
+                break;
+            case LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX:
+                titleResID = R.string.left_drawer_mine_title;
+                imgResID = R.drawable.ic_menu_mine;
+                break;
+            case LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX:
                 titleResID = R.string.left_drawer_tag_title;
                 imgResID = R.drawable.ic_menu_tag;
+                break;
+            case LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
+                titleResID = R.string.left_drawer_following_tag_title;
+                imgResID = R.drawable.ic_menu_following_tag;
+                break;
         }
 
         viewHolder.imageView.setImageResource(imgResID);

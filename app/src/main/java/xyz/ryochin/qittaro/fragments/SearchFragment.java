@@ -84,7 +84,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         try {
             this.listener = (Listener)activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException("Please implement the SearchFragmentListener.");
+            throw new ClassCastException("Please implement the SearchFragment.Listener.");
         }
     }
 
@@ -332,7 +332,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.fragment_article_loading, null);
+                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
         }
         return this.footerLoadingView;
     }

@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import xyz.ryochin.qittaro.R;
+import xyz.ryochin.qittaro.apimanagers.UserAPIManager;
+import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -41,16 +43,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = LoginFragment.class.getSimpleName();
     private final LoginFragment self = this;
 
+    public interface Listener {
+        public void onCompletedLoggedin(boolean result);
+    }
+
     private static final String LOGIN_RESPONSE_URL_NAME_KEY = "url_name";
     private static final String LOGIN_RESPONSE_TOKEN_KEY = "token";
     private static final String LOGIN_API_KEY = "https://qiita.com/api/v1/auth";
-    private FragmentListener listener;
+    private Listener listener;
     private EditText userNameEditText;
     private EditText passwordEditText;
 
     public LoginFragment(){}
 
-    public static LoginFragment getInstance(){
+    public static LoginFragment newInstance(){
         LoginFragment fragment = new LoginFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
@@ -60,10 +66,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof FragmentListener) {
-            this.listener = (FragmentListener)activity;
-        } else {
-            throw new ClassCastException("activity が FragmentListener を実装していません.");
+        try {
+            this.listener = (Listener)activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Please implement the LoginFragment.Listener.");
         }
     }
 
@@ -96,6 +102,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         AppController.getInstance().sendView(TAG);
     }
 
+    private void setUserInfo(final String token) {
+        UserAPIManager.getInstatnce().getItem(token, new UserAPIManager.Listener() {
+            @Override
+            public void willStart() {
+            }
+
+            @Override
+            public void onCompleted(UserModel model) {
+                boolean savedToken = AppSharedPreference.setToken(self.getActivity(), token);
+                boolean savedURLName = AppSharedPreference.setURLName(self.getActivity(), model.getUrlName());
+                boolean savedImageURL = AppSharedPreference.setProfileImageURL(self.getActivity(), model.getProfileImageURL());
+                boolean result = (savedToken && savedURLName && savedImageURL);
+                self.listener.onCompletedLoggedin(result);
+            }
+
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         InputMethodManager inputMethodManager = (InputMethodManager)this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -107,12 +134,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 try {
                     JSONObject jsonObject = new JSONObject(jsonResponse);
                     String token = jsonObject.getString(LOGIN_RESPONSE_TOKEN_KEY);
-                    String urlName = jsonObject.getString(LOGIN_RESPONSE_URL_NAME_KEY);
-                    boolean result = (
-                            AppSharedPreference.setToken(self.getActivity(), token) &&
-                                    AppSharedPreference.setURLName(self.getActivity(), urlName)
-                    );
-                    self.listener.onCompletedLoggedin(result);
+                    self.setUserInfo(token);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSONException", e);
                     self.listener.onCompletedLoggedin(false);
