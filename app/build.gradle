@@ -45,6 +45,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':modules:volley')
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:5.0.89'
     compile 'com.android.support:appcompat-v7:20.+'
 }
