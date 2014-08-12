@@ -4,6 +4,13 @@ android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        abortOnError false
+    }
+
+
     defaultConfig {
         applicationId "xyz.ryochin.qittaro"
         minSdkVersion 9
