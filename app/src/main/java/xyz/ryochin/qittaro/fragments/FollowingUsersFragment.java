@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -31,7 +33,7 @@ import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class FollowingUsersFragment extends Fragment {
+public class FollowingUsersFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
     private static final String TAG = FollowingUsersFragment.class.getSimpleName();
     private final FollowingUsersFragment self = this;
@@ -76,8 +78,36 @@ public class FollowingUsersFragment extends Fragment {
                 R.color.app_third_green_color,
                 R.color.app_fourth_green_color
         );
+        this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String urlName = AppSharedPreference.getURLName(self.getActivity());
+                FollowUsersAPIManager.getInstance().reloadItems(urlName, self.reloadItemListener);
+            }
+        });
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
         String urlName = AppSharedPreference.getURLName(this.getActivity());
         FollowUsersAPIManager.getInstance().getItems(urlName, this.getItemListener);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (!FollowUsersAPIManager.getInstance().isMax()) {
+            if (totalItemCount != 0 && totalItemCount == visibleItemCount + firstVisibleItem) {
+                FollowUsersAPIManager.getInstance().addItems(this.addItemListener);
+            }
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FollowUserModel model = (FollowUserModel)this.adapter.getItem(position);
+        this.listener.onItemSelected(model);
     }
 
     @Override
@@ -144,6 +174,54 @@ public class FollowingUsersFragment extends Fragment {
         }
     };
 
+    private APIManagerListener<FollowUserModel> reloadItemListener = new APIManagerListener<FollowUserModel>() {
+        @Override
+        public void willStart() {
+            self.swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        public void onCompleted(List<FollowUserModel> items) {
+            self.adapter.setItems(items);
+            self.adapter.notifyDataSetInvalidated();
+            if (FollowUsersAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
+            }
+            self.swipeRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
+        public void onError() {
+            self.swipeRefreshLayout.setRefreshing(false);
+        }
+    };
+
+    private APIManagerListener<FollowUserModel> addItemListener = new APIManagerListener<FollowUserModel>() {
+        @Override
+        public void willStart() {
+            self.showFooterLoadingView();
+        }
+
+        @Override
+        public void onCompleted(List<FollowUserModel> items) {
+            self.adapter.addItems(items);
+            self.adapter.notifyDataSetChanged();
+            if (FollowUsersAPIManager.getInstance().isMax()) {
+                self.hideFooterLoadingView();
+            } else {
+                self.showFooterLoadingView();
+            }
+            self.hideFooterLoadingView();;
+        }
+
+        @Override
+        public void onError() {
+            self.hideFooterLoadingView();
+        }
+    };
+
     private void setAdView() {
         this.adView = (AdView)this.getView().findViewById(R.id.article_admob_view);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -172,5 +250,4 @@ public class FollowingUsersFragment extends Fragment {
     private void hideFullLoadingView() {
         this.getView().findViewById(R.id.article_loading_layout).setVisibility(View.GONE);
     }
-
 }

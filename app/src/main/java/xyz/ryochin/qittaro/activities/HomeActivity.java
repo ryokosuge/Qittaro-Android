@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -105,6 +104,13 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             }
         }
         this.navigateTo(this.drawerListIndex);
+        this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     @Override
@@ -174,7 +180,10 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     @Override
     public void onItemSelected(FollowUserModel model) {
-        Log.e(TAG, "HOGE");
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, model.getUrlName());
+        intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, model.getProfileImageURL());
+        this.startActivity(intent);
     }
 
     @Override
