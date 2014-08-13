@@ -14,7 +14,7 @@
         android:id="@+id/user_info_user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/user_info_icon"
+        android:layout_toRightOf="@id/user_info_icon"
         android:layout_centerVertical="true"
         android:layout_marginTop="@dimen/large_margin"
         android:layout_marginBottom="@dimen/large_margin"

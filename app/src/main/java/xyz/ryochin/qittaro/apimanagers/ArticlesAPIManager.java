@@ -11,8 +11,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.utils.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +19,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.utils.AppController;
+
 public class ArticlesAPIManager {
 
     private static final String TAG = ArticlesAPIManager.class.getSimpleName();
     private final ArticlesAPIManager self = this;
     private static final String API_URL = "https://qiita.com/api/v1/items";
+
     private static final int PER_PAGE = 20;
 
     private static ArticlesAPIManager instance;
@@ -57,15 +59,30 @@ public class ArticlesAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
-
-    public void getItems(final APIManagerListener<ArticleModel> listener) {
+    public void getItems(APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
             return;
         }
+
+        listener.willStart();
 
         if (!this.items.isEmpty()) {
-            listener.onCompleted(items);
-            return ;
+            listener.onCompleted(this.items);
+            return;
+        }
+
+        this.page = 1;
+        this.loading = true;
+        this.max = false;
+        this.items.clear();
+
+        StringRequest request = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(request, TAG);
+    }
+
+    public void reloadItems(APIManagerListener<ArticleModel> listener) {
+        if (this.loading) {
+            return;
         }
 
         listener.willStart();
@@ -73,35 +90,29 @@ public class ArticlesAPIManager {
         this.page = 1;
         this.loading = true;
         this.max = false;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+        this.items.clear();
+
+        StringRequest request = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    public void reloadItems(final APIManagerListener<ArticleModel> listener) {
+    public void addItems(APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
             return;
         }
-        listener.willStart();
-        this.page = 1;
-        this.loading = true;
-        this.max = false;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
-    }
 
-    public void addItems(final APIManagerListener<ArticleModel> listener) {
-        if (this.loading) {
-            return;
-        }
         listener.willStart();
+
         this.page++;
         this.loading = true;
-        StringRequest stringRequest = this.getRequest(this.page, listener);
-        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+
+        StringRequest request = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    private StringRequest getRequest(final int page, final APIManagerListener<ArticleModel> listener) {
-        String url = API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
+
+    private StringRequest getRequest(int page, final APIManagerListener<ArticleModel> listener) {
+        String url =  API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
@@ -132,7 +143,6 @@ public class ArticlesAPIManager {
         );
         return stringRequest;
     }
-
 
     private List<ArticleModel> responseToItems(String response) {
         JSONArray jsonArray = null;

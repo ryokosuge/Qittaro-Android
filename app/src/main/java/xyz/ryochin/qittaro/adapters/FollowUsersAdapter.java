@@ -91,7 +91,7 @@ public class FollowUsersAdapter extends BaseAdapter {
         final FollowUserModel model = this.items.get(position);
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.follow_user_list_detail, null);
+            convertView = inflater.inflate(R.layout.list_item_simple, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

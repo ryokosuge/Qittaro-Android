@@ -70,7 +70,7 @@ public class LoginLeftDrawerAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.left_drawer_layout, parent, false);
+            convertView = inflater.inflate(R.layout.drawer_list_item, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

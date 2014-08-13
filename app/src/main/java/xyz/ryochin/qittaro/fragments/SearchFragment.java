@@ -332,7 +332,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
+                    .getLayoutInflater().inflate(R.layout.list_item_footer_loading, null);
         }
         return this.footerLoadingView;
     }
