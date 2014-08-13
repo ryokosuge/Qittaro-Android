@@ -3,15 +3,13 @@
  * CREATED BY kosugeryou
  * CREATED AT 2014/08/13
  */
-
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,39 +21,38 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
+import xyz.ryochin.qittaro.fragments.TagFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
-public class UserActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener {
+public class TagActivity extends ActionBarActivity implements FragmentListener {
 
-    private static final String TAG = UserActivity.class.getSimpleName();
-    private final UserActivity self = this;
+    private static final String TAG = TagActivity.class.getSimpleName();
+    private final TagActivity self = this;
 
-    public static final String INTENT_USER_PROFILE_IMAGE_URL_KEY = "profileImageURL";
-    public static final String INTENT_USER_URL_NAME_KEY = "urlName";
-
-    private static final String SAVE_INSTANCE_CURRENT_INDEX_KEY = "currentIndex";
+    public static final String INTENT_TAG_NAME_KEY = "tagName";
+    public static final String INTENT_TAG_URL_NAME_KEY = "tagURLName";
+    public static final String INTENT_TAG_ICON_URL_KEY = "tagIconURL";
 
     private AdView adView;
-    private ViewPager viewPager;
-    private int currentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_user);
+        this.setContentView(R.layout.activity_tag);
+
+        Intent intent = this.getIntent();
+        String tagName = intent.getStringExtra(INTENT_TAG_NAME_KEY);
+        String tagURLName = intent.getStringExtra(INTENT_TAG_URL_NAME_KEY);
+        String tagIconURL = intent.getStringExtra(INTENT_TAG_ICON_URL_KEY);
 
         ActionBar actionBar = this.getSupportActionBar();
 
-        Intent intent = this.getIntent();
-        String urlName = intent.getExtras().getString(INTENT_USER_URL_NAME_KEY);
-        String profileImageURL = intent.getExtras().getString(INTENT_USER_PROFILE_IMAGE_URL_KEY);
         if (savedInstanceState == null) {
-            View customActionBarView = this.getActionBarView(urlName, profileImageURL);
+            View customActionBarView = this.getActionBarView(tagName, tagIconURL);
 
             if (customActionBarView == null) {
                 this.finish();
@@ -66,16 +63,14 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
             actionBar.setDisplayShowHomeEnabled(false);
             actionBar.setCustomView(customActionBarView);
             actionBar.setDisplayShowCustomEnabled(true);
+
+            TagFragment fragment = TagFragment.newInstance(tagURLName);
+            this.getSupportFragmentManager().beginTransaction()
+                    .add(R.id.tag_activity_fragment_container, fragment)
+                    .commit();
         }
 
         this.setAdView();
-        this.viewPager = (ViewPager)this.findViewById(R.id.activity_user_view_pager);
-        UserDetailPagerAdapter adapter = new UserDetailPagerAdapter(this.getSupportFragmentManager(), this, urlName);
-        this.viewPager.setAdapter(adapter);
-        PagerTabStrip pagerTabStrip = (PagerTabStrip)this.findViewById(R.id.activity_user_pager_tab_strip);
-        pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColorResource(R.color.apptheme_color);
-        this.viewPager.setOnPageChangeListener(this);
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
@@ -88,10 +83,10 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
     @Override
     protected void onPause() {
         super.onPause();
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
         if (this.adView != null) {
             this.adView.pause();
         }
-        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     @Override
@@ -122,36 +117,6 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(SAVE_INSTANCE_CURRENT_INDEX_KEY, this.currentIndex);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(SAVE_INSTANCE_CURRENT_INDEX_KEY)) {
-            this.currentIndex = savedInstanceState.getInt(SAVE_INSTANCE_CURRENT_INDEX_KEY);
-        } else {
-            this.currentIndex = 0;
-        }
-        this.viewPager.setCurrentItem(this.currentIndex, true);
-    }
-
-    @Override
-    public void onPageScrolled(int i, float v, int i2) {
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        this.currentIndex = position;
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int i) {
-    }
-
-    @Override
     public void onItemSelected(ArticleModel model) {
         Intent intent = new Intent(this, ArticleDetailActivity.class);
         intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
@@ -164,24 +129,21 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
 
     @Override
     public void onItemSelected(TagModel model) {
-        Intent intent = new Intent(this, TagActivity.class);
-        intent.putExtra(TagActivity.INTENT_TAG_URL_NAME_KEY, model.getUrlName());
-        intent.putExtra(TagActivity.INTENT_TAG_NAME_KEY, model.getName());
-        intent.putExtra(TagActivity.INTENT_TAG_ICON_URL_KEY, model.getIconURL());
-        this.startActivity(intent);
     }
 
-    private View getActionBarView(String urlName, String profileImageURL) {
-        if (urlName == null || profileImageURL == null) {
+    private View getActionBarView(String urlName, String iconURL) {
+        if (urlName == null || iconURL == null) {
             return null;
         }
+        Log.e(TAG, "title = " + urlName);
+        Log.e(TAG, "iconURL = " + iconURL);
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.activity_action_bar_layout, null);
         TextView textView = (TextView)view.findViewById(R.id.activity_action_bar_title);
         textView.setText(urlName);
         NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.activity_action_bar_icon);
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        imageView.setImageUrl(profileImageURL, imageLoader);
+        imageView.setImageUrl(iconURL, imageLoader);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,8 +153,9 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
         return view;
     }
 
+
     private void setAdView() {
-        this.adView = (AdView)this.findViewById(R.id.activity_user_admob_view);
+        this.adView = (AdView)this.findViewById(R.id.activity_tag_admob_view);
         AdRequest adRequest = new AdRequest.Builder().build();
         this.adView.loadAd(adRequest);
     }

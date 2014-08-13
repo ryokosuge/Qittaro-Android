@@ -38,6 +38,7 @@ import xyz.ryochin.qittaro.fragments.StocksFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.FollowUserModel;
+import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -169,6 +170,15 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             this.drawerListIndex = 1;
         }
         this.navigateTo(this.drawerListIndex);
+    }
+
+    @Override
+    public void onItemSelected(TagModel model) {
+        Intent intent = new Intent(this, TagActivity.class);
+        intent.putExtra(TagActivity.INTENT_TAG_URL_NAME_KEY, model.getUrlName());
+        intent.putExtra(TagActivity.INTENT_TAG_NAME_KEY, model.getName());
+        intent.putExtra(TagActivity.INTENT_TAG_ICON_URL_KEY, model.getIconURL());
+        this.startActivity(intent);
     }
 
     @Override

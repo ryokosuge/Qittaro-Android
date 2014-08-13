@@ -201,6 +201,8 @@ public class UserFollowingTagsFragment extends Fragment implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        TagModel tagModel = (TagModel)this.adapter.getItem(position);
+        this.listener.onItemSelected(tagModel);
     }
 
     private View getFooterLoadingView() {

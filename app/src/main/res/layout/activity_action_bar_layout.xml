@@ -8,7 +8,7 @@
     >
 
     <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/activity_user_action_bar_icon"
+        android:id="@+id/activity_action_bar_icon"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentLeft="true"
@@ -17,11 +17,11 @@
         />
 
     <TextView
-        android:id="@+id/activity_user_action_bar_title"
+        android:id="@+id/activity_action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/activity_user_action_bar_icon"
+        android:layout_toRightOf="@id/activity_action_bar_icon"
         android:layout_marginLeft="8dp"
         android:textSize="@dimen/large_text_size"
         />

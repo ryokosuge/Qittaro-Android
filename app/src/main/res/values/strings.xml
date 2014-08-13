@@ -51,5 +51,4 @@
     <string name="user_info_page_following_user_count_title">Following Users Count</string>
     <string name="user_info_page_followers_count_title">Follower Count</string>
     <string name="user_info_page_post_item_count_title">Items</string>
-    <string name="tag_detail_format">item count : %1$d / follower count : %2$d</string>
 </resources>

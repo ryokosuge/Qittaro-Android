@@ -24,10 +24,10 @@ public class LoginLeftDrawerAdapter extends BaseAdapter {
     private static final int LOG_IN_LEFT_DRAWER_ITEM_COUNT = 6;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX = 0;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_STOCKED_INDEX = 1;
-    public static final int LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX = 2;
-    public static final int LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX = 3;
-    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX = 4;
-    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX = 5;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX = 4;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX = 5;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX = 2;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX = 3;
 
     private Context context;
 
