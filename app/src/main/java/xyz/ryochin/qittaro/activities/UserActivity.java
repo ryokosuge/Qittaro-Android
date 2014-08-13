@@ -24,9 +24,12 @@ import com.google.android.gms.ads.AdView;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
+import xyz.ryochin.qittaro.fragments.FragmentListener;
+import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
-public class UserActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener {
+public class UserActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener, FragmentListener {
 
     private static final String TAG = UserActivity.class.getSimpleName();
     private final UserActivity self = this;
@@ -146,6 +149,17 @@ public class UserActivity extends ActionBarActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageScrollStateChanged(int i) {
+    }
+
+    @Override
+    public void onItemSelected(ArticleModel model) {
+        Intent intent = new Intent(this, ArticleDetailActivity.class);
+        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(FollowUserModel model) {
 
     }
 

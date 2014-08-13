@@ -12,13 +12,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import xyz.ryochin.qittaro.R;
+import xyz.ryochin.qittaro.fragments.UserArticlesFragment;
 import xyz.ryochin.qittaro.fragments.UserInfoFragment;
+import xyz.ryochin.qittaro.fragments.UserStocksFragment;
 
 public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = UserDetailPagerAdapter.class.getSimpleName();
     private final UserDetailPagerAdapter self = this;
 
-    private static final int PAGER_COUNT = 1;
+    private static final int PAGER_COUNT = 3;
     private static final int PAGER_USER_INFO_INDEX = 0;
     private static final int PAGER_USER_POST_ARTICLES_INDEX = 1;
     private static final int PAGER_USER_STOCKED_INDEX = 2;
@@ -38,6 +40,10 @@ public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case PAGER_USER_INFO_INDEX:
                 return UserInfoFragment.newInstance(this.urlName);
+            case PAGER_USER_POST_ARTICLES_INDEX:
+                return UserArticlesFragment.newInstance(this.urlName);
+            case PAGER_USER_STOCKED_INDEX:
+                return UserStocksFragment.newInstance(this.urlName);
             default:
                 return null;
         }
