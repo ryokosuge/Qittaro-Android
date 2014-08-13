@@ -37,6 +37,7 @@ import xyz.ryochin.qittaro.fragments.MyArticleFragment;
 import xyz.ryochin.qittaro.fragments.StocksFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -88,7 +89,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         this.drawerLayout.setDrawerListener(this.drawerToggle);
 
         if (savedInstanceState == null) {
-            ArticlesFragment fragment = new ArticlesFragment();
+            ArticlesFragment fragment = ArticlesFragment.newInstance();
             this.getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.activity_home_fragment_container, fragment)
@@ -103,6 +104,13 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             }
         }
         this.navigateTo(this.drawerListIndex);
+        this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     @Override
@@ -167,6 +175,14 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     public void onItemSelected(ArticleModel model) {
         Intent intent = new Intent(this, ArticleDetailActivity.class);
         intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(FollowUserModel model) {
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, model.getUrlName());
+        intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, model.getProfileImageURL());
         this.startActivity(intent);
     }
 
@@ -239,7 +255,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_mine_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = new ArticlesFragment();
+                ArticlesFragment fragment = ArticlesFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
@@ -271,7 +287,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_login_title);
                 break;
             case LeftDrawerAdapter.LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = new ArticlesFragment();
+                ArticlesFragment fragment = ArticlesFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
@@ -289,7 +305,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private View getHeaderUserInfo() {
         if (this.headerUserInfo == null) {
-            this.headerUserInfo = LayoutInflater.from(this).inflate(R.layout.left_drawer_header_user_info, null);
+            this.headerUserInfo = LayoutInflater.from(this).inflate(R.layout.drawer_list_header_user_info, null);
             String urlName = AppSharedPreference.getURLName(this);
             String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
             ((TextView)this.headerUserInfo.findViewById(R.id.user_info_user_name)).setText(urlName);

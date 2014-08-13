@@ -38,8 +38,14 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private ArticleAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View footerLoadingView;
-
     private AdView adView;
+
+    public static ArticlesFragment newInstance() {
+        Bundle args = new Bundle();
+        ArticlesFragment fragment = new ArticlesFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -61,6 +67,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         this.setAdView();
+
         ListView listView = (ListView) this.getView().findViewById(R.id.article_list_view);
         this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.article_swipe_refresh);
         this.adapter = new ArticleAdapter(this.getActivity());
@@ -79,8 +86,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         listView.addFooterView(this.getFooterLoadingView());
         listView.setOnItemClickListener(this);
         listView.setAdapter(this.adapter);
-        ArticlesAPIManager.getInstance().getItems(this.getAPIManagerListener);
         listView.setOnScrollListener(this);
+        ArticlesAPIManager.getInstance().getItems(this.getAPIManagerListener);
     }
 
     @Override
@@ -221,7 +228,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
+                    .getLayoutInflater().inflate(R.layout.list_item_footer_loading, null);
         }
         return this.footerLoadingView;
     }

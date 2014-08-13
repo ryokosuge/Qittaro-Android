@@ -38,4 +38,17 @@
     <string name="left_drawer_following_tag_title">Following Tag</string>
 
     <string name="left_drawer_following_user_title">Following User</string>
+    <string name="user_detail_page_info_title">Info</string>
+    <string name="user_detail_page_post_article_title">Post Articles</string>
+    <string name="user_detail_page_stocked_title">Stocks</string>
+    <string name="user_detail_page_following_tag_title">Following Tags</string>
+    <string name="user_info_page_name_title">Name</string>
+    <string name="user_info_page_url_title">URL</string>
+    <string name="user_info_page_description_title">Description</string>
+    <string name="user_info_page_web_site_url_title">WebSite URL</string>
+    <string name="user_info_page_organization_title">Organization</string>
+    <string name="user_info_page_location_title">Location</string>
+    <string name="user_info_page_following_user_count_title">Following Users Count</string>
+    <string name="user_info_page_followers_count_title">Follower Count</string>
+    <string name="user_info_page_post_item_count_title">Items</string>
 </resources>

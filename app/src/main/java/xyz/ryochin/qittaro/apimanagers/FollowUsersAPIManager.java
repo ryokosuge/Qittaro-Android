@@ -1,8 +1,9 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.apimanagers
+ * PACKAGE NAME xyz.ryochin.qittaro.adapters
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/08/13
  */
+
 package xyz.ryochin.qittaro.apimanagers;
 
 import android.util.Log;
@@ -19,39 +20,34 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
-public class ArticlesAPIManager {
+public class FollowUsersAPIManager {
 
-    private static final String TAG = ArticlesAPIManager.class.getSimpleName();
-    private final ArticlesAPIManager self = this;
-    private static final String API_URL = "https://qiita.com/api/v1/items";
-
+    private static final String TAG = FollowUsersAPIManager.class.getSimpleName();
+    private final FollowUsersAPIManager self = this;
+    private static final String API_URL = "https://qiita.com/api/v1/users/%s/following_users?page=%d&per_page=%d";
     private static final int PER_PAGE = 20;
 
-    private static ArticlesAPIManager instance;
+    private static FollowUsersAPIManager instance;
+    private List<FollowUserModel> items;
     private int page;
     private boolean loading;
     private boolean max;
-    private List<ArticleModel> items;
+    private String urlName;
 
-    public static ArticlesAPIManager getInstance() {
+    public static FollowUsersAPIManager getInstance() {
         if (instance == null) {
-            instance = new ArticlesAPIManager();
+            instance = new FollowUsersAPIManager();
         }
         return instance;
     }
 
-    private ArticlesAPIManager() {
+    private FollowUsersAPIManager() {
         this.page = 1;
         this.loading = false;
-        this.max = false;
-        this.items = new ArrayList<ArticleModel>();
-    }
-
-    public boolean isMax() {
-        return this.max;
+        this.items = new ArrayList<FollowUserModel>();
     }
 
     public void cancel() {
@@ -59,107 +55,108 @@ public class ArticlesAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
-    public void getItems(APIManagerListener<ArticleModel> listener) {
+    public boolean isMax() {
+        return this.max;
+    }
+
+    public void getItems(String urlName, final APIManagerListener<FollowUserModel> listener) {
         if (this.loading) {
-            return;
+            return ;
         }
 
         listener.willStart();
 
-        if (!this.items.isEmpty()) {
+        if (this.urlName != null && this.urlName.equals(urlName) && this.items.size() > 0) {
             listener.onCompleted(this.items);
-            return;
         }
 
-        this.page = 1;
         this.loading = true;
+        this.page = 1;
         this.max = false;
-        this.items.clear();
+        this.urlName = urlName;
 
-        StringRequest request = this.getRequest(this.page, listener);
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    public void reloadItems(APIManagerListener<ArticleModel> listener) {
+    public void reloadItems(String urlName, final APIManagerListener<FollowUserModel> listener) {
         if (this.loading) {
             return;
         }
 
         listener.willStart();
 
-        this.page = 1;
         this.loading = true;
+        this.page = 1;
         this.max = false;
+        this.urlName = urlName;
         this.items.clear();
 
-        StringRequest request = this.getRequest(this.page, listener);
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    public void addItems(APIManagerListener<ArticleModel> listener) {
+    public void addItems(final APIManagerListener<FollowUserModel> listener) {
         if (this.loading) {
             return;
         }
 
         listener.willStart();
 
-        this.page++;
-        this.loading = true;
+        if (this.urlName == null || this.urlName.equals("")) {
+            listener.onError();
+        }
 
-        StringRequest request = this.getRequest(this.page, listener);
+        this.loading = true;
+        this.page ++;
+
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-
-    private StringRequest getRequest(int page, final APIManagerListener<ArticleModel> listener) {
-        String url =  API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                url,
+    private StringRequest getRequest(String urlName, int page, final APIManagerListener<FollowUserModel> listener) {
+        String url = String.format(API_URL, urlName, page, PER_PAGE);
+        Log.e(TAG, "URL = " + url);
+        return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "onResponse()");
+                        List<FollowUserModel> items = self.responseToItems(response);
                         self.loading = false;
-                        List<ArticleModel> items = self.responseToItems(response);
                         if (items == null) {
                             listener.onError();
                         } else {
                             if (items.size() < PER_PAGE) {
                                 self.max = true;
                             }
-                            self.items.addAll(items);
                             listener.onCompleted(items);
+                            self.items.addAll(items);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "onErrorResponse()");
-                        self.loading = false;
                         listener.onError();
                     }
                 }
         );
-        return stringRequest;
     }
 
-    private List<ArticleModel> responseToItems(String response) {
-        JSONArray jsonArray = null;
+    private List<FollowUserModel> responseToItems(String response) {
         try {
-            jsonArray = new JSONArray(response);
-            int responseArrayCount = jsonArray.length();
-            List<ArticleModel> items = new ArrayList<ArticleModel>(responseArrayCount);
-            for (int i = 0; i < responseArrayCount; i ++) {
+            JSONArray jsonArray = new JSONArray(response);
+            int count = jsonArray.length();
+            List<FollowUserModel> items = new ArrayList<FollowUserModel>(count);
+            for (int i = 0; i < count; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                ArticleModel articleModel = new ArticleModel(jsonObject);
-                items.add(articleModel);
+                FollowUserModel model = new FollowUserModel(jsonObject);
+                items.add(model);
             }
             return items;
         } catch (JSONException e) {
-            Log.e(TAG, "JSONException ::", e);
+            Log.e(TAG, "JSONException", e);
             return null;
         }
     }
-
 }

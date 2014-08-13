@@ -1,8 +1,12 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.apimanagers
- * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * =====================================================
+ * ENCODE : UTF-8
+ * CREATED AT 14/08/13.
+ * CREATED BY kosuge.
+ * Copyright © Samurai Factory Inc. All rights reserved.
+ * ===================================================== 
  */
+
 package xyz.ryochin.qittaro.apimanagers;
 
 import android.util.Log;
@@ -22,29 +26,29 @@ import java.util.List;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
-public class ArticlesAPIManager {
-
-    private static final String TAG = ArticlesAPIManager.class.getSimpleName();
-    private final ArticlesAPIManager self = this;
-    private static final String API_URL = "https://qiita.com/api/v1/items";
-
+public class UserStocksAPIManager {
+    private static final String TAG = UserStocksAPIManager.class.getSimpleName();
+    private final UserStocksAPIManager self = this;
+    private static final String API_URL = "https://qiita.com/api/v1/users/%s/stocks?page=%d&per_page=%d";
     private static final int PER_PAGE = 20;
 
-    private static ArticlesAPIManager instance;
+    private static UserStocksAPIManager instance;
     private int page;
+    private String urlName;
     private boolean loading;
     private boolean max;
     private List<ArticleModel> items;
 
-    public static ArticlesAPIManager getInstance() {
+    public static UserStocksAPIManager getInstance() {
         if (instance == null) {
-            instance = new ArticlesAPIManager();
+            instance = new UserStocksAPIManager();
         }
         return instance;
     }
 
-    private ArticlesAPIManager() {
+    private UserStocksAPIManager() {
         this.page = 1;
+        this.urlName = "";
         this.loading = false;
         this.max = false;
         this.items = new ArrayList<ArticleModel>();
@@ -59,14 +63,14 @@ public class ArticlesAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
-    public void getItems(APIManagerListener<ArticleModel> listener) {
+    public void getItems(String urlName, APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
-            return;
+            return ;
         }
 
         listener.willStart();
 
-        if (!this.items.isEmpty()) {
+        if (this.urlName != null && this.urlName.equals(urlName) && this.items.size() > 0) {
             listener.onCompleted(this.items);
             return;
         }
@@ -74,15 +78,16 @@ public class ArticlesAPIManager {
         this.page = 1;
         this.loading = true;
         this.max = false;
+        this.urlName = urlName;
         this.items.clear();
 
-        StringRequest request = this.getRequest(this.page, listener);
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    public void reloadItems(APIManagerListener<ArticleModel> listener) {
+    public void reloadItems(String urlName, APIManagerListener<ArticleModel> listener) {
         if (this.loading) {
-            return;
+            return ;
         }
 
         listener.willStart();
@@ -90,36 +95,33 @@ public class ArticlesAPIManager {
         this.page = 1;
         this.loading = true;
         this.max = false;
+        this.urlName = urlName;
         this.items.clear();
 
-        StringRequest request = this.getRequest(this.page, listener);
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
     public void addItems(APIManagerListener<ArticleModel> listener) {
-        if (this.loading) {
-            return;
+        if (this.loading || this.max) {
+            return ;
         }
 
         listener.willStart();
 
-        this.page++;
+        this.page ++;
         this.loading = true;
 
-        StringRequest request = this.getRequest(this.page, listener);
+        StringRequest request = this.getRequest(this.urlName, this.page, listener);
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-
-    private StringRequest getRequest(int page, final APIManagerListener<ArticleModel> listener) {
-        String url =  API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                url,
+    private StringRequest getRequest(String urlName, int page, final APIManagerListener<ArticleModel> listener) {
+        String url = String.format(API_URL, urlName, page, PER_PAGE);
+        return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "onResponse()");
-                        self.loading = false;
                         List<ArticleModel> items = self.responseToItems(response);
                         if (items == null) {
                             listener.onError();
@@ -135,13 +137,10 @@ public class ArticlesAPIManager {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "onErrorResponse()");
-                        self.loading = false;
                         listener.onError();
                     }
                 }
         );
-        return stringRequest;
     }
 
     private List<ArticleModel> responseToItems(String response) {
@@ -161,5 +160,4 @@ public class ArticlesAPIManager {
             return null;
         }
     }
-
 }

@@ -221,7 +221,7 @@ public class StocksFragment extends Fragment implements AbsListView.OnScrollList
     private View getFooterLoadingView() {
         if (this.footerLoadingView == null) {
             this.footerLoadingView = this.getActivity()
-                    .getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
+                    .getLayoutInflater().inflate(R.layout.list_item_footer_loading, null);
         }
         return this.footerLoadingView;
     }

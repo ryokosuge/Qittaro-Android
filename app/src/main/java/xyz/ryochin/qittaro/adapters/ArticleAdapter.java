@@ -87,7 +87,7 @@ public class ArticleAdapter extends BaseAdapter {
         final ArticleModel articleModel = this.items.get(position);
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_article_list_detail, null);
+            convertView = inflater.inflate(R.layout.list_item_detail, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

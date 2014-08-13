@@ -4,6 +4,7 @@
     <dimen name="user_icon_height">45dp</dimen>
     <dimen name="tag_icon_width">25dp</dimen>
     <dimen name="tag_icon_height">25dp</dimen>
+    <dimen name="xlarge_margin">20dp</dimen>
     <dimen name="large_margin">10dp</dimen>
     <dimen name="medium_margin">5dp</dimen>
     <dimen name="small_margin">3dp</dimen>
