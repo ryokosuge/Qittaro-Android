@@ -21,12 +21,13 @@ public class LoginLeftDrawerAdapter extends BaseAdapter {
     private static final String TAG = LoginLeftDrawerAdapter.class.getSimpleName();
     private final LoginLeftDrawerAdapter self = this;
 
-    private static final int LOG_IN_LEFT_DRAWER_ITEM_COUNT = 5;
+    private static final int LOG_IN_LEFT_DRAWER_ITEM_COUNT = 6;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX = 0;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_STOCKED_INDEX = 1;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX = 2;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX = 3;
     public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX = 4;
+    public static final int LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX = 5;
 
     private Context context;
 
@@ -97,6 +98,9 @@ public class LoginLeftDrawerAdapter extends BaseAdapter {
                 titleResID = R.string.left_drawer_following_tag_title;
                 imgResID = R.drawable.ic_menu_following_tag;
                 break;
+            case LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX:
+                titleResID = R.string.left_drawer_following_user_title;
+                imgResID = R.drawable.ic_menu_following_user;
         }
 
         viewHolder.imageView.setImageResource(imgResID);

@@ -36,4 +36,6 @@
     <string name="left_drawer_stocked_title">Stocked</string>
     <string name="left_drawer_mine_title">Mine</string>
     <string name="left_drawer_following_tag_title">Following Tag</string>
+
+    <string name="left_drawer_following_user_title">Following User</string>
 </resources>

@@ -30,6 +30,7 @@ import xyz.ryochin.qittaro.adapters.LoginLeftDrawerAdapter;
 import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.ArticlesFragment;
 import xyz.ryochin.qittaro.fragments.FollowingTagsFragment;
+import xyz.ryochin.qittaro.fragments.FollowingUsersFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.fragments.LoginFragment;
 import xyz.ryochin.qittaro.fragments.MyArticleFragment;
@@ -44,11 +45,13 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private final HomeActivity self = this;
+    private static final String BUNDLE_NAVIGATION_DRAWER_INDEX_KEY = "index";
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
     private View headerUserInfo;
+    private int drawerListIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +94,15 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                     .add(R.id.activity_home_fragment_container, fragment)
                     .commit();
             this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
+            this.drawerListIndex = 1;
+        } else {
+            if (savedInstanceState.containsKey(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY)) {
+                this.drawerListIndex = savedInstanceState.getInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY);
+            } else {
+                this.drawerListIndex = 1;
+            }
         }
+        this.navigateTo(this.drawerListIndex);
     }
 
     @Override
@@ -133,6 +144,23 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         this.drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY, this.drawerListIndex);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY)) {
+            this.drawerListIndex = savedInstanceState.getInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY);
+        } else {
+            this.drawerListIndex = 1;
+        }
+        this.navigateTo(this.drawerListIndex);
     }
 
     @Override
@@ -183,6 +211,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             AppSharedPreference.logout(this);
             this.notLoggedInNavigateTo(position);
         }
+        this.drawerListIndex = position;
         this.drawerLayout.closeDrawer(this.drawerList);
     }
 
@@ -223,6 +252,12 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_stocked_title);
                 break;
+            case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX:
+                FollowingUsersFragment usersFragment = FollowingUsersFragment.newInstance();
+                this.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.activity_home_fragment_container, usersFragment)
+                        .commit();
+                this.getSupportActionBar().setTitle(R.string.left_drawer_following_user_title);
         }
     }
 
