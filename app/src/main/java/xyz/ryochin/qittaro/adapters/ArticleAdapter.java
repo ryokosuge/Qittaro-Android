@@ -38,9 +38,9 @@ public class ArticleAdapter extends BaseAdapter {
         ImageView userIconImageView;
 
         public ViewHolder(View v) {
-            this.titleTextView = (TextView) v.findViewById(R.id.article_title_text_view);
-            this.detailTextView = (TextView) v.findViewById(R.id.article_post_user_and_created_at_text_view);
-            this.userIconImageView = (ImageView) v.findViewById(R.id.article_user_icon_image_view);
+            this.titleTextView = (TextView) v.findViewById(R.id.list_item_detail_title);
+            this.detailTextView = (TextView) v.findViewById(R.id.list_item_detail_sub_title);
+            this.userIconImageView = (ImageView) v.findViewById(R.id.list_item_detail_image_view);
         }
     }
 

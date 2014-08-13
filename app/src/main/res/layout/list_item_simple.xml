@@ -4,7 +4,7 @@
     android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/follow_user_detail_icon"
+        android:id="@+id/list_item_simple_image_view"
         android:layout_width="@dimen/user_icon_width"
         android:layout_height="@dimen/user_icon_height"
         android:layout_marginTop="@dimen/large_margin"
@@ -14,10 +14,10 @@
     />
 
     <TextView
-        android:id="@+id/follow_user_detail_url_name"
+        android:id="@+id/list_item_simple_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/follow_user_detail_icon"
+        android:layout_toRightOf="@id/list_item_simple_image_view"
         android:layout_centerVertical="true"
         android:layout_marginTop="@dimen/large_margin"
         android:layout_marginBottom="@dimen/large_margin"

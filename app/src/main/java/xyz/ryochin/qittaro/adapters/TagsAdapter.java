@@ -23,44 +23,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.models.FollowUserModel;
+import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
-public class FollowUsersAdapter extends BaseAdapter {
+public class TagsAdapter extends BaseAdapter {
 
-    private static final String TAG = FollowUsersAdapter.class.getSimpleName();
-    private final FollowUsersAdapter self = this;
-    private List<FollowUserModel> items;
+    private static final String TAG = TagsAdapter.class.getSimpleName();
+    private final TagsAdapter self = this;
+
     private Context context;
-    private int userIconMaxWidth;
-    private int userIconMaxHeight;
+    private List<TagModel> items;
+    private int iconMaxWidth;
+    private int iconMaxHeight;
 
     private static class ViewHolder {
-        ImageView userIconImageView;
-        TextView userNameTextView;
+        private ImageView icon;
+        private TextView tagName;
 
         public ViewHolder(View v) {
-            this.userIconImageView = (ImageView)v.findViewById(R.id.list_item_simple_image_view);
-            this.userNameTextView = (TextView)v.findViewById(R.id.list_item_simple_title);
+            this.icon = (ImageView)v.findViewById(R.id.list_item_simple_image_view);
+            this.tagName = (TextView)v.findViewById(R.id.list_item_simple_title);
         }
     }
 
-    public FollowUsersAdapter(Context context) {
-        this(new ArrayList<FollowUserModel>(), context);
+    public TagsAdapter(Context context) {
+        this(context, new ArrayList<TagModel>());
     }
 
-    public FollowUsersAdapter(List<FollowUserModel> items, Context context) {
-        this.items = items;
+    public TagsAdapter(Context context, List<TagModel> items) {
         this.context = context;
-        this.userIconMaxWidth = (int)this.context.getResources().getDimension(R.dimen.user_icon_width);
-        this.userIconMaxHeight = (int)this.context.getResources().getDimension(R.dimen.user_icon_height);
+        this.items = items;
+        this.iconMaxWidth = (int)this.context.getResources().getDimension(R.dimen.user_icon_width);
+        this.iconMaxHeight = (int)this.context.getResources().getDimension(R.dimen.user_icon_height);
     }
 
-    public void setItems(List<FollowUserModel> items) {
+    public void setItems(List<TagModel> items) {
         this.items = items;
     }
 
-    public void addItems(List<FollowUserModel> items) {
+    public void addItems(List<TagModel> items) {
         this.items.addAll(items);
     }
 
@@ -76,14 +77,14 @@ public class FollowUsersAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return this.items.get(position).getId();
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        TagModel tagModel = this.items.get(position);
         ViewHolder viewHolder;
-        final FollowUserModel model = this.items.get(position);
+
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
             convertView = inflater.inflate(R.layout.list_item_simple, null);
@@ -93,28 +94,26 @@ public class FollowUsersAdapter extends BaseAdapter {
             viewHolder = (ViewHolder)convertView.getTag();
         }
 
-        ImageLoader.ImageContainer imageContainer =
-                (ImageLoader.ImageContainer)viewHolder.userIconImageView.getTag();
+        ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer)viewHolder.icon.getTag();
         if (imageContainer != null) {
             imageContainer.cancelRequest();
         }
 
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-        ImageLoader.ImageListener imageListener =
-                imageLoader.getImageListener(
-                        viewHolder.userIconImageView,
-                        R.drawable.ic_launcher,
-                        android.R.drawable.ic_dialog_alert
-                );
-        viewHolder.userIconImageView.setTag(
+        ImageLoader.ImageListener imageListener = imageLoader.getImageListener(
+                viewHolder.icon,
+                R.drawable.ic_launcher,
+                android.R.drawable.ic_dialog_alert
+        );
+        viewHolder.icon.setTag(
                 imageLoader.get(
-                        model.getProfileImageURL(),
+                        tagModel.getIconURL(),
                         imageListener,
-                        this.userIconMaxWidth,
-                        this.userIconMaxHeight
+                        this.iconMaxWidth,
+                        this.iconMaxHeight
                 )
         );
-        viewHolder.userNameTextView.setText(model.getUrlName());
+        viewHolder.tagName.setText(tagModel.getName());
         return convertView;
     }
 }
