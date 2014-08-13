@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,7 @@ import xyz.ryochin.qittaro.fragments.MyArticleFragment;
 import xyz.ryochin.qittaro.fragments.StocksFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -168,6 +170,11 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         Intent intent = new Intent(this, ArticleDetailActivity.class);
         intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(FollowUserModel model) {
+        Log.e(TAG, "HOGE");
     }
 
     @Override
