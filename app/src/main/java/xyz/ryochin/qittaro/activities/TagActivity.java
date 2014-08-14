@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
@@ -36,8 +33,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     public static final String INTENT_TAG_NAME_KEY = "tagName";
     public static final String INTENT_TAG_URL_NAME_KEY = "tagURLName";
     public static final String INTENT_TAG_ICON_URL_KEY = "tagIconURL";
-
-    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +64,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
                     .add(R.id.tag_activity_fragment_container, fragment)
                     .commit();
         }
-
-        this.setAdView();
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
@@ -84,25 +77,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     protected void onPause() {
         super.onPause();
         this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
-        if (this.adView != null) {
-            this.adView.pause();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (this.adView != null) {
-            this.adView.resume();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.adView != null) {
-            this.adView.destroy();
-        }
     }
 
     @Override
@@ -135,8 +109,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
         if (urlName == null || iconURL == null) {
             return null;
         }
-        Log.e(TAG, "title = " + urlName);
-        Log.e(TAG, "iconURL = " + iconURL);
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.activity_action_bar_layout, null);
         TextView textView = (TextView)view.findViewById(R.id.activity_action_bar_title);
@@ -153,10 +125,4 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
         return view;
     }
 
-
-    private void setAdView() {
-        this.adView = (AdView)this.findViewById(R.id.activity_tag_admob_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        this.adView.loadAd(adRequest);
-    }
 }

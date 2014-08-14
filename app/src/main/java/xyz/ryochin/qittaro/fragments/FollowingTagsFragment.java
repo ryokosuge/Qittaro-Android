@@ -6,74 +6,67 @@
 
 package xyz.ryochin.qittaro.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.adapters.TagViewPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.FollowTagsAPIManager;
+import xyz.ryochin.qittaro.apimanagers.UserStocksAPIManager;
 import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
+import xyz.ryochin.qittaro.views.TagListView;
 
-public class FollowingTagsFragment extends Fragment {
+public class FollowingTagsFragment extends Fragment implements TagListView.Listener {
 
     private static final String TAG = FollowingTagsFragment.class.getSimpleName();
     private final FollowingTagsFragment self = this;
 
-    private static final String BUNDLE_CURRENT_INDEX_KEY = "currentIndex";
-    private static final int ADD_TAGS_LOADING_INDICATION = 5;
-    private ViewPager viewPager;
-    private TagViewPagerAdapter adapter;
-    private AdView adView;
-    private int currentIndex;
+
+    private FragmentListener listener;
+    private TagListView tagListView;
+    private String urlName;
 
     public static FollowingTagsFragment newInstance() {
         return new FollowingTagsFragment();
     }
 
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if ((activity instanceof FragmentListener)) {
+            this.listener = (FragmentListener) activity;
+        } else {
+            throw new ClassCastException("Please implement the FragmentListener.");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tags, container, false);
+        return inflater.inflate(R.layout.basic_list_view_layout, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        this.tagListView = new TagListView(this.getActivity(), this.getView(), true, this);
+        this.urlName = AppSharedPreference.getURLName(this.getActivity());
+        FollowTagsAPIManager.getInstance().getItems(this.urlName, this.getAPIManagerListener);
+    }
 
-        if (savedInstanceState == null) {
-            this.currentIndex = 0;
-        } else {
-            if (savedInstanceState.containsKey(BUNDLE_CURRENT_INDEX_KEY)) {
-                this.currentIndex = savedInstanceState.getInt(BUNDLE_CURRENT_INDEX_KEY);
-            }
-        }
-
-        this.setAdView();
-        this.viewPager = (ViewPager)this.getView().findViewById(R.id.fragment_tags_view_pager);
-        this.viewPager.setOnPageChangeListener(this.pageChangeListener);
-        PagerTabStrip pagerTabStrip = (PagerTabStrip) this.getView().findViewById(R.id.fragment_tags_pager_tab_strip);
-        pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColorResource(R.color.apptheme_color);
-        String urlName = AppSharedPreference.getURLName(this.getActivity());
-        FollowTagsAPIManager.getInstance().getItems(urlName, this.reloadTagListener);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        UserStocksAPIManager.getInstance().cancel();
     }
 
     @Override
@@ -83,96 +76,110 @@ public class FollowingTagsFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (this.adView != null) {
-            this.adView.pause();
-        }
+    public void onResume() {
+        super.onResume();
+        this.tagListView.resume();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (this.adView != null) {
-            this.adView.resume();
-        }
+    public void onPause() {
+        super.onPause();
+        this.tagListView.pause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (this.adView != null) {
-            this.adView.destroy();
-        }
-    }
-
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int i, float v, int i2) {
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            int pageCount = self.adapter.getCount();
-            if (ADD_TAGS_LOADING_INDICATION > (pageCount - position)) {
-                if (!FollowTagsAPIManager.getInstance().isMax()) {
-                    FollowTagsAPIManager.getInstance().addItems(self.addTagListener);
-                }
-            }
-            self.currentIndex = position;
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int i) {
-        }
-    };
-
-    private APIManagerListener<TagModel> reloadTagListener = new APIManagerListener<TagModel>() {
-        @Override
-        public void willStart() {
-        }
-
-        @Override
-        public void onCompleted(List<TagModel> items) {
-            self.adapter = new TagViewPagerAdapter(getChildFragmentManager(), items);
-            self.viewPager.setAdapter(self.adapter);
-            if (items.size() < self.currentIndex) {
-                self.viewPager.setCurrentItem(0, true);
-            } else {
-                self.viewPager.setCurrentItem(self.currentIndex, true);
-            }
-        }
-
-        @Override
-        public void onError() {
-        }
-    };
-
-    private APIManagerListener<TagModel> addTagListener = new APIManagerListener<TagModel>() {
-        @Override
-        public void willStart() {
-        }
-
-        @Override
-        public void onCompleted(List<TagModel> items) {
-            self.adapter.addItems(items);
-            self.adapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onError() {
-        }
-    };
-
-    private void setAdView() {
-        this.adView = (AdView)this.getView().findViewById(R.id.fragment_tags_admob_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        this.adView.loadAd(adRequest);
+        this.tagListView.destroy();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(BUNDLE_CURRENT_INDEX_KEY, this.currentIndex);
+    public void onRefresh() {
+        FollowTagsAPIManager.getInstance().reloadItems(this.urlName, this.reloadAPIManagerListener);
     }
+
+    @Override
+    public void onItemClicked(TagModel model) {
+        this.listener.onItemSelected(model);
+    }
+
+    @Override
+    public void onScrollEnd() {
+        if (!FollowTagsAPIManager.getInstance().isMax()) {
+            FollowTagsAPIManager.getInstance().addItems(this.addAPIManagerListener);
+        }
+    }
+
+    private APIManagerListener<TagModel> getAPIManagerListener = new APIManagerListener<TagModel>() {
+
+        @Override
+        public void willStart() {
+            self.tagListView.setFullLoadingViewVisibility(View.VISIBLE);
+            self.tagListView.setSwipeRefreshVisibility(View.GONE);
+        }
+
+        @Override
+        public void onCompleted(List<TagModel> items) {
+            self.tagListView.setItems(items);
+            if (FollowTagsAPIManager.getInstance().isMax()) {
+                self.tagListView.setFooterLoadingViewVisibility(View.GONE);
+            } else {
+                self.tagListView.setFooterLoadingViewVisibility(View.VISIBLE);
+            }
+            self.tagListView.setSwipeRefreshVisibility(View.VISIBLE);
+            self.tagListView.setFullLoadingViewVisibility(View.GONE);
+        }
+
+        @Override
+        public void onError() {
+            self.tagListView.setFullLoadingViewVisibility(View.GONE);
+            self.tagListView.setSwipeRefreshVisibility(View.VISIBLE);
+        }
+    };
+
+    private APIManagerListener<TagModel> reloadAPIManagerListener = new APIManagerListener<TagModel>() {
+
+        @Override
+        public void willStart() {
+            self.tagListView.setRefresh(true);
+        }
+
+        @Override
+        public void onCompleted(List<TagModel> items) {
+            self.tagListView.setItems(items);
+            if (FollowTagsAPIManager.getInstance().isMax()) {
+                self.tagListView.setFooterLoadingViewVisibility(View.GONE);
+            } else {
+                self.tagListView.setFooterLoadingViewVisibility(View.VISIBLE);
+            }
+            self.tagListView.setRefresh(false);
+        }
+
+        @Override
+        public void onError() {
+            self.tagListView.setRefresh(false);
+            self.tagListView.setFooterLoadingViewVisibility(View.GONE);
+        }
+    };
+
+    private APIManagerListener<TagModel> addAPIManagerListener = new APIManagerListener<TagModel>() {
+        @Override
+        public void willStart() {
+        }
+
+        @Override
+        public void onCompleted(List<TagModel> items) {
+            self.tagListView.addItems(items);
+            if (FollowTagsAPIManager.getInstance().isMax()) {
+                self.tagListView.setFooterLoadingViewVisibility(View.GONE);
+            } else {
+                self.tagListView.setFooterLoadingViewVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onError() {
+            self.tagListView.setFooterLoadingViewVisibility(View.GONE);
+        }
+    };
 }

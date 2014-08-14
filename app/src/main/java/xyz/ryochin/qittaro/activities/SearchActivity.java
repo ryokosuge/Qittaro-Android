@@ -1,7 +1,7 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.activities
+ * PACKAGE NAME xyz.ryochin.qittaro.views
  * CREATED BY kosugeryou
- * CREATED AT 2014/08/05
+ * CREATED AT 2014/08/14
  */
 
 package xyz.ryochin.qittaro.activities;
@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import xyz.ryochin.qittaro.R;
@@ -65,7 +64,6 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
         @Override
         public boolean onNavigationItemSelected(int position, long id) {
             Fragment fragment;
-            Log.e(TAG, "onNavigationItemSelected() :: self.searchWord = " + self.searchWord);
             switch (position) {
                 case SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION:
                     fragment = SearchFragment.newInstance(self.searchWord, false);

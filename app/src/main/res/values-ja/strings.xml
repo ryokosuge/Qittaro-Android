@@ -48,7 +48,7 @@
     <string name="user_info_page_web_site_url_title">WebSite URL</string>
     <string name="user_info_page_organization_title">Organization</string>
     <string name="user_info_page_location_title">Location</string>
-    <string name="user_info_page_following_user_count_title">フォローしているユーザー数</string>
-    <string name="user_info_page_followers_count_title">フォローされている数</string>
-    <string name="user_info_page_post_item_count_title">投稿数</string>
+    <string name="user_info_page_following_user_count_title">フォロー</string>
+    <string name="user_info_page_followers_count_title">フォロワー</string>
+    <string name="user_info_page_post_item_count_title">投稿</string>
 </resources>

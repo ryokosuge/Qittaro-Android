@@ -65,6 +65,8 @@ public class ArticleAdapter extends BaseAdapter {
         this.items.addAll(items);
     }
 
+
+
     @Override
     public int getCount() {
         return this.items.size();

@@ -2,21 +2,33 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/basic_list_admob_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adUnitId="ca-app-pub-3010029359415397/8656788469"
+        ads:adSize="BANNER"
+        android:visibility="gone"
+        />
+
     <RelativeLayout
-        android:id="@+id/fragment_tag_loading_layout"
+        android:id="@+id/basic_list_loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:layout_above="@id/basic_list_admob_view"
         >
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fragment_tag_progress_bar"
+            android:id="@+id/basic_list_loading_progress_bar"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 
@@ -24,13 +36,14 @@
 
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/fragment_tag_swipe_refresh"
+        android:id="@+id/basic_list_swipe_refresh"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_above="@id/basic_list_admob_view"
         >
 
         <ListView
-            android:id="@+id/fragment_tag_list_view"
+            android:id="@+id/basic_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             style="@style/ListViewAppTheme.White"

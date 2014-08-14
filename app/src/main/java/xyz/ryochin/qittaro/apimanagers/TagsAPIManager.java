@@ -25,7 +25,7 @@ import xyz.ryochin.qittaro.utils.AppController;
 public class TagsAPIManager {
     private static final String TAG = TagsAPIManager.class.getSimpleName();
     private final TagsAPIManager self = this;
-    private static final String API_URL = "https://qiita.com/api/v1/tags";
+    private static final String API_URL = "https://qiita.com/api/v1/tags?page=%d&per_page=%d";
     private static final int PER_PAGE = 20;
 
     private static TagsAPIManager instance;
@@ -56,9 +56,9 @@ public class TagsAPIManager {
         return this.max;
     }
 
-    public void reloadItems(final APIManagerListener<TagModel> listener) {
+    public void getItems(final APIManagerListener<TagModel> listener) {
         if (this.loading) {
-            return;
+            return ;
         }
 
         listener.willStart();
@@ -66,6 +66,21 @@ public class TagsAPIManager {
         if (this.items != null && this.items.size() > 0) {
             listener.onCompleted(this.items);
         }
+
+        this.loading = true;
+        this.max = false;
+        this.page = 1;
+
+        StringRequest stringRequest = this.getRequest(this.page, listener);
+        AppController.getInstance().addToRequestQueue(stringRequest, TAG);
+    }
+
+    public void reloadItems(final APIManagerListener<TagModel> listener) {
+        if (this.loading) {
+            return;
+        }
+
+        listener.willStart();
 
         this.loading = true;
         this.max = false;
@@ -89,7 +104,7 @@ public class TagsAPIManager {
     }
 
     private StringRequest getRequest(int page, final APIManagerListener<TagModel> listener) {
-        String url = API_URL + "?page=" + page + "&per_page=" + PER_PAGE;
+        String url = String.format(API_URL, page, PER_PAGE);
         return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override

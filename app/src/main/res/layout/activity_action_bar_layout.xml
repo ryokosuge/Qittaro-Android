@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@android:color/transparent"
+    android:background="@drawable/apptheme_list_selector_holo_light"
     >
 
     <com.android.volley.toolbox.NetworkImageView
@@ -23,6 +23,7 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/activity_action_bar_icon"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="@dimen/large_margin"
         android:textSize="@dimen/large_text_size"
         />
 
