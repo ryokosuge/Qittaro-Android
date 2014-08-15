@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Qittaro</string>
-    <string name="activity_home_drawer_open">Open</string>
-    <string name="activity_home_drawer_close">Close</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
     <string name="login_user_name_hint">ユーザー名</string>
     <string name="login_password_hint">パスワード</string>
     <string name="login_btn_text">ログイン</string>
@@ -36,7 +36,6 @@
     <string name="left_drawer_stocked_title">ストックした記事</string>
     <string name="left_drawer_mine_title">自分の投稿</string>
     <string name="left_drawer_following_tag_title">フォローしているタグ</string>
-
     <string name="left_drawer_following_user_title">フォローしているユーザー</string>
     <string name="user_detail_page_info_title">情報</string>
     <string name="user_detail_page_post_article_title">投稿記事</string>
@@ -51,4 +50,14 @@
     <string name="user_info_page_following_user_count_title">フォロー</string>
     <string name="user_info_page_followers_count_title">フォロワー</string>
     <string name="user_info_page_post_item_count_title">投稿</string>
+
+    <string name="menu_article_info_title">記事情報</string>
+    <string name="article_info_title_tag_id">title</string>
+    <string name="article_info_user_tag_id">user</string>
+    <string name="article_info_tag_tag_id">tag</string>
+    <string name="article_info_comment_tag_id">comment</string>
+    <string name="article_info_user_title">投稿者</string>
+    <string name="article_info_tag_title">タグ(%1$d)</string>
+    <string name="article_info_comment_title">コメント(%1$d)</string>
+
 </resources>

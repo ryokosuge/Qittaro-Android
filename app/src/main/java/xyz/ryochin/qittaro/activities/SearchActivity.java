@@ -37,14 +37,14 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.basic_fragment_container_layout);
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             SearchFragment fragment = SearchFragment.newInstance(null, false);
-            fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit();
+            fragmentManager.beginTransaction().add(R.id.basic_fragment_container, fragment).commit();
         }
 
         if (AppSharedPreference.isLoggedIn(this)) {
@@ -77,7 +77,7 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
 
             if (fragment != null) {
                 self.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, fragment).commit();
+                        .replace(R.id.basic_fragment_container, fragment).commit();
             }
             return false;
         }
@@ -118,8 +118,8 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
 
     @Override
     public void onItemClicked(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 

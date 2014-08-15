@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Qittaro</string>
-    <string name="activity_home_drawer_open">Open</string>
-    <string name="activity_home_drawer_close">Close</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
     <string name="login_user_name_hint">url_name</string>
     <string name="login_password_hint">Password</string>
     <string name="login_btn_text">Sing In</string>
@@ -51,4 +51,12 @@
     <string name="user_info_page_followers_count_title">Followers</string>
     <string name="user_info_page_post_item_count_title">Post Count</string>
 
+    <string name="menu_article_info_title">Info</string>
+    <string name="article_info_title_tag_id">title</string>
+    <string name="article_info_user_tag_id">user</string>
+    <string name="article_info_tag_tag_id">tag</string>
+    <string name="article_info_comment_tag_id">comment</string>
+    <string name="article_info_user_title">Post User</string>
+    <string name="article_info_tag_title">Tag(%1$d)</string>
+    <string name="article_info_comment_title">Comments(%1$d)</string>
 </resources>

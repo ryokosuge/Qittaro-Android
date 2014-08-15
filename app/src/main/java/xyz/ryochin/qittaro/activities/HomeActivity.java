@@ -72,8 +72,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this,
                 this.drawerLayout,
                 R.drawable.apptheme_ic_navigation_drawer,
-                R.string.activity_home_drawer_open,
-                R.string.activity_home_drawer_close
+                R.string.drawer_open,
+                R.string.drawer_close
                 ) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -184,8 +184,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     @Override
     public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 

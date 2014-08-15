@@ -21,7 +21,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.fragments.UserDetailView;
+import xyz.ryochin.qittaro.views.UserDetailView;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.models.TagModel;
@@ -127,8 +127,8 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
 
     @Override
     public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 
@@ -155,10 +155,10 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
             return null;
         }
         LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.activity_action_bar_layout, null);
-        TextView textView = (TextView)view.findViewById(R.id.activity_action_bar_title);
+        View view = inflater.inflate(R.layout.action_bar_icon_layout, null);
+        TextView textView = (TextView)view.findViewById(R.id.action_bar_title);
         textView.setText(urlName);
-        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.activity_action_bar_icon);
+        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.action_bar_icon);
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
         imageView.setImageUrl(profileImageURL, imageLoader);
         view.setOnClickListener(new View.OnClickListener() {

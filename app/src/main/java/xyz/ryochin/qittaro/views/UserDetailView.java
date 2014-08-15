@@ -1,13 +1,11 @@
 /**
- * =====================================================
- * ENCODE : UTF-8
- * CREATED AT 14/08/14.
- * CREATED BY kosuge.
- * Copyright © Samurai Factory Inc. All rights reserved.
- * ===================================================== 
+ * PACKAGE NAME xyz.ryochin.qittaro.views
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/14
  */
 
-package xyz.ryochin.qittaro.fragments;
+
+package xyz.ryochin.qittaro.views;
 
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;

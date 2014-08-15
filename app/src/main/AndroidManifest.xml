@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="xyz.ryochin.qittaro.activities.ArticleDetailActivity"
+        <activity android:name=".activities.ArticleActivity"
             android:label="@string/app_name"
             />
         <activity android:name="xyz.ryochin.qittaro.activities.SearchActivity"

@@ -37,7 +37,7 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_tag);
+        this.setContentView(R.layout.basic_fragment_container_layout);
 
         Intent intent = this.getIntent();
         String tagName = intent.getStringExtra(INTENT_TAG_NAME_KEY);
@@ -61,7 +61,7 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
 
             TagFragment fragment = TagFragment.newInstance(tagURLName);
             this.getSupportFragmentManager().beginTransaction()
-                    .add(R.id.tag_activity_fragment_container, fragment)
+                    .add(R.id.basic_fragment_container, fragment)
                     .commit();
         }
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
@@ -92,8 +92,8 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
 
     @Override
     public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 
@@ -110,10 +110,10 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
             return null;
         }
         LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.activity_action_bar_layout, null);
-        TextView textView = (TextView)view.findViewById(R.id.activity_action_bar_title);
+        View view = inflater.inflate(R.layout.action_bar_icon_layout, null);
+        TextView textView = (TextView)view.findViewById(R.id.action_bar_title);
         textView.setText(urlName);
-        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.activity_action_bar_icon);
+        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.action_bar_icon);
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
         imageView.setImageUrl(iconURL, imageLoader);
         view.setOnClickListener(new View.OnClickListener() {
