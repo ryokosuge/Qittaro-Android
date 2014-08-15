@@ -67,7 +67,8 @@
                 android:orientation="horizontal"
                 android:baselineAligned="false"
                 android:background="@color/app_light_gray_color"
-                android:padding="@dimen/medium_padding"
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
                 >
 
                 <LinearLayout
@@ -76,6 +77,8 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
                     >
 
                     <TextView
@@ -83,17 +86,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/medium_margin"
-                        android:textSize="@dimen/xxlarge_text_size"
+                        android:textSize="@dimen/large_text_size"
                         android:textStyle="bold"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/medium_text_size"
+                        android:textSize="@dimen/small_text_size"
                         android:text="@string/user_info_page_post_item_count_title"
                         />
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"
+                    />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -101,23 +110,31 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
                     >
                     <TextView
                         android:id="@+id/user_info_following_user_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/medium_margin"
-                        android:textSize="@dimen/xxlarge_text_size"
+                        android:textSize="@dimen/large_text_size"
                         android:textStyle="bold"
                     />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/medium_text_size"
+                        android:textSize="@dimen/small_text_size"
                         android:text="@string/user_info_page_followers_count_title"
                     />
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"
+                    />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -125,19 +142,21 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
                     >
                     <TextView
                         android:id="@+id/user_info_follower_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/medium_margin"
-                        android:textSize="@dimen/xxlarge_text_size"
+                        android:textSize="@dimen/large_text_size"
                         android:textStyle="bold"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/medium_text_size"
+                        android:textSize="@dimen/small_text_size"
                         android:text="@string/user_info_page_followers_count_title"
                         />
 

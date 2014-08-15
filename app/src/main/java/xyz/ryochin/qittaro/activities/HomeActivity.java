@@ -48,6 +48,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     private static final String TAG = HomeActivity.class.getSimpleName();
     private final HomeActivity self = this;
     private static final String BUNDLE_NAVIGATION_DRAWER_INDEX_KEY = "index";
+    private static final int DRAWER_LIST_HEADER_INDEX = -1;
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
@@ -243,6 +244,14 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private void loggedInNavigateTo(int position) {
         switch (position - 1) {
+            case DRAWER_LIST_HEADER_INDEX:
+                String urlName = AppSharedPreference.getURLName(this);
+                String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
+                Intent intent = new Intent(this, UserActivity.class);
+                intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
+                intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, profileImageURL);
+                this.startActivity(intent);
+                break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
                 FollowingTagsFragment followFragment = FollowingTagsFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
