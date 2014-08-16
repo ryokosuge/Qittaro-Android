@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:background="@color/app_light_gray_color"
+    >
+
+    <TextView
+        android:id="@+id/article_info_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="bold"
+        />
+
+</RelativeLayout>

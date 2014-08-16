@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <RelativeLayout
+        android:id="@+id/user_info_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_detail_progress_bar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/user_info_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/large_padding"
+            >
+            
+            <LinearLayout
+                android:id="@+id/user_info_top_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:orientation="horizontal"
+                >
+                
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/user_info_icon"
+                    android:layout_width="@dimen/user_icon_width"
+                    android:layout_height="@dimen/user_icon_height"
+                    android:layout_marginRight="@dimen/large_margin"
+                />
+                
+                <TextView
+                    android:id="@+id/user_info_url_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/xlarge_text_size"
+                />
+                
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user_info_counter"
+                android:layout_below="@id/user_info_top_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:background="@color/app_light_gray_color"
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
+                >
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
+                    >
+
+                    <TextView
+                        android:id="@+id/user_info_post_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/medium_margin"
+                        android:textSize="@dimen/large_text_size"
+                        android:textStyle="bold"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/small_text_size"
+                        android:text="@string/user_info_page_post_item_count_title"
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"
+                    />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
+                    >
+                    <TextView
+                        android:id="@+id/user_info_following_user_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/medium_margin"
+                        android:textSize="@dimen/large_text_size"
+                        android:textStyle="bold"
+                    />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/small_text_size"
+                        android:text="@string/user_info_page_followers_count_title"
+                    />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"
+                    />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/medium_margin"
+                    android:layout_marginRight="@dimen/medium_margin"
+                    >
+                    <TextView
+                        android:id="@+id/user_info_follower_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/medium_margin"
+                        android:textSize="@dimen/large_text_size"
+                        android:textStyle="bold"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/small_text_size"
+                        android:text="@string/user_info_page_followers_count_title"
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/user_info_name_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_counter"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:text="@string/user_info_page_name_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_name_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:textSize="@dimen/large_text_size"
+                />
+
+            <TextView
+                android:id="@+id/user_info_url_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_name"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:text="@string/user_info_page_url_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_url_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:textSize="@dimen/large_text_size"
+                android:autoLink="web"
+                />
+            <TextView
+                android:id="@+id/user_info_description_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_url"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:text="@string/user_info_page_description_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_description_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:textSize="@dimen/large_text_size"
+                android:autoLink="web"
+                />
+
+            <TextView
+                android:id="@+id/user_info_web_site_url_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_description"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:text="@string/user_info_page_web_site_url_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_web_site_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_web_site_url_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:autoLink="web"
+                android:textSize="@dimen/large_text_size"
+                />
+
+            <TextView
+                android:id="@+id/user_info_organization_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_web_site_url"
+                android:text="@string/user_info_page_organization_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_organization"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_organization_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:textSize="@dimen/large_text_size"
+                />
+
+            <TextView
+                android:id="@+id/user_info_location_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_organization"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:text="@string/user_info_page_location_title"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/user_info_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_location_title"
+                android:layout_marginLeft="@dimen/large_margin"
+                android:layout_marginRight="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:textSize="@dimen/large_text_size"
+                />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>
+
+

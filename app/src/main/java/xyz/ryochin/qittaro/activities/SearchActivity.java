@@ -1,7 +1,7 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.activities
+ * PACKAGE NAME xyz.ryochin.qittaro.views
  * CREATED BY kosugeryou
- * CREATED AT 2014/08/05
+ * CREATED AT 2014/08/14
  */
 
 package xyz.ryochin.qittaro.activities;
@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import xyz.ryochin.qittaro.R;
@@ -38,14 +37,14 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.basic_fragment_container_layout);
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             SearchFragment fragment = SearchFragment.newInstance(null, false);
-            fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit();
+            fragmentManager.beginTransaction().add(R.id.basic_fragment_container, fragment).commit();
         }
 
         if (AppSharedPreference.isLoggedIn(this)) {
@@ -65,7 +64,6 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
         @Override
         public boolean onNavigationItemSelected(int position, long id) {
             Fragment fragment;
-            Log.e(TAG, "onNavigationItemSelected() :: self.searchWord = " + self.searchWord);
             switch (position) {
                 case SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION:
                     fragment = SearchFragment.newInstance(self.searchWord, false);
@@ -79,7 +77,7 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
 
             if (fragment != null) {
                 self.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, fragment).commit();
+                        .replace(R.id.basic_fragment_container, fragment).commit();
             }
             return false;
         }
@@ -120,8 +118,8 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
 
     @Override
     public void onItemClicked(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
         this.startActivity(intent);
     }
 

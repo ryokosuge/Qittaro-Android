@@ -21,7 +21,7 @@ import xyz.ryochin.qittaro.utils.AppController;
 
 public class ArticleAPIManager {
 
-    public interface ArticleAPIManagerListener {
+    public interface Listener {
         public void willStart(ArticleDetailModel model);
         public void onCompleted(ArticleDetailModel model);
         public void onError();
@@ -51,7 +51,7 @@ public class ArticleAPIManager {
         AppController.getInstance().cancelPendingRequests(TAG);
     }
 
-    public void getItem(String articleUUID, String token, ArticleAPIManagerListener listener) {
+    public void getItem(String articleUUID, String token, Listener listener) {
         if (this.loading) {
             return ;
         }
@@ -87,10 +87,10 @@ public class ArticleAPIManager {
     }
 
     public boolean isStockedItem() {
-        return this.item.isStocked();
+        return (this.item != null && this.item.isStocked());
     }
 
-    public void unStockArticle(String token, final ArticleAPIManagerListener listener) {
+    public void unStockArticle(String token, final Listener listener) {
         if (this.loading) {
             return;
         }
@@ -124,7 +124,7 @@ public class ArticleAPIManager {
         AppController.getInstance().addToRequestQueue(request, TAG);
     }
 
-    public void stockArticle(String token, final ArticleAPIManagerListener listener) {
+    public void stockArticle(String token, final Listener listener) {
         if (this.loading) {
             return;
         }
@@ -163,7 +163,7 @@ public class ArticleAPIManager {
         return urlBuilder.toString();
     }
 
-    private StringRequest getRequest(String articleUUID, String token, final ArticleAPIManagerListener listener) {
+    private StringRequest getRequest(String articleUUID, String token, final Listener listener) {
         String url = this.makeURL(articleUUID, token);
         return new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {

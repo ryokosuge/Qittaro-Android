@@ -6,7 +6,7 @@
     >
 
     <ImageView
-        android:id="@+id/article_user_icon_image_view"
+        android:id="@+id/list_item_detail_image_view"
         android:layout_width="@dimen/user_icon_width"
         android:layout_height="@dimen/user_icon_height"
         android:layout_margin="@dimen/large_margin"
@@ -20,7 +20,7 @@
         >
 
         <TextView
-            android:id="@+id/article_title_text_view"
+            android:id="@+id/list_item_detail_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/large_margin"
@@ -31,12 +31,12 @@
             />
 
         <TextView
-            android:id="@+id/article_post_user_and_created_at_text_view"
+            android:id="@+id/list_item_detail_sub_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/large_margin"
             android:layout_marginBottom="@dimen/small_margin"
-            android:layout_below="@id/article_title_text_view"
+            android:layout_below="@id/list_item_detail_title"
             android:textColor="@android:color/secondary_text_light"
             android:textSize="@dimen/small_text_size"
             />

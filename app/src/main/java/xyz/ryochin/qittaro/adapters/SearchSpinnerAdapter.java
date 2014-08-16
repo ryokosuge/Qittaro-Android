@@ -77,7 +77,7 @@ public class SearchSpinnerAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_search_spinner_drop_down_view, parent, false);
+            convertView = inflater.inflate(R.layout.search_spinner_drop_down_view, parent, false);
             viewHolder = new DropDownViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -94,7 +94,7 @@ public class SearchSpinnerAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_search_spinner_view, parent, false);
+            convertView = inflater.inflate(R.layout.search_spinner_view, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

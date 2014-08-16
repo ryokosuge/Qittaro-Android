@@ -30,12 +30,15 @@ import xyz.ryochin.qittaro.adapters.LoginLeftDrawerAdapter;
 import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.ArticlesFragment;
 import xyz.ryochin.qittaro.fragments.FollowingTagsFragment;
+import xyz.ryochin.qittaro.fragments.FollowingUsersFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.fragments.LoginFragment;
 import xyz.ryochin.qittaro.fragments.MyArticleFragment;
 import xyz.ryochin.qittaro.fragments.StocksFragment;
 import xyz.ryochin.qittaro.fragments.TagsFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.FollowUserModel;
+import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -44,11 +47,14 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private final HomeActivity self = this;
+    private static final String BUNDLE_NAVIGATION_DRAWER_INDEX_KEY = "index";
+    private static final int DRAWER_LIST_HEADER_INDEX = -1;
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
     private View headerUserInfo;
+    private int drawerListIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +72,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this,
                 this.drawerLayout,
                 R.drawable.apptheme_ic_navigation_drawer,
-                R.string.activity_home_drawer_open,
-                R.string.activity_home_drawer_close
+                R.string.drawer_open,
+                R.string.drawer_close
                 ) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -85,13 +91,28 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         this.drawerLayout.setDrawerListener(this.drawerToggle);
 
         if (savedInstanceState == null) {
-            ArticlesFragment fragment = new ArticlesFragment();
+            ArticlesFragment fragment = ArticlesFragment.newInstance();
             this.getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.activity_home_fragment_container, fragment)
                     .commit();
             this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
+            this.drawerListIndex = 1;
+        } else {
+            if (savedInstanceState.containsKey(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY)) {
+                this.drawerListIndex = savedInstanceState.getInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY);
+            } else {
+                this.drawerListIndex = 1;
+            }
         }
+        this.navigateTo(this.drawerListIndex);
+        this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     @Override
@@ -136,9 +157,43 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY, this.drawerListIndex);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY)) {
+            this.drawerListIndex = savedInstanceState.getInt(BUNDLE_NAVIGATION_DRAWER_INDEX_KEY);
+        } else {
+            this.drawerListIndex = 1;
+        }
+        this.navigateTo(this.drawerListIndex);
+    }
+
+    @Override
+    public void onItemSelected(TagModel model) {
+        Intent intent = new Intent(this, TagActivity.class);
+        intent.putExtra(TagActivity.INTENT_TAG_URL_NAME_KEY, model.getUrlName());
+        intent.putExtra(TagActivity.INTENT_TAG_NAME_KEY, model.getName());
+        intent.putExtra(TagActivity.INTENT_TAG_ICON_URL_KEY, model.getIconURL());
+        this.startActivity(intent);
+    }
+
+    @Override
     public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleDetailActivity.class);
-        intent.putExtra(ArticleDetailActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(FollowUserModel model) {
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, model.getUrlName());
+        intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, model.getProfileImageURL());
         this.startActivity(intent);
     }
 
@@ -183,11 +238,20 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             AppSharedPreference.logout(this);
             this.notLoggedInNavigateTo(position);
         }
+        this.drawerListIndex = position;
         this.drawerLayout.closeDrawer(this.drawerList);
     }
 
     private void loggedInNavigateTo(int position) {
         switch (position - 1) {
+            case DRAWER_LIST_HEADER_INDEX:
+                String urlName = AppSharedPreference.getURLName(this);
+                String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
+                Intent intent = new Intent(this, UserActivity.class);
+                intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
+                intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, profileImageURL);
+                this.startActivity(intent);
+                break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
                 FollowingTagsFragment followFragment = FollowingTagsFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
@@ -210,7 +274,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_mine_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = new ArticlesFragment();
+                ArticlesFragment fragment = ArticlesFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
@@ -223,6 +287,12 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_stocked_title);
                 break;
+            case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX:
+                FollowingUsersFragment usersFragment = FollowingUsersFragment.newInstance();
+                this.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.activity_home_fragment_container, usersFragment)
+                        .commit();
+                this.getSupportActionBar().setTitle(R.string.left_drawer_following_user_title);
         }
     }
 
@@ -236,7 +306,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_login_title);
                 break;
             case LeftDrawerAdapter.LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = new ArticlesFragment();
+                ArticlesFragment fragment = ArticlesFragment.newInstance();
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
@@ -254,7 +324,7 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
 
     private View getHeaderUserInfo() {
         if (this.headerUserInfo == null) {
-            this.headerUserInfo = LayoutInflater.from(this).inflate(R.layout.left_drawer_header_user_info, null);
+            this.headerUserInfo = LayoutInflater.from(this).inflate(R.layout.drawer_list_header_user_info, null);
             String urlName = AppSharedPreference.getURLName(this);
             String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
             ((TextView)this.headerUserInfo.findViewById(R.id.user_info_user_name)).setText(urlName);

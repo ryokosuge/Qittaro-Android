@@ -38,9 +38,9 @@ public class ArticleAdapter extends BaseAdapter {
         ImageView userIconImageView;
 
         public ViewHolder(View v) {
-            this.titleTextView = (TextView) v.findViewById(R.id.article_title_text_view);
-            this.detailTextView = (TextView) v.findViewById(R.id.article_post_user_and_created_at_text_view);
-            this.userIconImageView = (ImageView) v.findViewById(R.id.article_user_icon_image_view);
+            this.titleTextView = (TextView) v.findViewById(R.id.list_item_detail_title);
+            this.detailTextView = (TextView) v.findViewById(R.id.list_item_detail_sub_title);
+            this.userIconImageView = (ImageView) v.findViewById(R.id.list_item_detail_image_view);
         }
     }
 
@@ -65,6 +65,8 @@ public class ArticleAdapter extends BaseAdapter {
         this.items.addAll(items);
     }
 
+
+
     @Override
     public int getCount() {
         return this.items.size();
@@ -87,7 +89,7 @@ public class ArticleAdapter extends BaseAdapter {
         final ArticleModel articleModel = this.items.get(position);
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
-            convertView = inflater.inflate(R.layout.fragment_article_list_detail, null);
+            convertView = inflater.inflate(R.layout.list_item_detail, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

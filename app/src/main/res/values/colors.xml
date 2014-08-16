@@ -4,6 +4,7 @@
     <color name="app_main_bleu_color">#009B95</color>
     <color name="app_main_orange_color">#FE7100</color>
     <color name="app_main_red_color">#FC0006</color>
+    <color name="app_light_gray_color">#D8D8D8</color>
     <color name="app_first_green_color">#5CDB55</color>
     <color name="app_second_green_color">#37D22F</color>
     <color name="app_third_green_color">#08A000</color>

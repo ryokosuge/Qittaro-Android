@@ -10,34 +10,29 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.adapters.ArticleAdapter;
 import xyz.ryochin.qittaro.apimanagers.APIManagerListener;
 import xyz.ryochin.qittaro.apimanagers.TagArticlesAPIManager;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.utils.AppController;
+import xyz.ryochin.qittaro.views.ArticleListView;
 
-public class TagFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener {
+public class TagFragment extends Fragment implements ArticleListView.Listener {
 
     private static final String TAG = TagFragment.class.getSimpleName();
     private final TagFragment self = this;
     private static final String ARGS_URL_NAME_KEY = "urlname";
+
     private FragmentListener listener;
-    private View footerLoadingView;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ArticleAdapter adapter;
     private String tagURLName;
+    private ArticleListView view;
 
     public static TagFragment newInstance(String urlName) {
         Bundle args = new Bundle();
@@ -65,50 +60,16 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tag, container, false);
+        return inflater.inflate(R.layout.basic_list_view_layout, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle args = this.getArguments();
-        if (args.containsKey(ARGS_URL_NAME_KEY)) {
-            this.tagURLName = args.getString(ARGS_URL_NAME_KEY);
-        }
-        this.swipeRefreshLayout = (SwipeRefreshLayout)this.getView().findViewById(R.id.fragment_tag_swipe_refresh);
-        this.swipeRefreshLayout.setColorSchemeResources(
-                R.color.app_first_green_color,
-                R.color.app_second_green_color,
-                R.color.app_third_green_color,
-                R.color.app_fourth_green_color
-        );
-        this.swipeRefreshLayout.setOnRefreshListener(this);
-        ListView listView = (ListView)this.getView().findViewById(R.id.fragment_tag_list_view);
-        this.adapter = new ArticleAdapter(this.getActivity());
-        listView.addFooterView(this.getFooterLoadingView());
-        listView.setOnItemClickListener(this);
-        listView.setAdapter(this.adapter);
-        listView.setOnScrollListener(this);
+        this.tagURLName = args.getString(ARGS_URL_NAME_KEY);
+        this.view = new ArticleListView(this.getActivity(), this.getView(), true, this);
         TagArticlesAPIManager.getInstance().reloadItems(this.tagURLName, this.getAPIManagerListener);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ArticleModel articleModel = (ArticleModel)this.adapter.getItem(position);
-        this.listener.onItemSelected(articleModel);
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (!TagArticlesAPIManager.getInstance().isMax()) {
-            if (totalItemCount != 0 && totalItemCount == visibleItemCount + firstVisibleItem) {
-                TagArticlesAPIManager.getInstance().addItems(this.addAPIManagerListener);
-            }
-        }
     }
 
     @Override
@@ -124,73 +85,110 @@ public class TagFragment extends Fragment implements AdapterView.OnItemClickList
         AppController.getInstance().sendView(TAG + ":" + this.tagURLName);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.view.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.view.pause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.view.destroy();
+    }
+
+    @Override
+    public void onRefresh() {
+        TagArticlesAPIManager.getInstance().reloadItems(this.tagURLName, this.reloadAPIManagerListener);
+    }
+
+    @Override
+    public void onItemClicked(ArticleModel model) {
+        this.listener.onItemSelected(model);
+    }
+
+    @Override
+    public void onScrollEnd() {
+        if (!TagArticlesAPIManager.getInstance().isMax()) {
+            TagArticlesAPIManager.getInstance().addItems(this.addAPIManagerListener);
+        }
+    }
+
     private APIManagerListener<ArticleModel> getAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void willStart() {
-            self.showFooterLoadingView();
+            self.view.setFullLoadingViewVisibility(View.VISIBLE);
+            self.view.setFooterLoadingViewVisibility(View.GONE);
+            self.view.setSwipeRefreshVisibility(View.GONE);
         }
 
         @Override
         public void onCompleted(List<ArticleModel> items) {
-            self.adapter.setItems(items);
-            self.adapter.notifyDataSetChanged();
+            self.view.setItems(items);
             if (TagArticlesAPIManager.getInstance().isMax()) {
-                self.hideFooterLoadingView();
+                self.view.setFooterLoadingViewVisibility(View.GONE);
             } else {
-                self.showFooterLoadingView();
+                self.view.setFooterLoadingViewVisibility(View.VISIBLE);
             }
-            self.swipeRefreshLayout.setRefreshing(false);
+            self.view.setFullLoadingViewVisibility(View.GONE);
+            self.view.setSwipeRefreshVisibility(View.VISIBLE);
         }
 
         @Override
         public void onError() {
-            self.swipeRefreshLayout.setRefreshing(false);
-            self.hideFooterLoadingView();
+            self.view.setFullLoadingViewVisibility(View.GONE);
+            self.view.setSwipeRefreshVisibility(View.VISIBLE);
+        }
+    };
+
+    private APIManagerListener<ArticleModel> reloadAPIManagerListener = new APIManagerListener<ArticleModel>() {
+        @Override
+        public void willStart() {
+            self.view.setRefresh(true);
+        }
+
+        @Override
+        public void onCompleted(List<ArticleModel> items) {
+            self.view.setItems(items);
+            if (TagArticlesAPIManager.getInstance().isMax()) {
+                self.view.setFooterLoadingViewVisibility(View.GONE);
+            } else {
+                self.view.setFooterLoadingViewVisibility(View.VISIBLE);
+            }
+            self.view.setRefresh(false);
+        }
+
+        @Override
+        public void onError() {
+            self.view.setRefresh(false);
         }
     };
 
     private APIManagerListener<ArticleModel> addAPIManagerListener = new APIManagerListener<ArticleModel>() {
         @Override
         public void willStart() {
-            self.showFooterLoadingView();
+            self.view.setFooterLoadingViewVisibility(View.VISIBLE);
         }
 
         @Override
         public void onCompleted(List<ArticleModel> items) {
-            self.adapter.addItems(items);
-            self.adapter.notifyDataSetChanged();
+            self.view.addItems(items);
             if (TagArticlesAPIManager.getInstance().isMax()) {
-                self.hideFooterLoadingView();
+                self.view.setFooterLoadingViewVisibility(View.GONE);
             } else {
-                self.showFooterLoadingView();
+                self.view.setFooterLoadingViewVisibility(View.VISIBLE);
             }
         }
 
         @Override
         public void onError() {
-            self.hideFooterLoadingView();
+            self.view.setFooterLoadingViewVisibility(View.GONE);
         }
     };
-
-    private View getFooterLoadingView() {
-        if (this.footerLoadingView == null) {
-            this.footerLoadingView = this.getActivity().getLayoutInflater().inflate(R.layout.list_view_footer_loading_layout, null);
-        }
-        return this.footerLoadingView;
-    }
-
-    private void hideFooterLoadingView() {
-        View footerLoadingView = this.getFooterLoadingView();
-        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.GONE);
-    }
-
-    private void showFooterLoadingView() {
-        View footerLoadingView = this.getFooterLoadingView();
-        footerLoadingView.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onRefresh() {
-        TagArticlesAPIManager.getInstance().reloadItems(this.tagURLName, this.getAPIManagerListener);
-    }
 }

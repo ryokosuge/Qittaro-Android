@@ -2,14 +2,19 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="user_icon_width">45dp</dimen>
     <dimen name="user_icon_height">45dp</dimen>
+    <dimen name="comment_user_icon_width">20dp</dimen>
+    <dimen name="comment_user_icon_height">20dp</dimen>
     <dimen name="tag_icon_width">25dp</dimen>
     <dimen name="tag_icon_height">25dp</dimen>
+    <dimen name="xlarge_margin">20dp</dimen>
     <dimen name="large_margin">10dp</dimen>
     <dimen name="medium_margin">5dp</dimen>
     <dimen name="small_margin">3dp</dimen>
     <dimen name="large_padding">10dp</dimen>
     <dimen name="medium_padding">5dp</dimen>
     <dimen name="small_padding">3dp</dimen>
+    <dimen name="xxlarge_text_size">40sp</dimen>
+    <dimen name="xlarge_text_size">30sp</dimen>
     <dimen name="large_text_size">20sp</dimen>
     <dimen name="medium_text_size">15sp</dimen>
     <dimen name="small_text_size">13sp</dimen>
