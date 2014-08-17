@@ -8,38 +8,48 @@
     >
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/article_detail_admob_view"
+        android:id="@+id/basic_list_admob_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adUnitId="ca-app-pub-3010029359415397/7317826064"
-        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-3010029359415397/4364359663"
+        ads:adSize="LEADERBOARD"
+        android:visibility="gone"
         />
 
-
-    <WebView
-        android:id="@+id/article_detail_body_web_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/article_detail_admob_view"
-        android:visibility="gone"
-    />
-
     <RelativeLayout
-        android:id="@+id/article_detail_loading_layout"
+        android:id="@+id/basic_list_loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/basic_list_admob_view"
         >
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/article_detail_progress_bar"
+            android:id="@+id/basic_list_loading_progress_bar"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/basic_list_swipe_refresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_above="@id/basic_list_admob_view"
+        >
+
+        <ListView
+            android:id="@+id/basic_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/ListViewAppTheme.White"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
 </RelativeLayout>
