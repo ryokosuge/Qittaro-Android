@@ -8,8 +8,10 @@ package xyz.ryochin.qittaro.adapters;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.models.ArticleInfoModel;
 import xyz.ryochin.qittaro.models.ArticleInfoModelType;
 import xyz.ryochin.qittaro.utils.AppController;
+import xyz.ryochin.qittaro.utils.URLImageParser;
 
 public class ArticleInfoAdapter extends BaseAdapter {
 
@@ -187,7 +190,10 @@ public class ArticleInfoAdapter extends BaseAdapter {
 
         MovementMethod movementMethod = LinkMovementMethod.getInstance();
         viewHolder.body.setMovementMethod(movementMethod);
-        CharSequence bodyHtml = Html.fromHtml(model.getBody());
+        URLImageParser imageParser = new URLImageParser(viewHolder.body, this.context);
+        // CharSequence bodyHtml = Html.fromHtml(model.getBody(), imageParser, null);
+        Spanned bodyHtml = Html.fromHtml(model.getBody(), imageParser, null);
+        Log.e(TAG, "model.getBody() = " + model.getBody());
         viewHolder.body.setText(bodyHtml);
         viewHolder.userName.setText(model.getTitle());
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
