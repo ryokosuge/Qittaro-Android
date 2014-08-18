@@ -17,7 +17,7 @@ public class ArticleInfoModel {
     private String body;
 
     public ArticleInfoModel(ArticleInfoModelType type, String title) {
-        if (type != ArticleInfoModelType.Title) {
+        if (type != ArticleInfoModelType.Title && type != ArticleInfoModelType.StockUser) {
             throw new IllegalArgumentException("ArticleInfoModelType must be a Title.");
         }
 

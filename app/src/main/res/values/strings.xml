@@ -50,7 +50,6 @@
     <string name="user_info_page_following_user_count_title">Following Users</string>
     <string name="user_info_page_followers_count_title">Followers</string>
     <string name="user_info_page_post_item_count_title">Post Count</string>
-
     <string name="menu_article_info_title">Info</string>
     <string name="article_info_title_tag_id">title</string>
     <string name="article_info_user_tag_id">user</string>
@@ -59,4 +58,7 @@
     <string name="article_info_user_title">Post User</string>
     <string name="article_info_tag_title">Tag(%1$d)</string>
     <string name="article_info_comment_title">Comments(%1$d)</string>
+
+    <string name="article_info_stock_user_tag_id">StockUser</string>
+    <string name="article_info_stock_user_title">Stock(%1$d)</string>
 </resources>
