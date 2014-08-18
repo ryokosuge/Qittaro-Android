@@ -60,7 +60,9 @@ public class ArticleInfoAdapter extends BaseAdapter {
     @Override
     public boolean isEnabled(int position) {
         ArticleInfoModel model = this.items.get(position);
-        return (model.getType() == ArticleInfoModelType.Tag || model.getType() == ArticleInfoModelType.User);
+        return (model.getType() == ArticleInfoModelType.Tag ||
+                model.getType() == ArticleInfoModelType.User ||
+                model.getType() == ArticleInfoModelType.StockUser);
     }
 
     @Override

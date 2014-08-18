@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+@SuppressWarnings("ALL")
 public class URLDrawable extends BitmapDrawable {
     private static final String TAG = URLDrawable.class.getSimpleName();
     private final URLDrawable self = this;

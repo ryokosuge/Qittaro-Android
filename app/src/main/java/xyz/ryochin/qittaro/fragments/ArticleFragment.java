@@ -48,7 +48,7 @@ import xyz.ryochin.qittaro.utils.AppSharedPreference;
 public class ArticleFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     public interface Listener {
-        public void onPressUser(String urlName, String iconURL);
+        public void onPressUser(String urlName);
         public void onPressTag(String tagName, String urlName, String iconURL);
         public void setLoadTitle();
         public void setArticleTitle(ArticleDetailModel model);
@@ -409,22 +409,23 @@ public class ArticleFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        this.drawerLayout.closeDrawer(Gravity.RIGHT);
+        if (this.listener == null) {
+            return;
+        }
         ArticleInfoModel model = (ArticleInfoModel)this.adapter.getItem(position);
         if (model.getType() == ArticleInfoModelType.User) {
             String urlName = model.getTitle();
-            String iconURL = model.getIconURL();
-            if (this.listener != null) {
-                this.listener.onPressUser(urlName, iconURL);
-            }
+            this.listener.onPressUser(urlName);
         } else if (model.getType() == ArticleInfoModelType.Tag) {
             String urlName = model.getBody();
             String name = model.getBody();
             String iconURL = model.getIconURL();
-            if (this.listener != null) {
-                this.listener.onPressTag(name, urlName, iconURL);
-            }
+            this.listener.onPressTag(name, urlName, iconURL);
+        } else if (model.getType() == ArticleInfoModelType.StockUser) {
+            String urlName = model.getTitle();
+            this.listener.onPressUser(urlName);
         }
-        this.drawerLayout.closeDrawer(Gravity.RIGHT);
     }
 
     @Override
