@@ -72,9 +72,32 @@ public class ArticleInfoAdapter extends BaseAdapter {
                 return this.getInfoTagView(model, convertView);
             case Comment:
                 return this.getInfoCommentView(model, convertView);
+            case StockUser:
+                return this.getInfoStockUserView(model, convertView);
             default:
                 return null;
         }
+    }
+
+    private View getInfoStockUserView(ArticleInfoModel model, View convertView) {
+        StockUserViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(this.context);
+            convertView = inflater.inflate(R.layout.article_info_stock_user_layout, null);
+            viewHolder = new StockUserViewHolder(convertView);
+            convertView.setTag(R.string.article_info_stock_user_tag_id, viewHolder);
+        } else {
+            viewHolder = (StockUserViewHolder)convertView.getTag(R.string.article_info_stock_user_tag_id);
+            if (viewHolder == null) {
+                LayoutInflater inflater = LayoutInflater.from(this.context);
+                convertView = inflater.inflate(R.layout.article_info_stock_user_layout, null);
+                viewHolder = new StockUserViewHolder(convertView);
+                convertView.setTag(R.string.article_info_stock_user_tag_id, viewHolder);
+            }
+        }
+
+        viewHolder.userName.setText(model.getTitle());
+        return convertView;
     }
 
     private View getInfoTitleView(ArticleInfoModel model, View convertView) {
@@ -213,6 +236,14 @@ public class ArticleInfoAdapter extends BaseAdapter {
             this.body = (TextView)v.findViewById(R.id.article_info_comment_body);
             this.userIcon = (NetworkImageView)v.findViewById(R.id.article_info_comment_user_icon);
             this.userName = (TextView)v.findViewById(R.id.article_info_comment_user_name);
+        }
+    }
+
+    private static class StockUserViewHolder {
+        TextView userName;
+
+        public StockUserViewHolder(View v) {
+            this.userName = (TextView)v.findViewById(R.id.article_info_stock_user_name);
         }
     }
 }

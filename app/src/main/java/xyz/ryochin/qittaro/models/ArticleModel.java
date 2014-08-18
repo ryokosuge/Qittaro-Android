@@ -5,6 +5,8 @@
  */
 package xyz.ryochin.qittaro.models;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +52,7 @@ public class ArticleModel {
     private boolean stocked;
 
     public ArticleModel(JSONObject jsonObject) throws JSONException {
+        Log.e(TAG, jsonObject.toString());
         this.id = jsonObject.getInt(API_ARTICLE_ID_KEY);
         this.uuid = jsonObject.getString(API_ARTICLE_UUID_KEY);
         this.user = new ArticleUserModel(jsonObject.getJSONObject(API_ARTICLE_USER_KEY));

@@ -333,6 +333,18 @@ public class ArticleFragment extends Fragment implements AdapterView.OnItemClick
             items.add(tagInfoModel);
         }
 
+        String stockUserTitle = this.getResources().getString(R.string.article_info_stock_user_title, model.getStockCount());
+        ArticleInfoModel stockUserTitleModel = new ArticleInfoModel(ArticleInfoModelType.Title, stockUserTitle);
+        items.add(stockUserTitleModel);
+
+        for (String stockUserName : model.getStockUsers()) {
+            ArticleInfoModel stockUserModel = new ArticleInfoModel(
+                    ArticleInfoModelType.StockUser,
+                    stockUserName
+            );
+            items.add(stockUserModel);
+        }
+
         String commentTitle = this.getResources().getString(R.string.article_info_comment_title, model.getCommentCount());
         ArticleInfoModel commentTitleModel = new ArticleInfoModel(
                 ArticleInfoModelType.Title,
