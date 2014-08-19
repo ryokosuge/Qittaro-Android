@@ -5,12 +5,8 @@
  */
 package xyz.ryochin.qittaro.fragments;
 
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.models.FollowUserModel;
-import xyz.ryochin.qittaro.models.TagModel;
+import android.content.Intent;
 
 public interface FragmentListener {
-    public void onItemSelected(ArticleModel model);
-    public void onItemSelected(FollowUserModel model);
-    public void onItemSelected(TagModel model);
+    public void navigateTo(Intent intent);
 }

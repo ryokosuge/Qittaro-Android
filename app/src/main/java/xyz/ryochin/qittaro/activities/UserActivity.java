@@ -25,9 +25,6 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
 import xyz.ryochin.qittaro.apimanagers.UserInfoAPIManager;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.models.FollowUserModel;
-import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.views.UserDetailView;
@@ -160,28 +157,13 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
     }
 
     @Override
-    public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void onItemSelected(FollowUserModel model) {
-    }
-
-    @Override
     public void onChangedPageIndex(int pageIndex) {
         this.currentIndex = pageIndex;
     }
 
     @Override
-    public void onItemSelected(TagModel model) {
-        Intent intent = new Intent(this, TagActivity.class);
-        intent.putExtra(TagActivity.INTENT_TAG_URL_NAME_KEY, model.getUrlName());
-        intent.putExtra(TagActivity.INTENT_TAG_NAME_KEY, model.getName());
-        intent.putExtra(TagActivity.INTENT_TAG_ICON_URL_KEY, model.getIconURL());
-        this.startActivity(intent);
+    public void navigateTo(Intent intent) {
+        startActivity(intent);
     }
 
     private View getActionBarView(String urlName, String profileImageURL) {

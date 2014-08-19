@@ -35,10 +35,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/large_margin"
-            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/medium_margin"
             android:layout_below="@id/list_item_detail_title"
-            android:textColor="@android:color/secondary_text_light"
+            android:textColor="@color/app_dark_gray_color"
             android:textSize="@dimen/small_text_size"
+            />
+
+        <TextView
+            android:id="@+id/list_item_detail_counter"
+            android:layout_below="@id/list_item_detail_sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/large_margin"
+            android:textSize="@dimen/small_text_size"
+            android:textColor="@color/app_dark_gray_color"
             />
 
     </RelativeLayout>
