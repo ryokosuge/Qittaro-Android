@@ -7,5 +7,5 @@
 package xyz.ryochin.qittaro.models;
 
 public enum ArticleInfoModelType {
-    Title, User, Tag, Comment
+    Title, User, Tag, Comment, StockUser
 }

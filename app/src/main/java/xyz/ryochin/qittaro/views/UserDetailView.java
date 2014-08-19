@@ -27,6 +27,7 @@ public class UserDetailView implements ViewPager.OnPageChangeListener {
     private final UserDetailView self = this;
 
     private ViewPager viewPager;
+    private View fullLoadingView;
     private AdView adView;
     private Listener listener;
 
@@ -40,6 +41,7 @@ public class UserDetailView implements ViewPager.OnPageChangeListener {
             if (showAdView) {
                 this.setAdView(v);
             }
+            this.fullLoadingView = v.findViewById(R.id.basic_view_pager_loading_layout);
             this.listener = listener;
         } catch (NullPointerException e) {
             throw new NullPointerException("layout resource id use R.layout.basic_view_pager_layout.");
@@ -70,6 +72,16 @@ public class UserDetailView implements ViewPager.OnPageChangeListener {
         if (this.adView != null) {
             this.adView.destroy();
         }
+    }
+
+    public void showFullLoadingView() {
+        this.fullLoadingView.setVisibility(View.VISIBLE);
+        this.viewPager.setVisibility(View.GONE);
+    }
+
+    public void hideFullLoadingView() {
+        this.fullLoadingView.setVisibility(View.GONE);
+        this.viewPager.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -7,6 +7,8 @@
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -15,61 +17,90 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
+import xyz.ryochin.qittaro.apimanagers.UserInfoAPIManager;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.views.UserDetailView;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.models.FollowUserModel;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.utils.AppController;
+import xyz.ryochin.qittaro.views.UserDetailView;
 
 public class UserActivity extends ActionBarActivity implements FragmentListener, UserDetailView.Listener {
 
     private static final String TAG = UserActivity.class.getSimpleName();
     private final UserActivity self = this;
 
-    public static final String INTENT_USER_PROFILE_IMAGE_URL_KEY = "profileImageURL";
     public static final String INTENT_USER_URL_NAME_KEY = "urlName";
-
     private static final String SAVE_INSTANCE_CURRENT_INDEX_KEY = "currentIndex";
 
     private UserDetailView view;
     private int currentIndex;
+    private ImageLoader.ImageContainer imageContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.basic_view_pager_layout);
-
         Intent intent = this.getIntent();
-        String urlName = intent.getExtras().getString(INTENT_USER_URL_NAME_KEY);
-        String profileImageURL = intent.getExtras().getString(INTENT_USER_PROFILE_IMAGE_URL_KEY);
-
+        final String urlName = intent.getExtras().getString(INTENT_USER_URL_NAME_KEY);
         View currentView = this.findViewById(android.R.id.content);
         this.view = new UserDetailView(currentView, true, this);
+        this.view.showFullLoadingView();
+        UserInfoAPIManager.getInstance().getItem(urlName, new UserInfoAPIManager.Listener() {
 
-        if (savedInstanceState == null) {
-            View customActionBarView = this.getActionBarView(urlName, profileImageURL);
-
-            if (customActionBarView == null) {
-                this.finish();
+            @Override
+            public void willStart() {
+                ActionBar actionBar = self.getSupportActionBar();
+                actionBar.setDisplayShowHomeEnabled(true);
+                actionBar.setDisplayShowTitleEnabled(true);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setTitle(R.string.article_detail_loading_title);
             }
 
-            ActionBar actionBar = this.getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setDisplayShowHomeEnabled(false);
-            actionBar.setCustomView(customActionBarView);
-            actionBar.setDisplayShowCustomEnabled(true);
-        }
+            @Override
+            public void onCompleted(UserModel model) {
+                self.setTitle(model);
+                UserDetailPagerAdapter adapter = new UserDetailPagerAdapter(
+                        self.getSupportFragmentManager(), self, urlName, model);
+                self.view.setAdapter(adapter);
+                self.view.hideFullLoadingView();
+            }
 
-        UserDetailPagerAdapter adapter = new UserDetailPagerAdapter(this.getSupportFragmentManager(), this, urlName);
-        this.view.setAdapter(adapter);
+            @Override
+            public void onError() {
+                self.view.hideFullLoadingView();
+            }
+        });
+
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    private void setTitle(final UserModel model) {
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        this.imageContainer = imageLoader.get(model.getProfileImageURL(), new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                Bitmap bitmap = response.getBitmap();
+                ActionBar actionBar = self.getSupportActionBar();
+                BitmapDrawable bitmapDrawable = new BitmapDrawable(self.getResources(), bitmap);
+                actionBar.setIcon(bitmapDrawable);
+                actionBar.setTitle(model.getUrlName());
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ActionBar actionBar = self.getSupportActionBar();
+                actionBar.setIcon(android.R.drawable.ic_dialog_alert);
+                actionBar.setTitle(model.getUrlName());
+            }
+        });
     }
 
     @Override
@@ -94,6 +125,9 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (this.imageContainer != null) {
+            this.imageContainer.cancelRequest();
+        }
         this.view.destroy();
     }
 

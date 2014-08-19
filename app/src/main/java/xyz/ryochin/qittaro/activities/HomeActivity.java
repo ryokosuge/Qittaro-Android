@@ -193,7 +193,6 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     public void onItemSelected(FollowUserModel model) {
         Intent intent = new Intent(this, UserActivity.class);
         intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, model.getUrlName());
-        intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, model.getProfileImageURL());
         this.startActivity(intent);
     }
 
@@ -246,10 +245,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         switch (position - 1) {
             case DRAWER_LIST_HEADER_INDEX:
                 String urlName = AppSharedPreference.getURLName(this);
-                String profileImageURL = AppSharedPreference.getProfileImageUrlKey(this);
                 Intent intent = new Intent(this, UserActivity.class);
                 intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
-                intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, profileImageURL);
                 this.startActivity(intent);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:

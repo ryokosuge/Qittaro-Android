@@ -16,6 +16,7 @@ import xyz.ryochin.qittaro.fragments.UserArticlesFragment;
 import xyz.ryochin.qittaro.fragments.UserFollowingTagsFragment;
 import xyz.ryochin.qittaro.fragments.UserInfoFragment;
 import xyz.ryochin.qittaro.fragments.UserStocksFragment;
+import xyz.ryochin.qittaro.models.UserModel;
 
 public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = UserDetailPagerAdapter.class.getSimpleName();
@@ -29,18 +30,20 @@ public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
     private String urlName;
+    private UserModel userModel;
 
-    public UserDetailPagerAdapter(FragmentManager fm, Context context, String urlName) {
+    public UserDetailPagerAdapter(FragmentManager fm, Context context, String urlName, UserModel model) {
         super(fm);
         this.context = context;
         this.urlName = urlName;
+        this.userModel = model;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case PAGER_USER_INFO_INDEX:
-                return UserInfoFragment.newInstance(this.urlName);
+                return UserInfoFragment.newInstance(this.userModel);
             case PAGER_USER_POST_ARTICLES_INDEX:
                 return UserArticlesFragment.newInstance(this.urlName);
             case PAGER_USER_STOCKED_INDEX:

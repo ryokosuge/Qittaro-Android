@@ -34,19 +34,22 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     public static final String INTENT_TAG_URL_NAME_KEY = "tagURLName";
     public static final String INTENT_TAG_ICON_URL_KEY = "tagIconURL";
 
+    private ImageLoader.ImageContainer imageContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.basic_fragment_container_layout);
 
         Intent intent = this.getIntent();
-        String tagName = intent.getStringExtra(INTENT_TAG_NAME_KEY);
-        String tagURLName = intent.getStringExtra(INTENT_TAG_URL_NAME_KEY);
-        String tagIconURL = intent.getStringExtra(INTENT_TAG_ICON_URL_KEY);
+        final String tagName = intent.getStringExtra(INTENT_TAG_NAME_KEY);
+        final String tagURLName = intent.getStringExtra(INTENT_TAG_URL_NAME_KEY);
+        final String tagIconURL = intent.getStringExtra(INTENT_TAG_ICON_URL_KEY);
 
-        ActionBar actionBar = this.getSupportActionBar();
 
         if (savedInstanceState == null) {
+
+            final ActionBar actionBar = this.getSupportActionBar();
             View customActionBarView = this.getActionBarView(tagName, tagIconURL);
 
             if (customActionBarView == null) {
@@ -105,6 +108,7 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     public void onItemSelected(TagModel model) {
     }
 
+
     private View getActionBarView(String urlName, String iconURL) {
         if (urlName == null || iconURL == null) {
             return null;
@@ -124,5 +128,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
         });
         return view;
     }
+
 
 }

@@ -79,10 +79,9 @@ public class ArticleActivity extends ActionBarActivity implements ArticleFragmen
     }
 
     @Override
-    public void onPressUser(String urlName, String iconURL) {
+    public void onPressUser(String urlName) {
         Intent intent = new Intent(this, UserActivity.class);
         intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
-        intent.putExtra(UserActivity.INTENT_USER_PROFILE_IMAGE_URL_KEY, iconURL);
         this.startActivity(intent);
     }
 

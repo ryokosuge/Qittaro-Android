@@ -14,20 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.apimanagers.UserInfoAPIManager;
 import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.views.UserInfoView;
 
 public class UserInfoFragment extends Fragment {
     private static final String TAG = UserInfoFragment.class.getSimpleName();
     private final UserInfoFragment self = this;
-    private static final String ARGS_URL_NAME_KEY = "urlName";
+    private static final String ARGS_USER_MODEL_KEY = "userModel";
 
-    private UserInfoView view;
+    protected UserInfoView view;
 
-    public static UserInfoFragment newInstance(String urlName) {
+    public static UserInfoFragment newInstance(UserModel model) {
         Bundle args = new Bundle();
-        args.putString(ARGS_URL_NAME_KEY, urlName);
+        args.putParcelable(ARGS_USER_MODEL_KEY, model);
         UserInfoFragment fragment = new UserInfoFragment();
         fragment.setArguments(args);
         return fragment;
@@ -42,29 +41,9 @@ public class UserInfoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle args = this.getArguments();
-        String urlName = args.getString(ARGS_URL_NAME_KEY);
+        UserModel userModel = args.getParcelable(ARGS_USER_MODEL_KEY);
         this.view = new UserInfoView(this.getView());
-
-        UserInfoAPIManager.getInstance().getItem(urlName, new UserInfoAPIManager.Listener() {
-            @Override
-            public void willStart() {
-                self.view.setFullLoadingViewVisibility(View.VISIBLE);
-                self.view.setUserInfoLayoutVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCompleted(UserModel model) {
-                self.view.setUserInfo(model);
-                self.view.setFullLoadingViewVisibility(View.GONE);
-                self.view.setUserInfoLayoutVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError() {
-                self.view.setFullLoadingViewVisibility(View.GONE);
-                self.view.setUserInfoLayoutVisibility(View.VISIBLE);
-            }
-        });
+        this.view.setUserInfo(userModel);
     }
 
 }
