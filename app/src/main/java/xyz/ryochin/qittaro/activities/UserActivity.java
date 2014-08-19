@@ -7,6 +7,8 @@
 package xyz.ryochin.qittaro.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -39,6 +42,7 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
 
     private UserDetailView view;
     private int currentIndex;
+    private ImageLoader.ImageContainer imageContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,19 +82,25 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 
-    private void setTitle(UserModel model) {
-        View customActionBarView = this.getActionBarView(model.getUrlName(), model.getProfileImageURL());
+    private void setTitle(final UserModel model) {
+        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+        this.imageContainer = imageLoader.get(model.getProfileImageURL(), new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                Bitmap bitmap = response.getBitmap();
+                ActionBar actionBar = self.getSupportActionBar();
+                BitmapDrawable bitmapDrawable = new BitmapDrawable(self.getResources(), bitmap);
+                actionBar.setIcon(bitmapDrawable);
+                actionBar.setTitle(model.getUrlName());
+            }
 
-        if (customActionBarView == null) {
-            this.finish();
-        }
-
-        ActionBar actionBar = this.getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setCustomView(customActionBarView);
-        actionBar.setDisplayShowCustomEnabled(true);
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                ActionBar actionBar = self.getSupportActionBar();
+                actionBar.setIcon(android.R.drawable.ic_dialog_alert);
+                actionBar.setTitle(model.getUrlName());
+            }
+        });
     }
 
     @Override
@@ -115,6 +125,9 @@ public class UserActivity extends ActionBarActivity implements FragmentListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (this.imageContainer != null) {
+            this.imageContainer.cancelRequest();
+        }
         this.view.destroy();
     }
 
