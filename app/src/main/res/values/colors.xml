@@ -13,5 +13,6 @@
     <color name="app_fourth_green_color">#067E00</color>
     <color name="action_bar_tab_selected_color">#0ACE00</color>
     <color name="action_bar_tab_un_selected_color">#000000</color>
+    <color name="login_progress_background_color">#77000000</color>
     <color name="apptheme_color">#0ace00</color>
 </resources>

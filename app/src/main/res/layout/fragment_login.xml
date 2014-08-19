@@ -3,47 +3,70 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/user_name_edittext"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:hint="@string/login_user_name_hint"
-        android:layout_margin="@dimen/large_margin"
-        android:textSize="@dimen/large_text_size"
-        android:inputType="text"
-        style="@style/EditTextAppTheme"
-        />
-    <requestFocus />
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/user_name_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:hint="@string/login_user_name_hint"
+            android:layout_margin="@dimen/large_margin"
+            android:textSize="@dimen/large_text_size"
+            android:inputType="text"
+            style="@style/EditTextAppTheme"
+            />
+        <requestFocus />
 
-    <EditText
-        android:id="@+id/password_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:layout_below="@id/user_name_edittext"
-        android:layout_marginLeft="@dimen/large_margin"
-        android:layout_marginRight="@dimen/large_margin"
-        android:layout_marginBottom="@dimen/large_margin"
-        android:textSize="@dimen/large_text_size"
-        android:hint="@string/login_password_hint"
-        style="@style/EditTextAppTheme"
-        />
+        <EditText
+            android:id="@+id/password_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:layout_below="@id/user_name_edittext"
+            android:layout_marginLeft="@dimen/large_margin"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/large_margin"
+            android:textSize="@dimen/large_text_size"
+            android:hint="@string/login_password_hint"
+            style="@style/EditTextAppTheme"
+            />
 
-    <Button
-        android:id="@+id/qiita_login_btn"
+        <Button
+            android:id="@+id/qiita_login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/password_edittext"
+            android:layout_marginLeft="@dimen/large_margin"
+            android:layout_marginRight="@dimen/large_margin"
+            android:layout_marginTop="@dimen/large_margin"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="@dimen/large_text_size"
+            android:text="@string/login_btn_text"
+            style="@style/ButtonAppTheme"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/login_loading_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/password_edittext"
-        android:layout_marginLeft="@dimen/large_margin"
-        android:layout_marginRight="@dimen/large_margin"
-        android:layout_marginTop="@dimen/large_margin"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="@dimen/large_text_size"
-        android:text="@string/login_btn_text"
-        style="@style/ButtonAppTheme"
-        />
+        android:layout_height="match_parent"
+        android:background="@color/login_progress_background_color"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

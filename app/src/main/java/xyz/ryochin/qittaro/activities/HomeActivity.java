@@ -29,9 +29,8 @@ import xyz.ryochin.qittaro.adapters.LeftDrawerAdapter;
 import xyz.ryochin.qittaro.adapters.LoginLeftDrawerAdapter;
 import xyz.ryochin.qittaro.articles.ArticlesFragment;
 import xyz.ryochin.qittaro.followingusers.FollowingUsersFragment;
-import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.fragments.LoginFragment;
+import xyz.ryochin.qittaro.login.LoginFragment;
 import xyz.ryochin.qittaro.requests.APIRequest;
 import xyz.ryochin.qittaro.requests.AllTagRequest;
 import xyz.ryochin.qittaro.requests.FollowTagsRequest;
@@ -181,22 +180,15 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     }
 
     @Override
-    public void onCompletedLoggedin(boolean result) {
-        if (result) {
-            Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
-            APIRequest request = new PublicRequest();
-            ArticlesFragment fragment = ArticlesFragment.newInstance(request, true);
-            this.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.activity_home_fragment_container, fragment)
-                    .commit();
-            this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
-            this.setAdapter();
-        } else {
-            String title = this.getResources().getString(R.string.login_error_title);
-            String message = this.getResources().getString(R.string.login_error_message);
-            AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
-            alertDialogFragment.show(this.getSupportFragmentManager(), null);
-        }
+    public void onLoginCompleted() {
+        Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
+        APIRequest request = new PublicRequest();
+        ArticlesFragment fragment = ArticlesFragment.newInstance(request, true);
+        this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_home_fragment_container, fragment)
+                .commit();
+        this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
+        this.setAdapter();
     }
 
     private void setAdapter() {

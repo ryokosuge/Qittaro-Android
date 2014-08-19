@@ -11,9 +11,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.ryochin.qittaro.interactors.Interactor;
-import xyz.ryochin.qittaro.interactors.InteractorImpl;
-import xyz.ryochin.qittaro.interactors.OnFinishedListener;
+import xyz.ryochin.qittaro.api.QiitaAPI;
+import xyz.ryochin.qittaro.api.QiitaAPIImpl;
+import xyz.ryochin.qittaro.api.OnFinishedListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
 import xyz.ryochin.qittaro.tags.models.TagModel;
 
@@ -24,7 +24,7 @@ public class TagsPresenterImpl implements TagsPresenter {
 
     private TagsView view;
     private APIRequest request;
-    private Interactor interactor;
+    private QiitaAPI interactor;
     private List<TagModel> items;
     private int page;
     private static final int PER_PAGE = 20;
@@ -34,7 +34,7 @@ public class TagsPresenterImpl implements TagsPresenter {
     public TagsPresenterImpl(TagsView view, APIRequest request) {
         this.view = view;
         this.request = request;
-        this.interactor = new InteractorImpl();
+        this.interactor = new QiitaAPIImpl();
         this.items = new ArrayList<TagModel>();
     }
 

@@ -12,10 +12,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.ryochin.qittaro.api.QiitaAPI;
+import xyz.ryochin.qittaro.api.QiitaAPIImpl;
 import xyz.ryochin.qittaro.articles.models.ArticleModel;
-import xyz.ryochin.qittaro.interactors.Interactor;
-import xyz.ryochin.qittaro.interactors.InteractorImpl;
-import xyz.ryochin.qittaro.interactors.OnFinishedListener;
+import xyz.ryochin.qittaro.api.OnFinishedListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
 
 public class ArticlesPresenterImpl implements ArticlesPresenter {
@@ -25,7 +25,7 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
 
     private ArticlesView view;
     private APIRequest request;
-    private Interactor interactor;
+    private QiitaAPI interactor;
     private List<ArticleModel> items;
 
     private int page;
@@ -36,7 +36,7 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
     public ArticlesPresenterImpl(ArticlesView view, APIRequest request) {
         this.view = view;
         this.request = request;
-        this.interactor = new InteractorImpl();
+        this.interactor = new QiitaAPIImpl();
         this.items = new ArrayList<ArticleModel>();
     }
 
