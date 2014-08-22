@@ -18,11 +18,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import xyz.ryochin.qittaro.R;
+import xyz.ryochin.qittaro.articles.ArticlesFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.fragments.TagFragment;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.models.FollowUserModel;
-import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.requests.TagArticlesRequest;
 import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagActivity extends ActionBarActivity implements FragmentListener {
@@ -33,8 +32,6 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     public static final String INTENT_TAG_NAME_KEY = "tagName";
     public static final String INTENT_TAG_URL_NAME_KEY = "tagURLName";
     public static final String INTENT_TAG_ICON_URL_KEY = "tagIconURL";
-
-    private ImageLoader.ImageContainer imageContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,10 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
             actionBar.setCustomView(customActionBarView);
             actionBar.setDisplayShowCustomEnabled(true);
 
-            TagFragment fragment = TagFragment.newInstance(tagURLName);
+            APIRequest request = new TagArticlesRequest(tagURLName);
+            boolean showAd = true;
+
+            ArticlesFragment fragment = ArticlesFragment.newInstance(request, showAd);
             this.getSupportFragmentManager().beginTransaction()
                     .add(R.id.basic_fragment_container, fragment)
                     .commit();
@@ -94,20 +94,9 @@ public class TagActivity extends ActionBarActivity implements FragmentListener {
     }
 
     @Override
-    public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
+    public void navigateTo(Intent intent) {
+        startActivity(intent);
     }
-
-    @Override
-    public void onItemSelected(FollowUserModel model) {
-    }
-
-    @Override
-    public void onItemSelected(TagModel model) {
-    }
-
 
     private View getActionBarView(String urlName, String iconURL) {
         if (urlName == null || iconURL == null) {

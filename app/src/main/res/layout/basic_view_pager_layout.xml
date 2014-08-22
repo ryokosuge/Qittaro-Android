@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adUnitId="ca-app-pub-3010029359415397/8656788469"
-        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_unit_id"
+        ads:adSize="@string/ad_size"
         />
 
     <RelativeLayout
@@ -27,7 +27,7 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/basic_view_pager_loading_progress_bar"
+            android:id="@+id/basic_list_loading_progress_bar"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 

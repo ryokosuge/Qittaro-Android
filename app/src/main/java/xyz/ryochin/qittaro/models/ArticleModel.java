@@ -1,38 +1,17 @@
 /**
  * PACKAGE NAME xyz.ryochin.qittaro.models
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/08/20
  */
+
 package xyz.ryochin.qittaro.models;
 
-import android.util.Log;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class ArticleModel {
-    private static final String TAG = ArticleModel.class.getSimpleName();
-    private final ArticleModel self = this;
-
-    private static final String API_ARTICLE_ID_KEY = "id";
-    private static final String API_ARTICLE_UUID_KEY = "uuid";
-    private static final String API_ARTICLE_USER_KEY = "user";
-    private static final String API_ARTICLE_TITLE_KEY = "title";
-    private static final String API_ARTICLE_BODY_KEY = "body";
-    private static final String API_ARTICLE_CREATED_AT_KEY = "created_at";
-    private static final String API_ARTICLE_UPDATED_AT_KEY = "updated_at";
-    private static final String API_ARTICLE_CREATED_AT_IN_WORDS_KEY = "created_at_in_words";
-    private static final String API_ARTICLE_UPDATED_AT_IN_WORDS_KEY = "updated_at_in_words";
-    private static final String API_ARTICLE_TAGS_KEY = "tags";
-    private static final String API_ARTICLE_STOCK_COUNT_KEY = "stock_count";
-    private static final String API_ARTICLE_STOCK_USERS_KEY = "stock_users";
-    private static final String API_ARTICLE_COMMENT_COUNT_KEY = "comment_count";
-    private static final String API_ARTICLE_URL_KEY = "url";
-    private static final String API_ARTICLE_GIST_URL_KEY = "gist_url";
+public class ArticleModel implements Parcelable {
 
     private int id;
     private String uuid;
@@ -48,37 +27,8 @@ public class ArticleModel {
     private List<String> stockUsers;
     private int commentCount;
     private String url;
-    private String gistURL;
+    private String gistUrl;
     private boolean stocked;
-
-    public ArticleModel(JSONObject jsonObject) throws JSONException {
-        Log.e(TAG, jsonObject.toString());
-        this.id = jsonObject.getInt(API_ARTICLE_ID_KEY);
-        this.uuid = jsonObject.getString(API_ARTICLE_UUID_KEY);
-        this.user = new ArticleUserModel(jsonObject.getJSONObject(API_ARTICLE_USER_KEY));
-        this.title = jsonObject.getString(API_ARTICLE_TITLE_KEY);
-        this.body = jsonObject.getString(API_ARTICLE_BODY_KEY);
-        this.createdAt = jsonObject.getString(API_ARTICLE_CREATED_AT_KEY);
-        this.updatedAt = jsonObject.getString(API_ARTICLE_UPDATED_AT_KEY);
-        this.createdAtInWords = jsonObject.getString(API_ARTICLE_CREATED_AT_IN_WORDS_KEY);
-        this.updatedAtInWords = jsonObject.getString(API_ARTICLE_UPDATED_AT_IN_WORDS_KEY);
-        JSONArray jsonTags = jsonObject.getJSONArray(API_ARTICLE_TAGS_KEY);
-        int jsonTagsCount = jsonTags.length();
-        this.tags = new ArrayList<ArticleTagModel>(jsonTagsCount);
-        for(int i = 0; i < jsonTagsCount; i ++) {
-            this.tags.add(new ArticleTagModel(jsonTags.getJSONObject(i)));
-        }
-        this.stockCount = jsonObject.getInt(API_ARTICLE_STOCK_COUNT_KEY);
-        JSONArray jsonStockUsers = jsonObject.getJSONArray(API_ARTICLE_STOCK_USERS_KEY);
-        int stockUserCount = jsonStockUsers.length();
-        this.stockUsers = new ArrayList<String>(stockUserCount);
-        for (int i = 0; i < stockUserCount; i ++) {
-            this.stockUsers.add(jsonStockUsers.getString(i));
-        }
-        this.commentCount = jsonObject.getInt(API_ARTICLE_COMMENT_COUNT_KEY);
-        this.url = jsonObject.getString(API_ARTICLE_URL_KEY);
-        this.gistURL = jsonObject.getString(API_ARTICLE_GIST_URL_KEY);
-    }
 
     public int getId() {
         return id;
@@ -136,8 +86,67 @@ public class ArticleModel {
         return url;
     }
 
-    public String getGistURL() {
-        return gistURL;
+    public String getGistUrl() {
+        return gistUrl;
     }
 
+    public boolean isStocked() {
+        return stocked;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(uuid);
+        dest.writeParcelable(user, flags);
+        dest.writeString(title);
+        dest.writeString(body);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeString(createdAtInWords);
+        dest.writeString(updatedAtInWords);
+        dest.writeTypedList(tags);
+        dest.writeInt(stockCount);
+        dest.writeStringList(stockUsers);
+        dest.writeInt(commentCount);
+        dest.writeString(url);
+        dest.writeString(gistUrl);
+        dest.writeByte((byte)(stocked ? 1 : 0));
+    }
+
+    public static final Creator<ArticleModel> CREATOR = new Creator<ArticleModel>() {
+        @Override
+        public ArticleModel createFromParcel(Parcel source) {
+            return new ArticleModel(source);
+        }
+
+        @Override
+        public ArticleModel[] newArray(int size) {
+            return new ArticleModel[0];
+        }
+    };
+
+    private ArticleModel(Parcel source) {
+        id = source.readInt();
+        uuid = source.readString();
+        user = source.readParcelable(ArticleUserModel.class.getClassLoader());
+        title = source.readString();
+        body = source.readString();
+        createdAt = source.readString();
+        updatedAt = source.readString();
+        createdAtInWords = source.readString();
+        updatedAtInWords = source.readString();
+        tags = source.createTypedArrayList(ArticleTagModel.CREATOR);
+        stockCount = source.readInt();
+        source.readStringList(stockUsers);
+        commentCount = source.readInt();
+        url = source.readString();
+        gistUrl = source.readString();
+        stocked = (source.readByte() != 0);
+    }
 }

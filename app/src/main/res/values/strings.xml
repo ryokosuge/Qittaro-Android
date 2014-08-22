@@ -11,9 +11,6 @@
     <string name="login_success_message">Login has been completed.</string>
     <string name="article_empty_message">Article was not found.</string>
     <string name="article_post_detail_format">by %1$s / at %2$s ago.</string>
-    <string name="search_empty_title">Search Error</string>
-    <string name="search_empty_message">Article was not found.</string>
-    <string name="search_empty_search_word_top">SearchWord</string>
     <string name="search_in_stoked_text">Search from the article you have stock.</string>
     <string name="article_detail_loading_title">Loading…</string>
     <string name="article_detail_stock_text">Stock this article.</string>
@@ -58,7 +55,15 @@
     <string name="article_info_user_title">Post User</string>
     <string name="article_info_tag_title">Tag(%1$d)</string>
     <string name="article_info_comment_title">Comments(%1$d)</string>
-
     <string name="article_info_stock_user_tag_id">StockUser</string>
     <string name="article_info_stock_user_title">Stock(%1$d)</string>
+    <string name="article_detail_counter_text">comment(%1$d) / stock(%2$d)</string>
+    <string name="login_error_user_name_text">Please enter a username.</string>
+    <string name="login_error_password_text">Please enter a password.</string>
+    <string name="left_drawer_user_info_title">My Profile</string>
+
+    <string name="api_error_title">API Error</string>
+    <string name="api_error_message">No value was returned from the server of Qiita. \nPlease try again after some time.</string>
+    <string name="search_error_title">Search Result</string>
+    <string name="search_error_message">Post was not found. \nSearch query correct? \nSearch query you entered : "%1$s"</string>
 </resources>

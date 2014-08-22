@@ -9,6 +9,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +20,9 @@ import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Logger;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.ads.AdRequest;
+
+import xyz.ryochin.qittaro.R;
 
 public class AppController extends Application {
 
@@ -30,6 +34,7 @@ public class AppController extends Application {
 
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
+    private AdRequest adRequest;
     private static AppController instance;
 
     private Tracker tracker;
@@ -78,6 +83,19 @@ public class AppController extends Application {
 
     public void sendView(String screenName) {
         this.tracker.send(MapBuilder.createAppView().set(Fields.SCREEN_NAME, screenName).build());
+    }
+
+    public AdRequest getAdRequest() {
+        if (this.adRequest == null) {
+            AdRequest.Builder builder = new AdRequest.Builder();
+            String[] testDevices = getResources().getStringArray(R.array.ad_test_devices);
+            for(String testDevice : testDevices) {
+                Log.e(TAG, "testDevice = " + testDevice);
+                builder.addTestDevice(testDevice);
+            }
+            this.adRequest = builder.build();
+        }
+        return this.adRequest;
     }
 
     private void initializeGa() {

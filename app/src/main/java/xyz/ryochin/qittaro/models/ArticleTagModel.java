@@ -1,42 +1,22 @@
 /**
  * PACKAGE NAME xyz.ryochin.qittaro.models
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/08/20
  */
+
 package xyz.ryochin.qittaro.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ArticleTagModel {
-    private static final String TAG = ArticleTagModel.class.getSimpleName();
-    private final ArticleTagModel self = this;
-
-    private static final String API_ARTICLE_TAG_NAME_KEY = "name";
-    private static final String API_ARTICLE_TAG_URL_NAME_KEY = "url_name";
-    private static final String API_ARTICLE_TAG_ICON_URL_KEY = "icon_url";
-    private static final String API_ARTICLE_TAG_VERSIONS_KEY = "versions";
+public class ArticleTagModel implements Parcelable {
 
     private String name;
     private String urlName;
-    private String iconURL;
+    private String iconUrl;
     private List<String> versions;
-
-    public ArticleTagModel(JSONObject jsonObject) throws JSONException {
-        this.name = jsonObject.getString(API_ARTICLE_TAG_NAME_KEY);
-        this.urlName = jsonObject.getString(API_ARTICLE_TAG_URL_NAME_KEY);
-        this.iconURL = jsonObject.getString(API_ARTICLE_TAG_ICON_URL_KEY);
-        JSONArray jsonVersions = jsonObject.getJSONArray(API_ARTICLE_TAG_VERSIONS_KEY);
-        int jsonArrayCount = jsonVersions.length();
-        this.versions = new ArrayList<String>(jsonArrayCount);
-        for (int i = 0; i < jsonArrayCount; i ++) {
-            this.versions.add(jsonVersions.getString(i));
-        }
-    }
 
     public String getName() {
         return name;
@@ -46,16 +26,43 @@ public class ArticleTagModel {
         return urlName;
     }
 
-    public String getIconURL() {
-        return iconURL;
-    }
-
-    public String getVersionAtIndex(int index) {
-        return versions.get(index);
+    public String getIconUrl() {
+        return iconUrl;
     }
 
     public List<String> getVersions() {
         return versions;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(urlName);
+        dest.writeString(iconUrl);
+        dest.writeStringList(versions);
+    }
+
+    public static final Creator<ArticleTagModel> CREATOR = new Creator<ArticleTagModel>() {
+        @Override
+        public ArticleTagModel createFromParcel(Parcel source) {
+            return new ArticleTagModel(source);
+        }
+
+        @Override
+        public ArticleTagModel[] newArray(int size) {
+            return new ArticleTagModel[0];
+        }
+    };
+
+    private ArticleTagModel(Parcel source) {
+        name = source.readString();
+        urlName = source.readString();
+        iconUrl = source.readString();
+        source.readStringList(versions);
+    }
 }
