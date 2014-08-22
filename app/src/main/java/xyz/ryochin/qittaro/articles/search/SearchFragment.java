@@ -33,6 +33,7 @@ import java.util.List;
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.ArticleActivity;
 import xyz.ryochin.qittaro.articles.ArticlesAdapter;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
@@ -196,6 +197,9 @@ public class SearchFragment extends Fragment implements SearchView, AdapterView.
             searchView.clearFocus();
             searchView.setIconified(false);
             searchView.onActionViewCollapsed();
+            this.setAdViewVisibility(View.VISIBLE);
+        } else {
+            this.setAdViewVisibility(View.GONE);
         }
     }
 
@@ -264,6 +268,18 @@ public class SearchFragment extends Fragment implements SearchView, AdapterView.
 
     @Override
     public void showNoArticleMessage(String searchWord) {
+        String title = getString(R.string.search_error_title);
+        String message = getString(R.string.search_error_message, searchWord);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
     @Override
@@ -289,8 +305,14 @@ public class SearchFragment extends Fragment implements SearchView, AdapterView.
     private void setAdView() {
         adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
         adView.loadAd(adRequest);
+    }
+
+    private void setAdViewVisibility(int visibility) {
+        if (adView != null) {
+            adView.setVisibility(visibility);
+        }
     }
 
     private View getFooterView() {

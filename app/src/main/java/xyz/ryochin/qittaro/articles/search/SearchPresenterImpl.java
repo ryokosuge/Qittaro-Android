@@ -84,11 +84,15 @@ public class SearchPresenterImpl implements SearchPresenter {
         interactor.getItems(request, new ArticlesInteractor.Listener() {
             @Override
             public void onCompleted(List<ArticleModel> items, boolean isMax) {
-                if (isMax) {
-                    view.hideListFooterLoadingView();
+                if (items.size() < 1) {
+                    view.showNoArticleMessage(searchWord);
+                } else {
+                    if (isMax) {
+                        view.hideListFooterLoadingView();
+                    }
+                    view.setItems(items);
+                    self.items = items;
                 }
-                view.setItems(items);
-                self.items = items;
                 view.hideFullLoadingView();
             }
 
@@ -109,11 +113,15 @@ public class SearchPresenterImpl implements SearchPresenter {
         interactor.getItems(request, new ArticlesInteractor.Listener() {
             @Override
             public void onCompleted(List<ArticleModel> items, boolean isMax) {
-                if (isMax) {
-                    view.hideListFooterLoadingView();
+                if (items.size() < 1) {
+                    view.showNoArticleMessage(searchWord);
+                } else {
+                    if (isMax) {
+                        view.hideListFooterLoadingView();
+                    }
+                    view.setItems(items);
+                    self.items = items;
                 }
-                view.setItems(items);
-                self.items = items;
                 view.hideFullLoadingView();
             }
 
@@ -133,12 +141,17 @@ public class SearchPresenterImpl implements SearchPresenter {
         interactor.getItems(request, new ArticlesInteractor.Listener() {
             @Override
             public void onCompleted(List<ArticleModel> items, boolean isMax) {
-                if (isMax) {
-                    view.hideListFooterLoadingView();
-                }
-                view.setItems(items);
-                self.items = items;
                 view.hideFullLoadingView();
+                if (items.size() < 1) {
+                    view.showNoArticleMessage(searchWord);
+                    self.items.clear();
+                } else {
+                    if (isMax) {
+                        view.hideListFooterLoadingView();
+                    }
+                    view.setItems(items);
+                    self.items = items;
+                }
             }
 
             @Override

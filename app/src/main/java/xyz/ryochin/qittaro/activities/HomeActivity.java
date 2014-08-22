@@ -106,8 +106,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
             } else {
                 this.drawerListIndex = 1;
             }
+            this.navigateTo(this.drawerListIndex);
         }
-        this.navigateTo(this.drawerListIndex);
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
 

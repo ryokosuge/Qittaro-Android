@@ -20,9 +20,12 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.UserDetailPagerAdapter;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
@@ -38,6 +41,7 @@ public class UserFragment extends Fragment implements UserView, ViewPager.OnPage
     private View fullLoadingView;
     private boolean showTitle;
     private UserPresenter presenter;
+    private AdView adView;
 
     public static UserFragment newInstance(String urlName, boolean showTitle) {
         Bundle args = new Bundle();
@@ -60,17 +64,44 @@ public class UserFragment extends Fragment implements UserView, ViewPager.OnPage
         String urlName = args.getString(ARGS_USER_URL_NAME_KEY);
         this.showTitle = args.getBoolean(ARGS_SHOW_USER_TITLE_KEY);
         this.viewPager = (ViewPager)getView().findViewById(R.id.basic_view_pager);
+        this.fullLoadingView = getView().findViewById(R.id.basic_view_pager_loading_layout);
         PagerTabStrip pagerTabStrip = (PagerTabStrip)getView().findViewById(R.id.basic_view_pager_tab_strip);
         pagerTabStrip.setDrawFullUnderline(true);
         pagerTabStrip.setTabIndicatorColorResource(R.color.apptheme_color);
         this.viewPager.setOnPageChangeListener(this);
         this.presenter = new UserPresenterImpl(this, urlName);
+        setAdView();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         presenter.start();
+        AppController.getInstance().sendView(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
     }
 
     @Override
@@ -81,13 +112,13 @@ public class UserFragment extends Fragment implements UserView, ViewPager.OnPage
 
     @Override
     public void showFullLoadingView() {
-        // fullLoadingView.setVisibility(View.VISIBLE);
+        fullLoadingView.setVisibility(View.VISIBLE);
         viewPager.setVisibility(View.GONE);
     }
 
     @Override
     public void hideFullLoadingView() {
-        // fullLoadingView.setVisibility(View.GONE);
+        fullLoadingView.setVisibility(View.GONE);
         viewPager.setVisibility(View.VISIBLE);
     }
 
@@ -138,6 +169,13 @@ public class UserFragment extends Fragment implements UserView, ViewPager.OnPage
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
+    }
 
     @Override
     public void onPageScrolled(int i, float v, int i2) {
@@ -149,5 +187,12 @@ public class UserFragment extends Fragment implements UserView, ViewPager.OnPage
 
     @Override
     public void onPageScrollStateChanged(int i) {
+    }
+
+    private void setAdView() {
+        adView = (AdView) getView().findViewById(R.id.basic_view_pager_admob_view);
+        adView.setVisibility(View.VISIBLE);
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
+        adView.loadAd(adRequest);
     }
 }

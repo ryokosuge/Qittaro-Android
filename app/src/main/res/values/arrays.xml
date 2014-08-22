@@ -4,4 +4,9 @@
         <item>Search In Articles</item>
         <item>Search In My Stocked</item>
     </string-array>
+    <string-array name="ad_test_devices">
+        <item>C3578474900D7CA6D88C34E3634A24AD</item>
+        <item>E7BC9CB9CFE61F02CF1CB17ED85FA7B6</item>
+        <item>47B76C38515FC5B269076AAB6D6DB5EE</item>
+    </string-array>
 </resources>

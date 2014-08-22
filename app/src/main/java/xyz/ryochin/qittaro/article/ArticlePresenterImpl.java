@@ -187,6 +187,8 @@ public class ArticlePresenterImpl implements ArticlePresenter {
 
     @Override
     public void openBrowser() {
+        String articleURL = model.getUrl();
+        view.navigateToBrowser(articleURL);
     }
 
     @Override

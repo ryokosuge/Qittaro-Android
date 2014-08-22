@@ -25,9 +25,11 @@ import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.TagActivity;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.requests.APIRequest;
 import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagsFragment extends Fragment implements TagsView, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
@@ -41,6 +43,7 @@ public class TagsFragment extends Fragment implements TagsView, AdapterView.OnIt
     private ListView listView;
     private TagsAdapter adapter;
     private TagsPresenter presenter;
+    private AdView adView;
     private View footerView;
     private FragmentListener listener;
 
@@ -97,12 +100,37 @@ public class TagsFragment extends Fragment implements TagsView, AdapterView.OnIt
         if (showAd) {
             this.setAdView();
         }
+        presenter.start();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        presenter.start();
+        AppController.getInstance().sendView(TAG + " : " + presenter.getRequestTag());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
     }
 
     @Override
@@ -171,8 +199,11 @@ public class TagsFragment extends Fragment implements TagsView, AdapterView.OnIt
     }
 
     @Override
-    public void showMessage(String title, String message) {
-
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
     @Override
@@ -185,9 +216,9 @@ public class TagsFragment extends Fragment implements TagsView, AdapterView.OnIt
     }
 
     private void setAdView() {
-        AdView adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
+        adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
         adView.loadAd(adRequest);
     }
 

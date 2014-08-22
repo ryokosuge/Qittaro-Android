@@ -37,6 +37,7 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.TagActivity;
 import xyz.ryochin.qittaro.activities.UserActivity;
 import xyz.ryochin.qittaro.adapters.ArticleInfoAdapter;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.models.ArticleInfoModel;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
@@ -115,7 +116,7 @@ public class ArticleFragment extends Fragment implements ArticleView, AdapterVie
         this.fullLoadingView = getView().findViewById(R.id.article_loading_layout);
 
         this.adView = (AdView) this.getView().findViewById(R.id.article_admob_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
         this.adView.loadAd(adRequest);
     }
 
@@ -321,10 +322,6 @@ public class ArticleFragment extends Fragment implements ArticleView, AdapterVie
     }
 
     @Override
-    public void showErrorMessage() {
-    }
-
-    @Override
     public void showLoadingTitle() {
         ((ActionBarActivity)getActivity()).getSupportActionBar()
                 .setTitle(R.string.article_detail_loading_title);
@@ -343,6 +340,14 @@ public class ArticleFragment extends Fragment implements ArticleView, AdapterVie
         } else {
             Toast.makeText(self.getActivity(), R.string.article_detail_un_stock_message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
     @Override

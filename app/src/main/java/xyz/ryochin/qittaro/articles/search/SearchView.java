@@ -21,6 +21,7 @@ public interface SearchView {
     public void addItems(List<ArticleModel> items);
     public void setActionBarTitle(String searchWord);
     public void showNoArticleMessage(String searchWord);
+    public void showAPIErrorMessage();
     public void navigateToArticleActivity(String uuid);
     public void changeSearchType(SearchFragment.Type type);
 }

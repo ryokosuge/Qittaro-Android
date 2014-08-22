@@ -19,7 +19,7 @@ public interface ArticlesView {
     public void hideListFooterLoadingView();
     public void setItems(List<ArticleModel> items);
     public void addItems(List<ArticleModel> items);
-    public void showMessage(String title, String message);
+    public void showAPIErrorMessage();
     public void navigateToArticleActivity(String uuid);
 
 }

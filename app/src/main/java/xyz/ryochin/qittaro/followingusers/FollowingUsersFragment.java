@@ -25,8 +25,9 @@ import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.UserActivity;
-import xyz.ryochin.qittaro.models.FollowingUserModel;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
+import xyz.ryochin.qittaro.models.FollowingUserModel;
 import xyz.ryochin.qittaro.requests.APIRequest;
 import xyz.ryochin.qittaro.utils.AppController;
 
@@ -98,13 +99,13 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
         if (showAd) {
             this.setAdView();
         }
+        presenter.start();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         AppController.getInstance().sendView(TAG);
-        presenter.start();
     }
 
     @Override
@@ -197,7 +198,11 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
     }
 
     @Override
-    public void showMessage(String title, String message) {
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
     @Override
@@ -210,7 +215,7 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
     private void setAdView() {
         adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
         adView.loadAd(adRequest);
     }
 

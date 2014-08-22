@@ -18,6 +18,6 @@ public interface FollowingUsersView {
     public void hideListFooterLoadingView();
     public void setItems(List<FollowingUserModel> items);
     public void addItems(List<FollowingUserModel> items);
-    public void showMessage(String title, String message);
+    public void showAPIErrorMessage();
     public void navigateToUserActivity(String urlName);
 }

@@ -86,6 +86,11 @@ public class TagsPresenterImpl implements TagsPresenter {
     }
 
     @Override
+    public String getRequestTag() {
+        return request.getTag();
+    }
+
+    @Override
     public void destroyView() {
         interactor.cancel(request);
     }

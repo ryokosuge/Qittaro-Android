@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.ArticleActivity;
+import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
 import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
@@ -47,6 +49,7 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
     private FragmentListener listener;
 
     public static ArticlesFragment newInstance(APIRequest request, boolean showAd) {
+        Log.e(TAG, "newInstance");
         Bundle args = new Bundle();
         args.putSerializable(ARGS_REQUEST_KEY, request);
         args.putBoolean(ARGS_SHOW_AD_KEY, showAd);
@@ -57,6 +60,7 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
 
     @Override
     public void onAttach(Activity activity) {
+        Log.e(TAG, "onAttach");
         super.onAttach(activity);
         try {
             this.listener = (FragmentListener)activity;
@@ -67,11 +71,13 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "onCreateView");
         return inflater.inflate(R.layout.basic_list_view_layout, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "onActivityCreated()");
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         APIRequest request = (APIRequest)args.getSerializable(ARGS_REQUEST_KEY);
@@ -99,12 +105,13 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
         if (showAd) {
             this.setAdView();
         }
+        this.presenter.start();
     }
 
     @Override
     public void onStart() {
+        Log.e(TAG, "onStart");
         super.onStart();
-        this.presenter.start();
         AppController.getInstance().sendView(TAG + " : " + presenter.getRequestTag());
     }
 
@@ -184,7 +191,11 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
     }
 
     @Override
-    public void showMessage(String title, String message) {
+    public void showAPIErrorMessage() {
+        String title = getString(R.string.api_error_title);
+        String message = getString(R.string.api_error_message);
+        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
+        fragment.show(getActivity().getSupportFragmentManager(), null);
     }
 
     @Override
@@ -211,7 +222,7 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
     private void setAdView() {
         adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = AppController.getInstance().getAdRequest();
         adView.loadAd(adRequest);
     }
 

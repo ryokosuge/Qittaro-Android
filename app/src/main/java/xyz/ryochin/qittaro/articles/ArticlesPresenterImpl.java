@@ -16,6 +16,10 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
     private static final String TAG = ArticlesPresenterImpl.class.getSimpleName();
     private final ArticlesPresenterImpl self = this;
 
+    private static final String SAVE_BUNDLE_ITEMS_KEY = "items";
+    private static final String SAVE_BUNDLE_PAGE_KEY = "page";
+    private static final String SAVE_BUNDLE_MAX_KEY = "max";
+
     private ArticlesView view;
     private APIRequest request;
     private List<ArticleModel> items;
@@ -45,7 +49,7 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
             @Override
             public void onError(Exception e) {
                 self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", e.getLocalizedMessage());
+                self.view.showAPIErrorMessage();
             }
         });
     }
@@ -67,7 +71,7 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
             @Override
             public void onError(Exception e) {
                 view.hideReloadLoadingView();
-                view.showMessage("エラー", e.getLocalizedMessage());
+                view.showAPIErrorMessage();
             }
         });
     }
@@ -107,7 +111,7 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
             @Override
             public void onError(Exception e) {
                 view.hideListFooterLoadingView();
-                view.showMessage("エラー", e.getLocalizedMessage());
+                view.showAPIErrorMessage();
             }
         });
     }

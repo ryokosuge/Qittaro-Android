@@ -19,6 +19,6 @@ public interface TagsView {
     public void hideListFooterLoadingView();
     public void setItems(List<TagModel> items);
     public void addItems(List<TagModel> items);
-    public void showMessage(String title, String message);
+    public void showAPIErrorMessage();
     public void navigateToTagActivity(String urlName, String name, String iconUrl);
 }

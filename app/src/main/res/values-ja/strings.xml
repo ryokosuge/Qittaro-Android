@@ -11,9 +11,6 @@
     <string name="login_success_message">ログインが完了しました！</string>
     <string name="article_empty_message">記事がありませんでした。</string>
     <string name="article_post_detail_format">by %1$s / at %2$s前</string>
-    <string name="search_empty_title">検索エラー</string>
-    <string name="search_empty_message">記事がみつかりませんでした。\n検索キーワードを変えてみてください。</string>
-    <string name="search_empty_search_word_top">検索ワード</string>
     <string name="search_in_stoked_text">ストックしている記事から検索</string>
     <string name="search_menu_search_title">Search</string>
     <string name="search_menu_query_hint_text">複数検索するときは半角スペースで分けてください。</string>
@@ -59,5 +56,12 @@
     <string name="article_info_user_title">投稿者</string>
     <string name="article_info_tag_title">タグ(%1$d)</string>
     <string name="article_info_comment_title">コメント(%1$d)</string>
+    <string name="article_info_stock_user_tag_id">StockUser</string>
+    <string name="article_info_stock_user_title">Stock(%1$d)</string>
+
+    <string name="article_detail_counter_text">コメント数 (%1$d) / ストック数(%2$d)</string>
+    <string name="login_error_user_name_text">url_nameを入力してください。</string>
+    <string name="login_error_password_text">パスワードを入力してください。</string>
+    <string name="left_drawer_user_info_title">プロフィール</string>
 
 </resources>

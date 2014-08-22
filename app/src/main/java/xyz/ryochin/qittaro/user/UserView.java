@@ -14,4 +14,5 @@ public interface UserView {
     public void setActionBarUserInfo(String urlName, String profileImageUrl);
     public void setActionBarLoadingTitle();
     public void setFragmentAdapter(UserModel model);
+    public void showAPIErrorMessage();
 }

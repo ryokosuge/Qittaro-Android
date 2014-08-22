@@ -45,7 +45,7 @@ public class FollowingUsersPresenterImpl implements FollowingUsersPresenter {
             @Override
             public void onError(Exception e) {
                 self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", e.getLocalizedMessage());
+                self.view.showAPIErrorMessage();
             }
         });
     }
@@ -67,7 +67,7 @@ public class FollowingUsersPresenterImpl implements FollowingUsersPresenter {
             @Override
             public void onError(Exception e) {
                 self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", e.getLocalizedMessage());
+                self.view.showAPIErrorMessage();
             }
         });
     }
@@ -107,7 +107,7 @@ public class FollowingUsersPresenterImpl implements FollowingUsersPresenter {
             @Override
             public void onError(Exception e) {
                 self.view.hideListFooterLoadingView();
-                self.view.showMessage("エラー", e.getLocalizedMessage());
+                self.view.showAPIErrorMessage();
             }
         });
     }

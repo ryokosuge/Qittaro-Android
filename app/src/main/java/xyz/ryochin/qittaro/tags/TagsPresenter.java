@@ -11,5 +11,6 @@ public interface TagsPresenter {
     public void refresh();
     public void onItemClicked(int position);
     public void onScroll(int totalItemCount, int firstVisibleItem, int visibleItemCount);
+    public String getRequestTag();
     public void destroyView();
 }

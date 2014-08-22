@@ -27,5 +27,5 @@ public interface ArticleView {
     public void navigateToUserActivity(String urlName);
     public void navigateToTagActivity(String urlName, String tagName, String tagIconUrl);
     public void navigateToBrowser(String articleUrl);
-    public void showErrorMessage();
+    public void showAPIErrorMessage();
 }

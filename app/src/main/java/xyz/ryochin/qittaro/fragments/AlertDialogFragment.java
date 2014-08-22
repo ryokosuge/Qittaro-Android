@@ -27,7 +27,6 @@ public class AlertDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putString(BUNDLE_TITLE_KEY, title);
         args.putString(BUNDLE_MESSAGE_KEY, message);
-
         AlertDialogFragment fragment = new AlertDialogFragment();
         fragment.setArguments(args);
         return fragment;

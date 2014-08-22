@@ -45,6 +45,7 @@ public class UserPresenterImpl implements UserPresenter {
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "onError", e);
+                view.showAPIErrorMessage();
             }
         });
     }
