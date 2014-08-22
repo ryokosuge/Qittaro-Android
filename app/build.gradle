@@ -47,4 +47,5 @@ dependencies {
     compile project(':modules:volley')
     compile 'com.google.android.gms:play-services:5.0.89'
     compile 'com.android.support:appcompat-v7:20.+'
+    compile 'com.google.code.gson:gson:2.3'
 }

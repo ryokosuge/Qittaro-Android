@@ -1,5 +1,5 @@
 /**
- * PACKAGE NAME xyz.ryochin.qittaro.views
+ * PACKAGE NAME xyz.ryochin.qittaro.activities
  * CREATED BY kosugeryou
  * CREATED AT 2014/08/14
  */
@@ -9,30 +9,24 @@ package xyz.ryochin.qittaro.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.MenuItem;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.SearchSpinnerAdapter;
-import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
-import xyz.ryochin.qittaro.fragments.SearchFragment;
-import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.articles.search.SearchFragment;
+import xyz.ryochin.qittaro.articles.search.SearchView;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
-public class SearchActivity extends ActionBarActivity implements SearchFragment.Listener {
+public class SearchActivity extends ActionBarActivity implements ActionBar.OnNavigationListener, SearchFragment.Listener {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
     private final SearchActivity self = this;
 
-    private static final int SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION = 0;
-    private static final int SPINNER_FRAGMENT_SEARCH_IN_STOCKS_POSITION = 1;
-    private static final String SPINNER_SELECTED_NAVIGATION_ITEM_INDEX_KEY = "selectItemIndex";
-    private static final String BUNDLE_SEARCH_WORD_KEY = "searchWord";
+    private static final int SEARCH_SPINNER_ALL_INDEX = 0;
+    private static final int SEARCH_SPINNER_STOCKS_INDEX = 1;
 
     private SearchSpinnerAdapter adapter;
-    private String searchWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +36,10 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
-            FragmentManager fragmentManager = this.getSupportFragmentManager();
-            SearchFragment fragment = SearchFragment.newInstance(null, false);
-            fragmentManager.beginTransaction().add(R.id.basic_fragment_container, fragment).commit();
+            Fragment fragment = SearchFragment.newInstance(false, true);
+            this.getSupportFragmentManager().beginTransaction()
+                    .add(R.id.basic_fragment_container, fragment)
+                    .commit();
         }
 
         if (AppSharedPreference.isLoggedIn(this)) {
@@ -52,36 +47,12 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             String[] spinnerStrings = this.getResources().getStringArray(R.array.search_spinner_titles);
             this.adapter = new SearchSpinnerAdapter(this, spinnerStrings);
-            this.adapter.setSearchWord(this.searchWord);
-            actionBar.setListNavigationCallbacks(this.adapter, this.onNavigationListener);
+            actionBar.setListNavigationCallbacks(this.adapter, this);
         } else {
             actionBar.setDisplayShowTitleEnabled(true);
         }
         this.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
     }
-
-    private ActionBar.OnNavigationListener onNavigationListener = new ActionBar.OnNavigationListener() {
-        @Override
-        public boolean onNavigationItemSelected(int position, long id) {
-            Fragment fragment;
-            switch (position) {
-                case SPINNER_FRAGMENT_SEARCH_IN_ARTICLES_POSITION:
-                    fragment = SearchFragment.newInstance(self.searchWord, false);
-                    break;
-                case SPINNER_FRAGMENT_SEARCH_IN_STOCKS_POSITION:
-                    fragment = SearchFragment.newInstance(self.searchWord, true);
-                    break;
-                default:
-                    fragment = null;
-            }
-
-            if (fragment != null) {
-                self.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.basic_fragment_container, fragment).commit();
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onPause() {
@@ -90,74 +61,35 @@ public class SearchActivity extends ActionBarActivity implements SearchFragment.
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState.containsKey(BUNDLE_SEARCH_WORD_KEY)) {
-            String searchWord = savedInstanceState.getString(BUNDLE_SEARCH_WORD_KEY);
-            if (searchWord != null && !searchWord.equals("")) {
-                this.searchWord = searchWord;
-            }
-        }
-
-        if (savedInstanceState.containsKey(SPINNER_SELECTED_NAVIGATION_ITEM_INDEX_KEY)) {
-            int selectedNavigationIndex = savedInstanceState.getInt(SPINNER_SELECTED_NAVIGATION_ITEM_INDEX_KEY);
-            this.getSupportActionBar().setSelectedNavigationItem(selectedNavigationIndex);
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        int selectedNavigationIndex = this.getSupportActionBar().getSelectedNavigationIndex();
-        outState.putInt(SPINNER_SELECTED_NAVIGATION_ITEM_INDEX_KEY, selectedNavigationIndex);
-        if (this.searchWord != null && !this.searchWord.equals("")) {
-            outState.putString(BUNDLE_SEARCH_WORD_KEY, this.searchWord);
-        }
-    }
-
-    @Override
-    public void onItemClicked(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void onOptionMenuClicked(MenuItem menu) {
-        switch(menu.getItemId()) {
-            case android.R.id.home:
-                this.finish();
+    public boolean onNavigationItemSelected(int i, long l) {
+        SearchView searchView = (SearchView)this.getSupportFragmentManager()
+                .findFragmentById(R.id.basic_fragment_container);
+        switch (i) {
+            case SEARCH_SPINNER_ALL_INDEX:
+                searchView.changeSearchType(SearchFragment.Type.All);
                 break;
-            default:
+            case SEARCH_SPINNER_STOCKS_INDEX:
+                searchView.changeSearchType(SearchFragment.Type.Stocks);
                 break;
         }
+        return false;
     }
 
     @Override
-    public void noSearchArticle(String searchWord) {
-        String title = this.getResources().getString(R.string.search_empty_title);
-        StringBuilder builder = new StringBuilder();
-        String message = builder.append(this.getResources().getString(R.string.search_empty_message))
-                .append("\n")
-                .append(this.getResources().getString(R.string.search_empty_search_word_top))
-                .append(" [")
-                .append(searchWord)
-                .append("]").toString();
-        AlertDialogFragment fragment = AlertDialogFragment.newInstance(title, message);
-        fragment.show(this.getSupportFragmentManager(), null);
-    }
-
-    @Override
-    public void setSearchWord(String searchWord) {
-        this.searchWord = searchWord;
+    public void setTitle(String title) {
         if (AppSharedPreference.isLoggedIn(this)) {
-            this.adapter.setSearchWord(this.searchWord);
+            this.adapter.setSearchWord(title);
             this.adapter.notifyDataSetChanged();
         } else {
             ActionBar actionBar = this.getSupportActionBar();
-            actionBar.setTitle(searchWord);
+            actionBar.setTitle(title);
             actionBar.setDisplayShowTitleEnabled(true);
         }
     }
+
+    @Override
+    public void navigateTo(Intent intent) {
+        startActivity(intent);
+    }
+
 }

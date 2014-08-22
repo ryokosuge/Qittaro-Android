@@ -58,7 +58,11 @@
     <string name="article_info_user_title">Post User</string>
     <string name="article_info_tag_title">Tag(%1$d)</string>
     <string name="article_info_comment_title">Comments(%1$d)</string>
-
     <string name="article_info_stock_user_tag_id">StockUser</string>
     <string name="article_info_stock_user_title">Stock(%1$d)</string>
+
+    <string name="article_detail_counter_text">comment(%1$d) / stock(%2$d)</string>
+    <string name="login_error_user_name_text">Please enter a username.</string>
+    <string name="login_error_password_text">Please enter a password.</string>
+    <string name="left_drawer_user_info_title">My Profile</string>
 </resources>

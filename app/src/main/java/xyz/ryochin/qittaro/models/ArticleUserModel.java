@@ -1,30 +1,20 @@
 /**
  * PACKAGE NAME xyz.ryochin.qittaro.models
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/26
+ * CREATED AT 2014/08/20
  */
+
+
 package xyz.ryochin.qittaro.models;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ArticleUserModel {
-    private static final String TAG = ArticleUserModel.class.getSimpleName();
-    private final ArticleUserModel self = this;
-
-    private static final String API_ARTICLE_ID_KEY = "id";
-    private static final String API_ARTICLE_USER_URL_NAME_KEY = "url_name";
-    private static final String API_ARTICLE_USER_PROFILE_IMAGE_URL_KEY = "profile_image_url";
+public class ArticleUserModel implements Parcelable {
 
     private Long id;
     private String urlName;
-    private String profileImageURL;
-
-    public ArticleUserModel(JSONObject jsonObject) throws JSONException {
-        this.id = jsonObject.getLong(API_ARTICLE_ID_KEY);
-        this.urlName = jsonObject.getString(API_ARTICLE_USER_URL_NAME_KEY);
-        this.profileImageURL = jsonObject.getString(API_ARTICLE_USER_PROFILE_IMAGE_URL_KEY);
-    }
+    private String profileImageUrl;
 
     public Long getId() {
         return id;
@@ -34,7 +24,37 @@ public class ArticleUserModel {
         return urlName;
     }
 
-    public String getProfileImageURL() {
-        return profileImageURL;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(urlName);
+        dest.writeString(profileImageUrl);
+    }
+
+    public static final Creator<ArticleUserModel> CREATOR = new Creator<ArticleUserModel>() {
+        @Override
+        public ArticleUserModel createFromParcel(Parcel source) {
+            return new ArticleUserModel(source);
+        }
+
+        @Override
+        public ArticleUserModel[] newArray(int size) {
+            return new ArticleUserModel[0];
+        }
+    };
+
+    private ArticleUserModel(Parcel source) {
+        id = source.readLong();
+        urlName = source.readString();
+        profileImageUrl = source.readString();
     }
 }

@@ -12,11 +12,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.fragments.UserArticlesFragment;
-import xyz.ryochin.qittaro.fragments.UserFollowingTagsFragment;
+import xyz.ryochin.qittaro.articles.ArticlesFragment;
 import xyz.ryochin.qittaro.fragments.UserInfoFragment;
-import xyz.ryochin.qittaro.fragments.UserStocksFragment;
 import xyz.ryochin.qittaro.models.UserModel;
+import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.requests.FollowTagsRequest;
+import xyz.ryochin.qittaro.requests.UserArticlesRequest;
+import xyz.ryochin.qittaro.requests.UserStocksRequest;
+import xyz.ryochin.qittaro.tags.TagsFragment;
 
 public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = UserDetailPagerAdapter.class.getSimpleName();
@@ -29,13 +32,11 @@ public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     private static final int PAGER_USER_FOLLOWING_TAGS_INDEX = 3;
 
     private Context context;
-    private String urlName;
     private UserModel userModel;
 
-    public UserDetailPagerAdapter(FragmentManager fm, Context context, String urlName, UserModel model) {
+    public UserDetailPagerAdapter(FragmentManager fm, Context context, UserModel model) {
         super(fm);
         this.context = context;
-        this.urlName = urlName;
         this.userModel = model;
     }
 
@@ -43,13 +44,16 @@ public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case PAGER_USER_INFO_INDEX:
-                return UserInfoFragment.newInstance(this.userModel);
+                return UserInfoFragment.newInstance(this.userModel, false);
             case PAGER_USER_POST_ARTICLES_INDEX:
-                return UserArticlesFragment.newInstance(this.urlName);
+                APIRequest userArticleRequest = new UserArticlesRequest(userModel.getUrlName());
+                return ArticlesFragment.newInstance(userArticleRequest, false);
             case PAGER_USER_STOCKED_INDEX:
-                return UserStocksFragment.newInstance(this.urlName);
+                APIRequest userStocksRequest = new UserStocksRequest(userModel.getUrlName());
+                return ArticlesFragment.newInstance(userStocksRequest, false);
             case PAGER_USER_FOLLOWING_TAGS_INDEX:
-                return UserFollowingTagsFragment.newInstance(this.urlName);
+                APIRequest followTagsRequest = new FollowTagsRequest(userModel.getUrlName());
+                return TagsFragment.newInstance(followTagsRequest, false);
             default:
                 return null;
         }

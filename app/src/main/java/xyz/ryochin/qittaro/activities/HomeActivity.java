@@ -27,18 +27,19 @@ import com.android.volley.toolbox.NetworkImageView;
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.adapters.LeftDrawerAdapter;
 import xyz.ryochin.qittaro.adapters.LoginLeftDrawerAdapter;
-import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
-import xyz.ryochin.qittaro.fragments.ArticlesFragment;
-import xyz.ryochin.qittaro.fragments.FollowingTagsFragment;
-import xyz.ryochin.qittaro.fragments.FollowingUsersFragment;
+import xyz.ryochin.qittaro.articles.ArticlesFragment;
+import xyz.ryochin.qittaro.followingusers.FollowingUsersFragment;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
-import xyz.ryochin.qittaro.fragments.LoginFragment;
-import xyz.ryochin.qittaro.fragments.MyArticleFragment;
-import xyz.ryochin.qittaro.fragments.StocksFragment;
-import xyz.ryochin.qittaro.fragments.TagsFragment;
-import xyz.ryochin.qittaro.models.ArticleModel;
-import xyz.ryochin.qittaro.models.FollowUserModel;
-import xyz.ryochin.qittaro.models.TagModel;
+import xyz.ryochin.qittaro.login.LoginFragment;
+import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.requests.AllTagRequest;
+import xyz.ryochin.qittaro.requests.FollowTagsRequest;
+import xyz.ryochin.qittaro.requests.FollowingUsersRequest;
+import xyz.ryochin.qittaro.requests.MineRequest;
+import xyz.ryochin.qittaro.requests.PublicRequest;
+import xyz.ryochin.qittaro.requests.StockRequest;
+import xyz.ryochin.qittaro.tags.TagsFragment;
+import xyz.ryochin.qittaro.user.UserFragment;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -91,7 +92,8 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         this.drawerLayout.setDrawerListener(this.drawerToggle);
 
         if (savedInstanceState == null) {
-            ArticlesFragment fragment = ArticlesFragment.newInstance();
+            APIRequest request = new PublicRequest();
+            ArticlesFragment fragment = ArticlesFragment.newInstance(request, true);
             this.getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.activity_home_fragment_container, fragment)
@@ -174,44 +176,20 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
     }
 
     @Override
-    public void onItemSelected(TagModel model) {
-        Intent intent = new Intent(this, TagActivity.class);
-        intent.putExtra(TagActivity.INTENT_TAG_URL_NAME_KEY, model.getUrlName());
-        intent.putExtra(TagActivity.INTENT_TAG_NAME_KEY, model.getName());
-        intent.putExtra(TagActivity.INTENT_TAG_ICON_URL_KEY, model.getIconURL());
-        this.startActivity(intent);
+    public void navigateTo(Intent intent) {
+        startActivity(intent);
     }
 
     @Override
-    public void onItemSelected(ArticleModel model) {
-        Intent intent = new Intent(this, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.INTENT_ARTICLE_UUID_KEY, model.getUuid());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void onItemSelected(FollowUserModel model) {
-        Intent intent = new Intent(this, UserActivity.class);
-        intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, model.getUrlName());
-        this.startActivity(intent);
-    }
-
-    @Override
-    public void onCompletedLoggedin(boolean result) {
-        if (result) {
-            Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
-            ArticlesFragment fragment = new ArticlesFragment();
-            this.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.activity_home_fragment_container, fragment)
-                    .commit();
-            this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
-            this.setAdapter();
-        } else {
-            String title = this.getResources().getString(R.string.login_error_title);
-            String message = this.getResources().getString(R.string.login_error_message);
-            AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(title, message);
-            alertDialogFragment.show(this.getSupportFragmentManager(), null);
-        }
+    public void onLoginCompleted() {
+        Toast.makeText(this, R.string.login_success_message, Toast.LENGTH_SHORT).show();
+        APIRequest request = new PublicRequest();
+        ArticlesFragment fragment = ArticlesFragment.newInstance(request, true);
+        this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_home_fragment_container, fragment)
+                .commit();
+        this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
+        this.setAdapter();
     }
 
     private void setAdapter() {
@@ -245,49 +223,61 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         switch (position - 1) {
             case DRAWER_LIST_HEADER_INDEX:
                 String urlName = AppSharedPreference.getURLName(this);
-                Intent intent = new Intent(this, UserActivity.class);
-                intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
-                this.startActivity(intent);
+                UserFragment userFragment = UserFragment.newInstance(urlName, false);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.activity_home_fragment_container, userFragment)
+                        .commit();
+                getSupportActionBar().setTitle(R.string.left_drawer_user_info_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
-                FollowingTagsFragment followFragment = FollowingTagsFragment.newInstance();
+                String tagUrlName = AppSharedPreference.getURLName(this);
+                APIRequest followTagsRequest = new FollowTagsRequest(tagUrlName);
+                TagsFragment followTagsFragment = TagsFragment.newInstance(followTagsRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_home_fragment_container, followFragment)
+                        .replace(R.id.activity_home_fragment_container, followTagsFragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_following_tag_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_ALL_TAG_INDEX:
-                TagsFragment tagsFragment = TagsFragment.newInstance();
+                APIRequest allTagRequest = new AllTagRequest();
+                TagsFragment tagsFragment = TagsFragment.newInstance(allTagRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, tagsFragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_tag_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_MINE_INDEX:
-                MyArticleFragment myArticleFragment = MyArticleFragment.newInstance();
+                String token = AppSharedPreference.getToken(this);
+                APIRequest mineRequest = new MineRequest(token);
+                ArticlesFragment mineFragment = ArticlesFragment.newInstance(mineRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_home_fragment_container, myArticleFragment)
+                        .replace(R.id.activity_home_fragment_container, mineFragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_mine_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = ArticlesFragment.newInstance();
+                APIRequest publicRequest = new PublicRequest();
+                ArticlesFragment fragment = ArticlesFragment.newInstance(publicRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_STOCKED_INDEX:
-                StocksFragment stocksFragment = StocksFragment.newInstance();
+                String stockToken = AppSharedPreference.getToken(this);
+                APIRequest stockRequest = new StockRequest(stockToken);
+                ArticlesFragment stocksFragment = ArticlesFragment.newInstance(stockRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, stocksFragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_stocked_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_USER_INDEX:
-                FollowingUsersFragment usersFragment = FollowingUsersFragment.newInstance();
+                String uname = AppSharedPreference.getURLName(this);
+                APIRequest followingUsersRequest = new FollowingUsersRequest(uname);
+                FollowingUsersFragment followingUsersFragment = FollowingUsersFragment.newInstance(followingUsersRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_home_fragment_container, usersFragment)
+                        .replace(R.id.activity_home_fragment_container, followingUsersFragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_following_user_title);
         }
@@ -303,14 +293,16 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
                 this.getSupportActionBar().setTitle(R.string.left_drawer_login_title);
                 break;
             case LeftDrawerAdapter.LEFT_DRAWER_ITEM_PUBLIC_INDEX:
-                ArticlesFragment fragment = ArticlesFragment.newInstance();
+                APIRequest request = new PublicRequest();
+                ArticlesFragment fragment = ArticlesFragment.newInstance(request, true);
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, fragment)
                         .commit();
                 this.getSupportActionBar().setTitle(R.string.left_drawer_public_title);
                 break;
             case LeftDrawerAdapter.LEFT_DRAWER_ITEM_TAG_INDEX:
-                TagsFragment tagsFragment = TagsFragment.newInstance();
+                APIRequest tagsRequest = new AllTagRequest();
+                TagsFragment tagsFragment = TagsFragment.newInstance(tagsRequest, true);
                 this.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.activity_home_fragment_container, tagsFragment)
                         .commit();
