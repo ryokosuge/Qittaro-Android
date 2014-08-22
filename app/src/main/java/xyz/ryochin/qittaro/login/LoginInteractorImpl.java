@@ -1,9 +1,7 @@
 /**
- * =====================================
- * ENCODE : UTF-8
- * CREATED AT 2014/08/19
+ * PACKAGE NAME xyz.ryochin.qittaro.login
  * CREATED BY kosugeryou
- * =====================================
+ * CREATED AT 2014/08/21
  */
 package xyz.ryochin.qittaro.login;
 
@@ -12,7 +10,6 @@ import java.util.Map;
 
 import xyz.ryochin.qittaro.api.OnFinishedListener;
 import xyz.ryochin.qittaro.api.QiitaAPI;
-import xyz.ryochin.qittaro.api.QiitaAPIImpl;
 import xyz.ryochin.qittaro.requests.Request;
 
 public class LoginInteractorImpl implements LoginInteractor {
@@ -23,11 +20,6 @@ public class LoginInteractorImpl implements LoginInteractor {
     private static final int REQUEST_PARAM_COUNT = 2;
     private static final String REQUEST_PARAMS_URL_NAME_KEY = "url_name";
     private static final String REQUEST_PARAMS_PASSWORD_KEY = "password";
-    private QiitaAPI qiitaAPI;
-
-    public LoginInteractorImpl() {
-        this.qiitaAPI = new QiitaAPIImpl();
-    }
 
     @Override
     public void login(Request request, String urlName, String password, final OnLoginListener listener) {
@@ -45,7 +37,7 @@ public class LoginInteractorImpl implements LoginInteractor {
         params.put(REQUEST_PARAMS_URL_NAME_KEY, urlName);
         params.put(REQUEST_PARAMS_PASSWORD_KEY, password);
 
-        qiitaAPI.post(request, params, new OnFinishedListener() {
+        QiitaAPI.post(request, params, new OnFinishedListener() {
             @Override
             public void onFinished(String jsonResponse) {
                 listener.onFinished(jsonResponse);
@@ -60,11 +52,11 @@ public class LoginInteractorImpl implements LoginInteractor {
 
     @Override
     public void getUserInfo(Request request, OnFinishedListener listener) {
-        qiitaAPI.getItems(request, listener);
+        QiitaAPI.get(request, listener);
     }
 
     @Override
     public void cancel(Request request) {
-        qiitaAPI.cancel(request);
+        QiitaAPI.cancel(request);
     }
 }

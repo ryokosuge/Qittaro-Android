@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.tags
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/22
+ */
 
 package xyz.ryochin.qittaro.tags;
 
@@ -16,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.tags.models.TagModel;
+import xyz.ryochin.qittaro.models.TagModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
 public class TagsAdapter extends BaseAdapter {

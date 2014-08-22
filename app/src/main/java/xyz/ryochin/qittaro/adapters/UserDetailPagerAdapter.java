@@ -32,31 +32,28 @@ public class UserDetailPagerAdapter extends FragmentStatePagerAdapter {
     private static final int PAGER_USER_FOLLOWING_TAGS_INDEX = 3;
 
     private Context context;
-    private String urlName;
     private UserModel userModel;
 
-    public UserDetailPagerAdapter(FragmentManager fm, Context context, String urlName, UserModel model) {
+    public UserDetailPagerAdapter(FragmentManager fm, Context context, UserModel model) {
         super(fm);
         this.context = context;
-        this.urlName = urlName;
         this.userModel = model;
     }
 
     @Override
     public Fragment getItem(int position) {
-        boolean showAd = false;
         switch (position) {
             case PAGER_USER_INFO_INDEX:
-                return UserInfoFragment.newInstance(this.userModel);
+                return UserInfoFragment.newInstance(this.userModel, false);
             case PAGER_USER_POST_ARTICLES_INDEX:
-                APIRequest userArticleRequest = new UserArticlesRequest(urlName);
-                return ArticlesFragment.newInstance(userArticleRequest, showAd);
+                APIRequest userArticleRequest = new UserArticlesRequest(userModel.getUrlName());
+                return ArticlesFragment.newInstance(userArticleRequest, false);
             case PAGER_USER_STOCKED_INDEX:
-                APIRequest userStocksRequest = new UserStocksRequest(urlName);
-                return ArticlesFragment.newInstance(userStocksRequest, showAd);
+                APIRequest userStocksRequest = new UserStocksRequest(userModel.getUrlName());
+                return ArticlesFragment.newInstance(userStocksRequest, false);
             case PAGER_USER_FOLLOWING_TAGS_INDEX:
-                APIRequest followTagsRequest = new FollowTagsRequest(urlName);
-                return TagsFragment.newInstance(followTagsRequest, showAd);
+                APIRequest followTagsRequest = new FollowTagsRequest(userModel.getUrlName());
+                return TagsFragment.newInstance(followTagsRequest, false);
             default:
                 return null;
         }

@@ -1,30 +1,19 @@
 /**
  * PACKAGE NAME xyz.ryochin.qittaro.models
  * CREATED BY kosugeryou
- * CREATED AT 2014/07/27
+ * CREATED AT 2014/08/20
  */
+
 package xyz.ryochin.qittaro.models;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class TagModel {
+
     private static final String TAG = TagModel.class.getSimpleName();
     private final TagModel self = this;
 
-    private static final String API_TAG_NAME_KEY = "name";
-    private static final String API_TAG_URL_NAME_KEY = "url_name";
-    private static final String API_TAG_ICON_URL_KEY = "icon_url";
-
     private String name;
     private String urlName;
-    private String iconURL;
-
-    public TagModel(JSONObject jsonObject) throws JSONException {
-        this.name = jsonObject.getString(API_TAG_NAME_KEY);
-        this.urlName = jsonObject.getString(API_TAG_URL_NAME_KEY);
-        this.iconURL = jsonObject.getString(API_TAG_ICON_URL_KEY);
-    }
+    private String iconUrl;
 
     public String getName() {
         return name;
@@ -34,8 +23,7 @@ public class TagModel {
         return urlName;
     }
 
-    public String getIconURL() {
-        return iconURL;
+    public String getIconUrl() {
+        return iconUrl;
     }
-
 }

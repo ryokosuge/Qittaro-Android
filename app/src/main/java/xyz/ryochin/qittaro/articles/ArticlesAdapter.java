@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.articles;
 
 import android.content.Context;
@@ -15,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.articles.models.ArticleModel;
-import xyz.ryochin.qittaro.articles.models.ArticleUserModel;
+import xyz.ryochin.qittaro.models.ArticleModel;
+import xyz.ryochin.qittaro.models.ArticleUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
 public class ArticlesAdapter extends BaseAdapter {

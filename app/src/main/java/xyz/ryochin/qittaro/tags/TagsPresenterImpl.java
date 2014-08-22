@@ -1,21 +1,16 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.tags
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/22
+ */
 
 package xyz.ryochin.qittaro.tags;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.ryochin.qittaro.api.QiitaAPI;
-import xyz.ryochin.qittaro.api.QiitaAPIImpl;
-import xyz.ryochin.qittaro.api.OnFinishedListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
-import xyz.ryochin.qittaro.tags.models.TagModel;
+import xyz.ryochin.qittaro.models.TagModel;
 
 public class TagsPresenterImpl implements TagsPresenter {
 
@@ -24,75 +19,53 @@ public class TagsPresenterImpl implements TagsPresenter {
 
     private TagsView view;
     private APIRequest request;
-    private QiitaAPI interactor;
+    private TagsInteractor interactor;
     private List<TagModel> items;
-    private int page;
-    private static final int PER_PAGE = 20;
-    private boolean loading = false;
-    private boolean max = false;
 
     public TagsPresenterImpl(TagsView view, APIRequest request) {
         this.view = view;
         this.request = request;
-        this.interactor = new QiitaAPIImpl();
+        this.interactor = new TagsInteractorImpl();
         this.items = new ArrayList<TagModel>();
     }
 
 
     @Override
     public void start() {
-        this.loading = true;
-        page = 1;
-        request.setPage(page);
-        request.setPerPage(PER_PAGE);
         this.view.showFullLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        interactor.getItems(request, new TagsInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<TagModel> items = convertModel(jsonResponse);
+            public void onCompleted(List<TagModel> items, boolean isMax) {
                 self.items = items;
-                if (self.max = isLimit(items.size())) {
+                if (isMax) {
                     self.view.hideListFooterLoadingView();
                 }
                 self.view.setItems(items);
                 self.view.hideFullLoadingView();
-                self.loading = false;
             }
 
             @Override
-            public void onError(Exception exception) {
-                self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
-                self.loading = false;
+            public void onError(Exception e) {
             }
         });
     }
 
     @Override
     public void refresh() {
-        self.loading = true;
-        page = 1;
-        request.setPage(page);
-        request.setPerPage(PER_PAGE);
         view.showReloadLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        interactor.getItems(request, new TagsInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<TagModel> items = convertModel(jsonResponse);
-                self.items = items;
-                if (self.max = isLimit(items.size())) {
+            public void onCompleted(List<TagModel> items, boolean isMax) {
+                if (isMax) {
                     self.view.hideListFooterLoadingView();
                 }
+                self.items = items;
                 self.view.setItems(items);
                 self.view.hideReloadLoadingView();
-                self.loading = false;
             }
 
             @Override
-            public void onError(Exception exception) {
-                self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
-                self.loading = false;
+            public void onError(Exception e) {
             }
         });
     }
@@ -106,7 +79,7 @@ public class TagsPresenterImpl implements TagsPresenter {
     @Override
     public void onScroll(int totalItemCount, int firstVisibleItem, int visibleItemCount) {
         if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            if (this.items.size() > 0 && !this.loading && !this.max) {
+            if (this.items.size() > 0 && !interactor.isLoading() && !interactor.isMax()) {
                 addRequest();
             }
         }
@@ -118,42 +91,21 @@ public class TagsPresenterImpl implements TagsPresenter {
     }
 
     private void addRequest() {
-        loading = true;
-        page++;
-        request.setPage(page);
         view.showListFooterLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        interactor.addItems(request, new TagsInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<TagModel> items = convertModel(jsonResponse);
-                if (self.max = isLimit(items.size())) {
+            public void onCompleted(List<TagModel> items, boolean isMax) {
+                if (isMax) {
                     self.view.hideListFooterLoadingView();
                 }
                 self.items.addAll(items);
-                self.loading = false;
                 self.view.addItems(items);
             }
 
             @Override
-            public void onError(Exception exception) {
-                self.view.hideListFooterLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
+            public void onError(Exception e) {
             }
         });
     }
 
-    private static List<TagModel> convertModel(String responseJson) {
-        Gson gson = createGson();
-        Type listType = new TypeToken<List<TagModel>>(){}.getType();
-        return gson.fromJson(responseJson, listType);
-    }
-
-    private static boolean isLimit(int itemSize) {
-        return (itemSize < PER_PAGE);
-    }
-
-    private static Gson createGson() {
-        return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
-    }
 }

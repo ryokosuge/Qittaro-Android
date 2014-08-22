@@ -1,9 +1,13 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.articles;
 
 import java.util.List;
 
-import xyz.ryochin.qittaro.articles.models.ArticleModel;
+import xyz.ryochin.qittaro.models.ArticleModel;
 
 public interface ArticlesView {
 

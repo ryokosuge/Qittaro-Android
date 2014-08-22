@@ -39,6 +39,7 @@ import xyz.ryochin.qittaro.requests.MineRequest;
 import xyz.ryochin.qittaro.requests.PublicRequest;
 import xyz.ryochin.qittaro.requests.StockRequest;
 import xyz.ryochin.qittaro.tags.TagsFragment;
+import xyz.ryochin.qittaro.user.UserFragment;
 import xyz.ryochin.qittaro.utils.AppController;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
@@ -222,9 +223,11 @@ public class HomeActivity extends ActionBarActivity implements FragmentListener,
         switch (position - 1) {
             case DRAWER_LIST_HEADER_INDEX:
                 String urlName = AppSharedPreference.getURLName(this);
-                Intent intent = new Intent(this, UserActivity.class);
-                intent.putExtra(UserActivity.INTENT_USER_URL_NAME_KEY, urlName);
-                this.startActivity(intent);
+                UserFragment userFragment = UserFragment.newInstance(urlName, false);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.activity_home_fragment_container, userFragment)
+                        .commit();
+                getSupportActionBar().setTitle(R.string.left_drawer_user_info_title);
                 break;
             case LoginLeftDrawerAdapter.LOG_IN_LEFT_DRAWER_ITEM_FOLLOWING_TAG_INDEX:
                 String tagUrlName = AppSharedPreference.getURLName(this);

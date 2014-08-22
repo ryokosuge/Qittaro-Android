@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.ryochin.qittaro.R;
-import xyz.ryochin.qittaro.followingusers.models.FollowingUserModel;
+import xyz.ryochin.qittaro.models.FollowingUserModel;
 import xyz.ryochin.qittaro.utils.AppController;
 
 public class FollowingUsersAdapter extends BaseAdapter {

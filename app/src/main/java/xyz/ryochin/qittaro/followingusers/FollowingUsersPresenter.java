@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles.followingusers
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.followingusers;
 
 public interface FollowingUsersPresenter {

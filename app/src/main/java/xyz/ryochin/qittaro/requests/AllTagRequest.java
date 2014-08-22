@@ -1,10 +1,7 @@
 /**
- * =====================================================
- * ENCODE : UTF-8
- * CREATED AT 14/08/19.
- * CREATED BY kosuge.
- * Copyright © Samurai Factory Inc. All rights reserved.
- * ===================================================== 
+ * PACKAGE NAME xyz.ryochin.qittaro.requests
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/22
  */
 
 package xyz.ryochin.qittaro.requests;

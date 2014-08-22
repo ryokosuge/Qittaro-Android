@@ -1,9 +1,7 @@
 /**
- * =====================================
- * ENCODE : UTF-8
- * CREATED AT 2014/08/19
+ * PACKAGE NAME xyz.ryochin.qittaro.login
  * CREATED BY kosugeryou
- * =====================================
+ * CREATED AT 2014/08/21
  */
 package xyz.ryochin.qittaro.login;
 
@@ -16,9 +14,11 @@ import com.google.gson.GsonBuilder;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.api.OnFinishedListener;
+import xyz.ryochin.qittaro.models.LoginResultModel;
 import xyz.ryochin.qittaro.requests.APIRequest;
 import xyz.ryochin.qittaro.requests.LoginRequest;
 import xyz.ryochin.qittaro.requests.UserRequest;
+import xyz.ryochin.qittaro.models.UserModel;
 import xyz.ryochin.qittaro.utils.AppSharedPreference;
 
 public class LoginPresenterImpl implements LoginPresenter {
@@ -80,14 +80,14 @@ public class LoginPresenterImpl implements LoginPresenter {
     };
 
     private void getUserInfo(String token) {
-        storeToken(token);
+        storeToken(self.context, token);
         APIRequest request = new UserRequest(token);
         interactor.getUserInfo(request, new OnFinishedListener() {
             @Override
             public void onFinished(String jsonResponse) {
                 Gson gson = createGson();
                 UserModel userModel = gson.fromJson(jsonResponse, UserModel.class);
-                storeUserInfo(userModel);
+                storeUserInfo(self.context, userModel);
                 view.hideProgress();
                 view.navigateToHome();
             }
@@ -103,12 +103,12 @@ public class LoginPresenterImpl implements LoginPresenter {
         return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     }
 
-    private void storeToken(String token) {
-        AppSharedPreference.setToken(this.context, token);
+    private static void storeToken(Context context, String token) {
+        AppSharedPreference.setToken(context, token);
     }
 
-    private void storeUserInfo(UserModel model) {
-        AppSharedPreference.setProfileImageURL(this.context, model.getProfileImageUrl());
-        AppSharedPreference.setURLName(this.context, model.getUrlName());
+    private static void storeUserInfo(Context context, UserModel model) {
+        AppSharedPreference.setProfileImageURL(context, model.getProfileImageUrl());
+        AppSharedPreference.setURLName(context, model.getUrlName());
     }
 }

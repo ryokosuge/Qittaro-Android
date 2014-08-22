@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.articles;
 
 import android.app.Activity;
@@ -21,9 +25,10 @@ import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.ArticleActivity;
-import xyz.ryochin.qittaro.articles.models.ArticleModel;
+import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class ArticlesFragment extends Fragment implements ArticlesView, AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
     private static final String TAG = ArticlesFragment.class.getSimpleName();
@@ -31,12 +36,14 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
 
     private static final String ARGS_REQUEST_KEY = "APIRequest";
     private static final String ARGS_SHOW_AD_KEY = "showAd";
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private View fullLoadingView;
     private ListView listView;
     private ArticlesAdapter adapter;
     private ArticlesPresenter presenter;
     private View footerView;
+    private AdView adView;
     private FragmentListener listener;
 
     public static ArticlesFragment newInstance(APIRequest request, boolean showAd) {
@@ -98,6 +105,31 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
     public void onStart() {
         super.onStart();
         this.presenter.start();
+        AppController.getInstance().sendView(TAG + " : " + presenter.getRequestTag());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
     }
 
     @Override
@@ -177,7 +209,7 @@ public class ArticlesFragment extends Fragment implements ArticlesView, AbsListV
     }
 
     private void setAdView() {
-        AdView adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
+        adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);

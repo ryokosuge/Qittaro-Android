@@ -1,11 +1,9 @@
 /**
- * =====================================
- * ENCODE : UTF-8
- * CREATED AT 2014/08/20
+ * PACKAGE NAME xyz.ryochin.qittaro.models
  * CREATED BY kosugeryou
- * =====================================
+ * CREATED AT 2014/08/20
  */
-package xyz.ryochin.qittaro.login;
+package xyz.ryochin.qittaro.models;
 
 public class LoginResultModel {
 

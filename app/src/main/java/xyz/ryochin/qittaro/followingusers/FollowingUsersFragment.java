@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles.followingusers
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.followingusers;
 
 import android.app.Activity;
@@ -21,9 +25,10 @@ import java.util.List;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.UserActivity;
-import xyz.ryochin.qittaro.followingusers.models.FollowingUserModel;
+import xyz.ryochin.qittaro.models.FollowingUserModel;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class FollowingUsersFragment extends Fragment implements FollowingUsersView, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
     private static final String TAG = FollowingUsersFragment.class.getSimpleName();
@@ -37,6 +42,7 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
     private FollowingUsersAdapter adapter;
     private FollowingUsersPresenterImpl presenter;
     private View footerView;
+    private AdView adView;
     private FragmentListener listener;
 
     public static FollowingUsersFragment newInstance(APIRequest request, boolean showAd) {
@@ -97,7 +103,32 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
     @Override
     public void onStart() {
         super.onStart();
+        AppController.getInstance().sendView(TAG);
         presenter.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
     }
 
     @Override
@@ -177,7 +208,7 @@ public class FollowingUsersFragment extends Fragment implements FollowingUsersVi
     }
 
     private void setAdView() {
-        AdView adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
+        adView = (AdView) getView().findViewById(R.id.basic_list_admob_view);
         adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);

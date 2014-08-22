@@ -1,9 +1,7 @@
 /**
- * =====================================
- * ENCODE : UTF-8
- * CREATED AT 2014/08/19
+ * PACKAGE NAME xyz.ryochin.qittaro.login
  * CREATED BY kosugeryou
- * =====================================
+ * CREATED AT 2014/08/21
  */
 package xyz.ryochin.qittaro.login;
 
@@ -20,6 +18,7 @@ import android.widget.EditText;
 
 import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.fragments.AlertDialogFragment;
+import xyz.ryochin.qittaro.utils.AppController;
 
 public class LoginFragment extends Fragment implements LoginView, View.OnClickListener {
 
@@ -63,6 +62,12 @@ public class LoginFragment extends Fragment implements LoginView, View.OnClickLi
         this.urlNameEditText = (EditText)getView().findViewById(R.id.user_name_edittext);
         this.passwordEditText = (EditText)getView().findViewById(R.id.password_edittext);
         getView().findViewById(R.id.qiita_login_btn).setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().sendView(TAG);
     }
 
     @Override

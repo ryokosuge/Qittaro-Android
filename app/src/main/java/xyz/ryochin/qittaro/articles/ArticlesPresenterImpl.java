@@ -1,21 +1,14 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.articles
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/20
+ */
 package xyz.ryochin.qittaro.articles;
 
-import android.util.Log;
-
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.ryochin.qittaro.api.QiitaAPI;
-import xyz.ryochin.qittaro.api.QiitaAPIImpl;
-import xyz.ryochin.qittaro.articles.models.ArticleModel;
-import xyz.ryochin.qittaro.api.OnFinishedListener;
+import xyz.ryochin.qittaro.models.ArticleModel;
 import xyz.ryochin.qittaro.requests.APIRequest;
 
 public class ArticlesPresenterImpl implements ArticlesPresenter {
@@ -25,75 +18,56 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
 
     private ArticlesView view;
     private APIRequest request;
-    private QiitaAPI interactor;
     private List<ArticleModel> items;
-
-    private int page;
-    private static final int PER_PAGE = 20;
-    private boolean loading;
-    private boolean max;
+    private ArticlesInteractor interactor;
 
     public ArticlesPresenterImpl(ArticlesView view, APIRequest request) {
         this.view = view;
         this.request = request;
-        this.interactor = new QiitaAPIImpl();
         this.items = new ArrayList<ArticleModel>();
+        this.interactor = new ArticlesInteractorImpl();
     }
 
     @Override
     public void start() {
-        this.loading = true;
-        page = 1;
-        request.setPage(page);
-        request.setPerPage(PER_PAGE);
-        this.view.showFullLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        view.showFullLoadingView();
+        interactor.getItems(request, new ArticlesInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<ArticleModel> items = convertModel(jsonResponse);
-                self.items = items;
-                if (self.max = isLimit(items.size())) {
-                    self.view.hideListFooterLoadingView();
+            public void onCompleted(List<ArticleModel> items, boolean isMax) {
+                if (isMax) {
+                    view.hideListFooterLoadingView();
                 }
-                self.view.setItems(items);
-                self.view.hideFullLoadingView();
-                self.loading = false;
+                view.setItems(items);
+                self.items = items;
+                view.hideFullLoadingView();
             }
 
             @Override
-            public void onError(Exception exception) {
+            public void onError(Exception e) {
                 self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
-                self.loading = false;
+                self.view.showMessage("エラー", e.getLocalizedMessage());
             }
         });
     }
 
     @Override
     public void refresh() {
-        self.loading = true;
-        page = 1;
-        request.setPage(page);
-        request.setPerPage(PER_PAGE);
         view.showReloadLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        interactor.getItems(request, new ArticlesInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<ArticleModel> items = convertModel(jsonResponse);
-                self.items = items;
-                if (self.max = isLimit(items.size())) {
-                    self.view.hideListFooterLoadingView();
+            public void onCompleted(List<ArticleModel> items, boolean isMax) {
+                if (isMax) {
+                    view.hideListFooterLoadingView();
                 }
-                self.view.setItems(items);
-                self.view.hideReloadLoadingView();
-                self.loading = false;
+                view.setItems(items);
+                self.items = items;
+                view.hideReloadLoadingView();
             }
 
             @Override
-            public void onError(Exception exception) {
-                self.view.hideFullLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
-                self.loading = false;
+            public void onError(Exception e) {
+                view.hideReloadLoadingView();
+                view.showMessage("エラー", e.getLocalizedMessage());
             }
         });
     }
@@ -107,35 +81,33 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
     @Override
     public void onScroll(int totalItemCount, int firstVisibleItem, int visibleItemCount) {
         if (totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount) {
-            Log.e(TAG, "onScroll");
-            Log.e(TAG, "items.size() = " + items.size());
-            if (this.items.size() > 0 && !this.loading && !this.max) {
+            if (items.size() > 0 && !interactor.isLoading() && !interactor.isMax()) {
                 addRequest();
             }
         }
     }
 
+    @Override
+    public String getRequestTag() {
+        return request.getTag();
+    }
+
     private void addRequest() {
-        this.loading = true;
-        page++;
-        request.setPage(page);
         view.showListFooterLoadingView();
-        interactor.getItems(request, new OnFinishedListener() {
+        interactor.addItems(request, new ArticlesInteractor.Listener() {
             @Override
-            public void onFinished(String jsonResponse) {
-                List<ArticleModel> items = convertModel(jsonResponse);
-                if (self.max = isLimit(items.size())) {
-                    self.view.hideListFooterLoadingView();
+            public void onCompleted(List<ArticleModel> items, boolean isMax) {
+                if (isMax) {
+                    view.hideListFooterLoadingView();
                 }
                 self.items.addAll(items);
-                self.loading = false;
-                self.view.addItems(items);
+                view.addItems(items);
             }
 
             @Override
-            public void onError(Exception exception) {
-                self.view.hideListFooterLoadingView();
-                self.view.showMessage("エラー", exception.getLocalizedMessage());
+            public void onError(Exception e) {
+                view.hideListFooterLoadingView();
+                view.showMessage("エラー", e.getLocalizedMessage());
             }
         });
     }
@@ -143,19 +115,5 @@ public class ArticlesPresenterImpl implements ArticlesPresenter {
     @Override
     public void destroyView() {
         interactor.cancel(request);
-    }
-
-    private static boolean isLimit(int itemSize) {
-        return (itemSize < PER_PAGE);
-    }
-
-    private static List<ArticleModel> convertModel(String responseJson) {
-        Gson gson = createGson();
-        Type listTyp = new TypeToken<List<ArticleModel>>(){}.getType();
-        return gson.fromJson(responseJson, listTyp);
-    }
-
-    private static Gson createGson() {
-        return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     }
 }

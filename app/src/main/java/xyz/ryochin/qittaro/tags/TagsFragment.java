@@ -1,4 +1,8 @@
-
+/**
+ * PACKAGE NAME xyz.ryochin.qittaro.tags
+ * CREATED BY kosugeryou
+ * CREATED AT 2014/08/22
+ */
 package xyz.ryochin.qittaro.tags;
 
 import android.app.Activity;
@@ -23,7 +27,7 @@ import xyz.ryochin.qittaro.R;
 import xyz.ryochin.qittaro.activities.TagActivity;
 import xyz.ryochin.qittaro.fragments.FragmentListener;
 import xyz.ryochin.qittaro.requests.APIRequest;
-import xyz.ryochin.qittaro.tags.models.TagModel;
+import xyz.ryochin.qittaro.models.TagModel;
 
 public class TagsFragment extends Fragment implements TagsView, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
