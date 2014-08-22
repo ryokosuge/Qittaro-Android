@@ -17,5 +17,5 @@ proguard/
 .idea/tasks.xml
 .idea/libraries/
 .gradle
-app/build/
+app
 .DS_Store

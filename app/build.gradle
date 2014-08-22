@@ -15,8 +15,8 @@ android {
         applicationId "xyz.ryochin.qittaro"
         minSdkVersion 9
         targetSdkVersion 20
-        versionCode 8
-        versionName "1.5.0"
+        versionCode 9
+        versionName "1.5.1"
     }
 
     signingConfigs {
