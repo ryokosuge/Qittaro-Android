@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="search_spinner_strings">
+    <string-array name="search_spinner_titles">
         <item>Search In Articles</item>
         <item>Search In My Stocked</item>
+    </string-array>
+    <string-array name="search_spinner_strings">
     </string-array>
     <string-array name="ad_test_devices">
         <item>C3578474900D7CA6D88C34E3634A24AD</item>
