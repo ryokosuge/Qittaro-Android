@@ -47,7 +47,6 @@
     <string name="user_info_page_following_user_count_title">フォロー数</string>
     <string name="user_info_page_followers_count_title">フォロワー数</string>
     <string name="user_info_page_post_item_count_title">投稿数</string>
-
     <string name="menu_article_info_title">記事情報</string>
     <string name="article_info_title_tag_id">title</string>
     <string name="article_info_user_tag_id">user</string>
@@ -58,7 +57,6 @@
     <string name="article_info_comment_title">コメント(%1$d)</string>
     <string name="article_info_stock_user_tag_id">StockUser</string>
     <string name="article_info_stock_user_title">Stock(%1$d)</string>
-
     <string name="article_detail_counter_text">コメント数 (%1$d) / ストック数(%2$d)</string>
     <string name="login_error_user_name_text">url_nameを入力してください。</string>
     <string name="login_error_password_text">パスワードを入力してください。</string>

@@ -4,7 +4,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="login_user_name_hint">url_name</string>
-    <string name="login_password_hint">Password</string>
+    <string name="login_password_hint">password</string>
     <string name="login_btn_text">Sing In</string>
     <string name="login_error_title">Login Error</string>
     <string name="login_error_message">Either the username or password is incorrect.</string>
@@ -61,7 +61,6 @@
     <string name="login_error_user_name_text">Please enter a username.</string>
     <string name="login_error_password_text">Please enter a password.</string>
     <string name="left_drawer_user_info_title">My Profile</string>
-
     <string name="api_error_title">API Error</string>
     <string name="api_error_message">No value was returned from the server of Qiita. \nPlease try again after some time.</string>
     <string name="search_error_title">Search Result</string>
